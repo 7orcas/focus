@@ -4,7 +4,7 @@ import 'package:focus/service/menu.dart';
 
 enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, EXIT }
 
-List<MenuItem<MainMenuAction>> items = [
+final List<MenuItem<MainMenuAction>> _menuItems = [
   MenuItem(value: MainMenuAction.ABOUT, label: 'item1', icon: Icons.add),
   MenuItem(value: MainMenuAction.ACCOUNT, label: 'item2', icon: Icons.label),
   MenuItem(
@@ -20,6 +20,8 @@ List<MenuItem<MainMenuAction>> items = [
       iconColor: Colors.redAccent),
 ];
 
+final IconData _menuIcon = Icons.reorder;
+
 class MainMenu {
   void _onPopupMenuSelected(MainMenuAction item) {
     if (MainMenuAction.EXIT == item) {
@@ -29,14 +31,17 @@ class MainMenu {
     }
   }
 
-  Menu m = Menu<MainMenuAction>();
+  get menuItems => _menuItems;
+  get menuIcon => _menuIcon;
+  
+  final Menu m = Menu<MainMenuAction>();
 
   get menu {
     return [
       PopupMenuButton<MainMenuAction>(
-          icon: Icon(Icons.reorder),
+          icon: Icon(_menuIcon),
           onSelected: _onPopupMenuSelected,
-          itemBuilder: (BuildContext context) => m.toList(items))
+          itemBuilder: (BuildContext context) => m.toList(_menuItems))
     ];
   }
 }

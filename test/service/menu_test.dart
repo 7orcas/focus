@@ -12,8 +12,10 @@ void main() {
     expect(i.isDivider(), false);
   });
 
+
   test('Create invalid menu item', () {
     try {
+      //ignore
       MenuItem i = MenuItem(label: 'x');
     } on Error catch (x) {
       expect(x.toString().indexOf('value != null') != -1, true);
