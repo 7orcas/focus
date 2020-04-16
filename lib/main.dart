@@ -28,8 +28,9 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+final FocusDB db = FocusDB();
+
 class _HomePageState extends State<HomePage> {
-  final FocusDB db = FocusDB();
   final MainMenu mm = MainMenu();
   User user ;
 
