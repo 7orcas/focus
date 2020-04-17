@@ -23,6 +23,11 @@ final List<MenuItem<MainMenuAction>> _menuItems = [
 final IconData _menuIcon = Icons.reorder;
 
 class MainMenu {
+
+  MainMenu ({@required lang}) : _lang = lang;
+
+  final String _lang;
+
   void _onPopupMenuSelected(MainMenuAction item) {
     if (MainMenuAction.EXIT == item) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -34,7 +39,7 @@ class MainMenu {
   get menuItems => _menuItems;
   get menuIcon => _menuIcon;
   
-  final Menu m = Menu<MainMenuAction>();
+  Menu m = Menu<MainMenuAction>(lang: 'en');
 
   get menu {
     return [

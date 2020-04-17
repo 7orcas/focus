@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:focus/service/language.dart';
 
-Language lang = Language();
-
 // Menu item
 class MenuItem<T> {
   MenuItem({@required value, @required label, labelColor, icon, iconColor}) {
     assert(value != null);
     assert(label != null);
     _value = value;
-    _label = lang.label(label);
+    _label = label;
     _labelColor = labelColor != null ? labelColor : Colors.black;
     _icon = icon;
     _iconColor = iconColor != null ? iconColor : Colors.black;
@@ -50,8 +48,15 @@ class MenuItem<T> {
   bool isDivider() => _divider;
 }
 
+
 // Control construction of menu
 class Menu<T> {
+
+  Menu ({@required lang}) : _lang = lang;
+
+  String _lang;
+  final Language lang = Language(lang: 'en');
+
   //Return list of menu items
   List<PopupMenuEntry<T>> toList(List<MenuItem> items) {
     List<PopupMenuEntry<T>> list = [];
@@ -62,7 +67,7 @@ class Menu<T> {
         //Get menu item attributes
         List<Widget> w = [
           Text(
-            lang.label(item.label),
+            lang.label(lang.label(item.label)),
             style: TextStyle(color: item.labelColor),
           )
         ];

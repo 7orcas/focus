@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus/bloc/session_provider.dart';
 import 'package:focus/page/home/mainmenu.dart';
 import 'package:focus/service/database.dart';
 import 'package:focus/entity/user.dart';
@@ -9,30 +10,24 @@ class FocusApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Focus',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
+    return SessionProvider(
+      child: MaterialApp(
+        title: 'Focus',
+        theme: ThemeData(
+          primarySwatch: Colors.purple,
+        ),
+        home: HomePage(title: 'Focus'),
       ),
-      home: HomePage(title: 'Focus'),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+final FocusDB db = FocusDB();
+
+class HomePage extends StatelessWidget {
   HomePage({Key key, this.title}) : super(key: key);
 
   final String title;
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-final FocusDB db = FocusDB();
-
-class _HomePageState extends State<HomePage> {
-  final MainMenu mm = MainMenu();
-  User user ;
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +35,14 @@ class _HomePageState extends State<HomePage> {
         future: db.loadUser(),
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            user = snapshot.data;
+            final User user = snapshot.data;
+            final session = SessionProvider.of(context);
+            session.changeLang(user.language);
+
+            final MainMenu mm = MainMenu(lang: session.lang);
             debugPrint('*** User= ' + user.language);
             return Scaffold(
-              appBar: AppBar(title: Text(widget.title), actions: mm.menu),
+              appBar: AppBar(title: Text(title), actions: mm.menu),
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
