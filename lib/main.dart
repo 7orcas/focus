@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:focus/bloc/session_bloc.dart';
 import 'package:focus/bloc/session_provider.dart';
 import 'package:focus/page/home/mainmenu.dart';
 import 'package:focus/service/database.dart';
+import 'package:focus/service/util.dart';
 import 'package:focus/entity/user.dart';
 
 void main() => runApp(FocusApp());
@@ -23,26 +25,40 @@ class FocusApp extends StatelessWidget {
 }
 
 final FocusDB db = FocusDB();
+final util = Util(StackTrace.current);
 
 class HomePage extends StatelessWidget {
   HomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
+  MainMenu _initialise(SessionBloc bloc, User user){
+    MainMenu menu= MainMenu(lang: 'en');
+    bloc.initialise(user);
+    bloc.language.listen((event) {
+      menu = MainMenu(lang: event);
+    });
+    util.out('menu l=' + menu.language);
+    return menu;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final session = SessionProvider.of(context);
+
     return FutureBuilder<User>(
         future: db.loadUser(),
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
             final User user = snapshot.data;
-            final session = SessionProvider.of(context);
-            session.changeLang(user.language);
+            MainMenu menu = _initialise(session, user);
 
-            final MainMenu mm = MainMenu(lang: session.lang);
-            debugPrint('*** User= ' + user.language);
+
             return Scaffold(
-              appBar: AppBar(title: Text(title), actions: mm.menu),
+              appBar: AppBar(title: Text(title),
+                  actions: menu != null? menu.menu : null
+              ),
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

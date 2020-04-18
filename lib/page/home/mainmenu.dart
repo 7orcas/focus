@@ -38,6 +38,7 @@ class MainMenu {
 
   get menuItems => _menuItems;
   get menuIcon => _menuIcon;
+  get language => _lang;
   
   Menu m = Menu<MainMenuAction>(lang: 'en');
 

@@ -55,7 +55,8 @@ class Menu<T> {
   Menu ({@required lang}) : _lang = lang;
 
   String _lang;
-  final Language lang = Language(lang: 'en');
+
+  Language lang = Language(lang: 'xx');
 
   //Return list of menu items
   List<PopupMenuEntry<T>> toList(List<MenuItem> items) {
@@ -67,7 +68,7 @@ class Menu<T> {
         //Get menu item attributes
         List<Widget> w = [
           Text(
-            lang.label(lang.label(item.label)),
+            lang.label(item.label),
             style: TextStyle(color: item.labelColor),
           )
         ];

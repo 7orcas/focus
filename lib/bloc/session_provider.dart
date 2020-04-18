@@ -10,8 +10,10 @@ class SessionProvider extends InheritedWidget {
   : bloc = SessionBloc(),
   super (key: key, child: child);
 
+  @override
   bool updateShouldNotify(_) => true;
 
+  //Todo
   static SessionBloc of (BuildContext context){
     return (context.inheritFromWidgetOfExactType(SessionProvider) as SessionProvider)
         .bloc;
