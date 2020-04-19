@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
   final String title;
 
   MainMenu _initialise(BuildContext context, SessionBloc bloc, String lang){
-    MainMenu menu= MainMenu(lang, context);
+    MainMenu menu= MainMenu(context, lang);
     util.out('menu l=' + menu.language);
     return menu;
   }
@@ -48,7 +48,6 @@ class HomePage extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasData) {
             final User user = snapshot.data;
-//            MainMenu menu = _initialise(session, user);
 
             return StreamBuilder<String>(
               stream: session.language,
@@ -77,4 +76,7 @@ class HomePage extends StatelessWidget {
             return Text('Loading...');
         });
   }
+
+
+
 }

@@ -27,9 +27,9 @@ final IconData _menuIcon = Icons.reorder;
 class MainMenu {
 
 
-  MainMenu (String lang, BuildContext context) {
+  MainMenu (BuildContext context, String lang) {
+    _bloc = context != null? SessionProvider.of(context) : null;
     _lang = lang;
-    _bloc = SessionProvider.of(context);
   }
 
   SessionBloc _bloc;
@@ -46,8 +46,8 @@ class MainMenu {
     }
   }
 
-  get menuItems => _menuItems;
-  get menuIcon => _menuIcon;
+  static get menuItems => _menuItems;
+  static get menuIcon => _menuIcon;
   get language => _lang;
   
 
