@@ -24,7 +24,6 @@ class FocusApp extends StatelessWidget {
   }
 }
 
-final FocusDB db = FocusDB();
 final util = Util(StackTrace.current);
 
 class HomePage extends StatelessWidget {
@@ -32,12 +31,8 @@ class HomePage extends StatelessWidget {
 
   final String title;
 
-  MainMenu _initialise(SessionBloc bloc, User user){
-    MainMenu menu= MainMenu(lang: 'en');
-    bloc.initialise(user);
-    bloc.language.listen((event) {
-      menu = MainMenu(lang: event);
-    });
+  MainMenu _initialise(BuildContext context, SessionBloc bloc, String lang){
+    MainMenu menu= MainMenu(lang, context);
     util.out('menu l=' + menu.language);
     return menu;
   }
@@ -46,31 +41,38 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final session = SessionProvider.of(context);
+    final FocusDB db = FocusDB(context);
 
     return FutureBuilder<User>(
         future: db.loadUser(),
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasData) {
             final User user = snapshot.data;
-            MainMenu menu = _initialise(session, user);
+//            MainMenu menu = _initialise(session, user);
 
-
-            return Scaffold(
-              appBar: AppBar(title: Text(title),
+            return StreamBuilder<String>(
+              stream: session.language,
+              initialData: 'zz',
+              builder: (context, snapshot) {
+                MainMenu menu = _initialise(context, session, snapshot.data);
+                return Scaffold(
+                  appBar: AppBar(title: Text(title),
                   actions: menu != null? menu.menu : null
-              ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'XXXX',
+                  ),
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'XXXX ' + snapshot.data,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              }
             );
-//            return Text('OK');
+            return Text('OK');
           } else
             return Text('Loading...');
         });

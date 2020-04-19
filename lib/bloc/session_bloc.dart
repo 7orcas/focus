@@ -4,11 +4,12 @@ import 'package:rxdart/rxdart.dart';
 import 'package:focus/service/util.dart';
 
 class SessionBloc {
-  final util = Util(StackTrace.current);
+  final _session = Session();
+  final _util = Util(StackTrace.current);
   final _lang = BehaviorSubject<String>();
 
   initialise (User user){
-    util.out('Session initialise, lang=' + user.language);
+    _util.out('Session initialise, lang=' + user.language);
 
     changeLanguage(user.language);
   }
@@ -21,8 +22,13 @@ class SessionBloc {
   Function(String) get changeLanguage => _lang.sink.add;
 
   dispose (){
-    util.out('disposed called');
+    _util.out('disposed called');
     _lang.close();
   }
 }
 
+class Session {
+  String _lang;
+
+
+}

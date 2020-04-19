@@ -56,10 +56,10 @@ class Menu<T> {
 
   String _lang;
 
-  Language lang = Language(lang: 'xx');
 
   //Return list of menu items
   List<PopupMenuEntry<T>> toList(List<MenuItem> items) {
+    Language lang = Language(lang: _lang);
     List<PopupMenuEntry<T>> list = [];
     items.forEach((item) {
       if (item.isDivider()) {
