@@ -27,19 +27,23 @@ final IconData _menuIcon = Icons.reorder;
 class MainMenu {
 
 
-  MainMenu (BuildContext context, String lang) {
-    _bloc = context != null? SessionProvider.of(context) : null;
+  MainMenu (Function onChangeLanguage, String lang) {
+//    _bloc = context != null? SessionProvider.of(context) : null;
+    _onChangeLanguage = onChangeLanguage;
     _lang = lang;
+
   }
 
-  SessionBloc _bloc;
+  Function _onChangeLanguage;
+//  SessionBloc _bloc;
   String _lang;
 
   void _onPopupMenuSelected(MainMenuAction item) {
     if (MainMenuAction.EXIT == item) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     } if (MainMenuAction.ACCOUNT == item){
-      _bloc.changeLanguage('ma');
+//      _bloc.changeLanguage('ma');
+      _onChangeLanguage('ma');
     }
     else {
       // do nothing
