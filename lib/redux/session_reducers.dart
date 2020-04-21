@@ -8,6 +8,9 @@ Session sessionReducer(Session state, action){
   if (action is ChangeLanguageAction){
     return Session(language: action.language);
   }
+  if (action is LoadLanguageAction){
+    return Session(language: action.language);
+  }
 
   return state;
 }

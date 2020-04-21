@@ -21,7 +21,12 @@ dependencies:
     sdk: flutter
   sqflite:
   path:
+  #remove rxdart or flutter_redux
   rxdart:
+  flutter_redux:
+  #remove for prod
+  flutter_redux_dev_tools:
+  shared_preferences:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

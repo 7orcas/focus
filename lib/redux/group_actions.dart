@@ -21,3 +21,8 @@ class RemoveGroupAction {
 
 class RemoveGroupsAction {}
 
+class GroupAdminAction {
+  final Group group;
+
+  GroupAdminAction(this.group);
+}
