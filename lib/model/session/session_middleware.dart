@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:focus/model/app_state.dart';
+import 'package:focus/model/app/app.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:focus/model/session.dart';
-import 'package:focus/redux/session_actions.dart';
+import 'package:focus/model/session/session.dart';
+import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/service/util.dart';
 
 final util = Util(StackTrace.current);
@@ -32,7 +32,7 @@ void sessionStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
   next(action);
 
-  util.out('middleware sessionStateMiddleware action=' + action.runtimeType.toString());
+  util.out('sessionStateMiddleware action=' + action.runtimeType.toString());
 
   if (action is ChangeLanguageAction) {
     _saveToPrefs(store.state.session);

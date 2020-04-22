@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:focus/model/session.dart';
-import 'package:focus/model/group.dart';
+import 'package:focus/model/session/session.dart';
+import 'package:focus/model/group/group.dart';
 import 'package:focus/service/util.dart';
 
 final util = Util(StackTrace.current);

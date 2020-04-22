@@ -1,5 +1,5 @@
-import 'package:focus/model/session.dart';
-import 'package:focus/redux/session_actions.dart';
+import 'package:focus/model/session/session.dart';
+import 'package:focus/model/session/session_actions.dart';
 
 // Define peer functions that change state
 

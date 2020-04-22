@@ -1,6 +1,6 @@
-import 'package:focus/model/app_state.dart';
-import 'package:focus/redux/group_reducers.dart';
-import 'package:focus/redux/session_reducers.dart';
+import 'package:focus/model/app/app.dart';
+import 'package:focus/model/group/group_reducers.dart';
+import 'package:focus/model/session/session_reducers.dart';
 
 // Define peer functions that change state
 

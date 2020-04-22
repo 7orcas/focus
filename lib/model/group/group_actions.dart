@@ -1,4 +1,4 @@
-import 'package:focus/model/group.dart';
+import 'package:focus/model/group/group.dart';
 
 // Actions that can mutate the state
 

@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-//import 'package:focus/bloc/session_bloc.dart';
-//import 'package:focus/bloc/session_provider.dart';
 import 'package:focus/page/home/mainmenu.dart';
-import 'package:focus/service/database.dart';
 import 'package:focus/service/util.dart';
-//import 'package:focus/entity/user.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:focus/model/app_state.dart';
-import 'package:focus/model/session.dart';
-import 'package:focus/model/group.dart';
-import 'package:focus/redux/session_actions.dart';
-import 'package:focus/redux/group_actions.dart';
-import 'package:focus/redux/appstate_reducers.dart';
-import 'package:focus/redux/session_reducers.dart';
-import 'package:focus/redux/group_reducers.dart';
-import 'package:focus/redux/middleware.dart';
+import 'package:focus/model/app/app.dart';
+import 'package:focus/model/session/session.dart';
+import 'package:focus/model/group/group.dart';
+import 'package:focus/model/session/session_actions.dart';
+import 'package:focus/model/group/group_actions.dart';
+import 'package:focus/model/app/app_reducers.dart';
+import 'package:focus/model/session/session_reducers.dart';
+import 'package:focus/model/group/group_reducers.dart';
+import 'package:focus/model/app/app_middleware.dart';
 import 'package:focus/service/language.dart';
-import 'package:redux_dev_tools/redux_dev_tools.dart';  //delete
-import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart'; //delete
+//import 'package:redux_dev_tools/redux_dev_tools.dart';  //TODO delete dev tool
+//import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart'; //TODO delete dev tool
 
 
 void main() => runApp(FocusApp());
@@ -29,12 +25,13 @@ class FocusApp extends StatelessWidget {
   Widget build(BuildContext context) {
     util.out('FocusApp build');
 
-    final DevToolsStore<AppState> store = DevToolsStore<AppState>(
+    final Store<AppState> store = Store<AppState>(
       appStateReducer,
       initialState: AppState.initialState(),
-      middleware: [sessionStateMiddleware],
+      middleware: [appMiddleware],
     );
 
+    util.out('FocusApp store');
     return StoreProvider<AppState>(
       store: store,
       child: MaterialApp(
@@ -54,21 +51,13 @@ class FocusApp extends StatelessWidget {
 final util = Util(StackTrace.current);
 
 class HomePage extends StatelessWidget {
-  final DevToolsStore<AppState> store;
+  final Store<AppState> store;
   HomePage(this.store);
 
   final String title = 'Focus';
 
-//  MainMenu _initialise(BuildContext context, SessionBloc bloc, String lang){
-//    MainMenu menu= MainMenu(context, lang);
-//    util.out('menu l=' + menu.language);
-//    return menu;
-//  }
-
   @override
   Widget build(BuildContext context) {
-//    final session = SessionProvider.of(context);
-//    final FocusDB db = FocusDB(context);
 
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
@@ -93,28 +82,11 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            drawer: Container(
-              child: ReduxDevTools(store),
-            ),
+//            drawer: Container(
+//              child: ReduxDevTools(store),
+//            ),
           );
         });
-
-//    return Scaffold(
-//      appBar: AppBar(title: Text(title),
-////      actions: menu != null? menu.menu : null
-//      ),
-//      body: StoreConnector<AppState, _ViewModel>(
-//        converter: (Store<AppState> store) => _ViewModel.create(store),
-//        builder: (BuildContext context, _ViewModel viewModel) => Column(
-//          children: <Widget>[
-//            AddGroupWidget(viewModel),
-//            Expanded(child: GroupListWidget(viewModel),),
-//            RemoveGroupsButton(viewModel),
-//          ],
-//        )
-//      ),
-//
-//    );
   }
 }
 

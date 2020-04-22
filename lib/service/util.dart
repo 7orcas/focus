@@ -9,7 +9,7 @@ class Util {
     var frames = this._trace.toString().split("\n");
     var traceString = frames[0];
     var indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z]+.dart'));
-    var fileInfo = traceString.substring(indexOfFileName);
+    var fileInfo = indexOfFileName != -1? traceString.substring(indexOfFileName) : '?';
 
     debugPrint('>> ' + message + '  [' + fileInfo + ']');
   }

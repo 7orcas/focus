@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:focus/bloc/session_bloc.dart';
-import 'package:focus/bloc/session_provider.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:focus/entity/user.dart';
@@ -11,10 +9,9 @@ import 'package:focus/entity/user.dart';
 class FocusDB {
   Database _database = null;
   String _databasesPath = null;
-  SessionBloc _bloc;
 
   FocusDB (BuildContext context){
-    _bloc = SessionProvider.of(context);
+
   }
 
   Future<User> loadUser() async {
@@ -37,7 +34,7 @@ class FocusDB {
       return User(users[i]['id'], users[i]['lang']);
     });
 
-    _bloc.initialise(list[0]);
+
 
     return list[0];
   }

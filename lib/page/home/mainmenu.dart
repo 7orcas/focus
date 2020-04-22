@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:focus/service/menu.dart';
-import 'package:focus/bloc/session_bloc.dart';
-import 'package:focus/bloc/session_provider.dart';
 
 enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, EXIT }
 
@@ -24,13 +22,11 @@ final IconData _menuIcon = Icons.reorder;
 
 class MainMenu {
   MainMenu(Function onChangeLanguage, String lang) {
-//    _bloc = context != null? SessionProvider.of(context) : null;
     _onChangeLanguage = onChangeLanguage;
     _lang = lang;
   }
 
   Function _onChangeLanguage;
-//  SessionBloc _bloc;
   String _lang;
 
   void _onPopupMenuSelected(MainMenuAction item) {

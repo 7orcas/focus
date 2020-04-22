@@ -1,5 +1,5 @@
-import 'package:focus/model/group.dart';
-import 'package:focus/redux/group_actions.dart';
+import 'package:focus/model/group/group.dart';
+import 'package:focus/model/group/group_actions.dart';
 
 // Define peer functions that change state
 
