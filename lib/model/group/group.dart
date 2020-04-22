@@ -11,6 +11,8 @@ class Group {
     this.admin = false,
   });
 
+  Group.db(this.id, this.name, this.admin);
+
   Group copyWith({int id, String body}) {
     return Group(
       id: id ?? this.id,

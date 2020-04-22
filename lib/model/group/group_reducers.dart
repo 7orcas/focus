@@ -21,5 +21,9 @@ List<Group> groupReducer(List<Group> state, action){
     return List.unmodifiable(<Group>[]);
   }
 
+  if (action is LoadGroupsAction){
+    return action.groups;
+  }
+
   return state;
 }

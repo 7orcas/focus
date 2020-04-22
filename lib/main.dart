@@ -4,13 +4,12 @@ import 'package:focus/service/util.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_actions.dart';
 import 'package:focus/model/session/session.dart';
 import 'package:focus/model/group/group.dart';
 import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/app/app_reducers.dart';
-import 'package:focus/model/session/session_reducers.dart';
-import 'package:focus/model/group/group_reducers.dart';
 import 'package:focus/model/app/app_middleware.dart';
 import 'package:focus/service/language.dart';
 //import 'package:redux_dev_tools/redux_dev_tools.dart';  //TODO delete dev tool
@@ -40,7 +39,7 @@ class FocusApp extends StatelessWidget {
           primarySwatch: Colors.purple,
         ),
         home: StoreBuilder<AppState>(
-            onInit: (store) => store.dispatch(GetLanguageAction()),
+            onInit: (store) => store.dispatch(LoadAppAction()),
             builder: (BuildContext context, Store<AppState> store) =>
                 HomePage(store)),
       ),
