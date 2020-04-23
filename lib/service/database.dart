@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:focus/entity/user.dart';
+import 'package:focus/model/data/user_entity.dart';
+import 'package:focus/model/data/group_entity.dart';
 import 'package:focus/model/group/group.dart';
+import 'package:focus/model/data/db_scheme.dart';
+import 'package:focus/model/data/db_mock_data.dart';
 import 'package:focus/service/util.dart';
 
 // Database Methods
@@ -28,15 +30,15 @@ class FocusDB {
       join(_databasesPath, 'focus.db'),
       onCreate: (db, version) {
         util.out("creating database...");
-        db.execute("CREATE TABLE user(id INTEGER PRIMARY KEY, lang TEXT)");
-        db.execute("INSERT INTO user(id, lang) VALUES (1, 'en')");
 
-        db.execute("CREATE TABLE fgroup(id INTEGER PRIMARY KEY, name TEXT, admin INTEGER)");
-        db.execute("INSERT INTO fgroup(id, name, admin) VALUES (1, 'group1', 0)");
-        db.execute("INSERT INTO fgroup(id, name, admin) VALUES (2, 'group2', 1)");
-        db.execute("INSERT INTO fgroup(id, name, admin) VALUES (3, 'group3', 0)");
+        for (String q in DatabaseScheme().scheme()){
+          db.execute(q);
+        }
 
-        util.out("done");
+        for (String q in DatabaseMockData.data()){
+          db.execute(q);
+        }
+
       },
       version: 1,
     );
@@ -45,8 +47,7 @@ class FocusDB {
 
   Future<User> loadUser() async {
     util.out('loadUser');
-//    _databasesPath ??= await getDatabasesPath();
-//    _openDatabase();
+    await _openDatabase();
 
     final List<Map<String, dynamic>> users = await _database.query('user');
     final List<User> list = List.generate(users.length, (i) {
@@ -58,7 +59,6 @@ class FocusDB {
 
   Future<List<Group>> loadGroups() async {
     util.out('loadGroups');
-//    _databasesPath ??= await getDatabasesPath();
     await _openDatabase();
 
     final List<Map<String, dynamic>> list = await _database.query('fgroup');

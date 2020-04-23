@@ -5,6 +5,12 @@ import 'package:focus/model/group/group_actions.dart';
 
 List<Group> groupReducer(List<Group> state, action){
 
+  bool _loaded = false; //TODO delete
+
+  void loaded() {
+    _loaded = true;
+  }
+
   if (action is AddGroupAction){
     return []
       ..addAll(state)
@@ -22,6 +28,7 @@ List<Group> groupReducer(List<Group> state, action){
   }
 
   if (action is LoadGroupsAction){
+//    if (_loaded) return "None";
     return action.groups;
   }
 

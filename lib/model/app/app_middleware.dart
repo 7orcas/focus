@@ -14,7 +14,7 @@ void appMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
   next(action);
 
-  util.out('middleware appStateMiddleware action=' + action.runtimeType.toString());
+  util.out('appMiddleware action=' + action.runtimeType.toString());
 
   if (action is LoadAppAction) {
     sessionStateMiddleware(store, GetLanguageAction(), next);
