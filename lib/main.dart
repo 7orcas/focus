@@ -64,7 +64,9 @@ class HomePage extends StatelessWidget {
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
         builder: (BuildContext context, _ViewModel viewModel) {
-          Language lang = Language(lang: viewModel.session.language);
+          Language lang = Language(viewModel.session.language);
+          viewModel.lang = lang;
+
           return Scaffold(
             appBar: AppBar(
               title: Text(lang.label(title)),
@@ -79,7 +81,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: GroupListWidget(viewModel),
                   ),
-                  Text('language: ' + viewModel.session.language),
+                  Text(viewModel.lang.label('Lang') + ':' + viewModel.session.language),
                   RemoveGroupsButton(viewModel),
                 ],
               ),
@@ -102,12 +104,13 @@ class AddGroupWidget extends StatefulWidget {
 class _AddGroupState extends State<AddGroupWidget> {
   final TextEditingController controller = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        hintText: 'add group',
+        hintText: widget.model.lang.label('AddGroup'),
       ),
       onSubmitted: (String s) {
         controller.clear();
@@ -144,13 +147,14 @@ class RemoveGroupsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      child: Text('Delete all'),
+      child: Text(model.lang.label('DelGroups')),
       onPressed: () => model.onRemoveGroups(),
     );
   }
 }
 
 class _ViewModel {
+  Language lang;
   final List<Group> groups;
   final Session session;
   final Function(String) onAddGroup;

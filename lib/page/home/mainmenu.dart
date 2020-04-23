@@ -33,9 +33,11 @@ class MainMenu {
     if (MainMenuAction.EXIT == item) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     }
+    else if (MainMenuAction.ABOUT == item) {
+      _onChangeLanguage('en');
+    }
     else if (MainMenuAction.ACCOUNT == item) {
-//      _bloc.changeLanguage('ma');
-      _onChangeLanguage('ma');
+      _onChangeLanguage('mi');
     } else if (MainMenuAction.SETTINGS == item) {
       _onChangeLanguage('de');
     } else {
