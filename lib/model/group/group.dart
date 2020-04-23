@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:focus/model/data/group_entity.dart';
 
 class Group {
   final int id;
@@ -21,15 +22,20 @@ class Group {
     );
   }
 
-  Map toJson() => {
-    'id' : id,
-    'name' : name,
-    'admin' : admin,
-  };
+//  Map toJson() => {
+//    'id' : id,
+//    'name' : name,
+//    'admin' : admin,
+//  };
 
-  @override
-  String toString(){
-    return toJson().toString();
+  GroupEntity toEntity() {
+    return GroupEntity(id, name, admin?1:0);
   }
+
+
+//  @override
+//  String toString(){
+//    return toJson().toString();
+//  }
 
 }

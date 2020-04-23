@@ -1,20 +1,18 @@
 import 'package:focus/model/group/group.dart';
 import 'package:focus/model/group/group_actions.dart';
+import 'package:focus/service/util.dart';
 
 // Define peer functions that change state
 
 List<Group> groupReducer(List<Group> state, action){
 
-  bool _loaded = false; //TODO delete
-
-  void loaded() {
-    _loaded = true;
-  }
-
   if (action is AddGroupAction){
+    Group g = Group(id: state.length+2, name: action.name);
+    action.group = g;
+    Util(StackTrace.current).out('groupReducer AddGroupAction, id=' + g.id.toString());
     return []
       ..addAll(state)
-      ..add(Group(id: action.id, name: action.name));
+      ..add(g);
   }
 
   if (action is RemoveGroupAction){
@@ -28,7 +26,6 @@ List<Group> groupReducer(List<Group> state, action){
   }
 
   if (action is LoadGroupsAction){
-//    if (_loaded) return "None";
     return action.groups;
   }
 

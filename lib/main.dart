@@ -11,6 +11,8 @@ import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/app/app_reducers.dart';
 import 'package:focus/model/app/app_middleware.dart';
+import 'package:focus/model/group/group_middleware.dart';
+import 'package:focus/model/session/session_middleware.dart';
 import 'package:focus/service/language.dart';
 //import 'package:redux_dev_tools/redux_dev_tools.dart';  //TODO delete dev tool
 //import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart'; //TODO delete dev tool
@@ -18,17 +20,21 @@ import 'package:focus/service/language.dart';
 
 void main() => runApp(FocusApp());
 
+Store<AppState> store;  //TODO This is a workaround when using the emulator. Not tested in a actual phone.
+
 class FocusApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     util.out('FocusApp build');
 
-    final Store<AppState> store = Store<AppState>(
-      appStateReducer,
-      initialState: AppState.initialState(),
-      middleware: [appMiddleware],
-    );
+    if (store == null) {
+      store = Store<AppState>(
+        appStateReducer,
+        initialState: AppState.initialState(),
+        middleware: listMiddleware(),
+      );
+    }
 
     util.out('FocusApp store');
     return StoreProvider<AppState>(
@@ -39,7 +45,7 @@ class FocusApp extends StatelessWidget {
           primarySwatch: Colors.purple,
         ),
         home: StoreBuilder<AppState>(
-            onInit: (store) => store.dispatch(LoadAppAction()),
+            onInit: (store) => store.dispatch(AppState.getLoadAppAction()),
             builder: (BuildContext context, Store<AppState> store) =>
                 HomePage(store)),
       ),
@@ -53,7 +59,7 @@ class HomePage extends StatelessWidget {
   final Store<AppState> store;
   HomePage(this.store);
 
-  final String title = 'Focus';
+  final String title = 'Focused Intention';
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +172,7 @@ class _ViewModel {
 
   factory _ViewModel.create(Store<AppState> store) {
     _onAddGroup(String name) {
+      Util(StackTrace.current).out('_onAddGroup, name=' + name);
       store.dispatch(AddGroupAction(name));
     }
 

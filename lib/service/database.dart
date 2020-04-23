@@ -70,4 +70,19 @@ class FocusDB {
     return listX;
   }
 
+  void saveGroup(GroupEntity group) async {
+    util.out('saveGroup name=' + group.name);
+    await _openDatabase();
+
+    // The `conflictAlgorithm` in case the same entity is inserted twice.
+    // In this case, replace any previous data.
+    int id = await _database.insert(
+      'fgroup',
+      group.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    util.out('saveGroup name=' + group.name + ' id=' + id.toString());
+  }
+
 }
