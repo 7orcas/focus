@@ -11,6 +11,8 @@ import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/app/app_reducers.dart';
 import 'package:focus/model/app/app_middleware.dart';
 import 'package:focus/service/language.dart';
+import 'package:focus/route.dart';
+
 //import 'package:redux_dev_tools/redux_dev_tools.dart';  //TODO delete dev tool
 //import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart'; //TODO delete dev tool
 
@@ -41,6 +43,7 @@ class FocusApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.purple,
         ),
+        onGenerateRoute: handleRoute,
         home: StoreBuilder<AppState>(
             onInit: (store) => store.dispatch(AppState.getLoadAppAction()),
             builder: (BuildContext context, Store<AppState> store) =>
@@ -70,7 +73,7 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(lang.label(title)),
-              actions: MainMenu(
+              actions: MainMenu(context,
                       viewModel.onChangeLanguage, viewModel.session.language)
                   .menu,
             ),
@@ -133,6 +136,10 @@ class GroupListWidget extends StatelessWidget {
                 leading: IconButton(
                   icon: Icon(Icons.delete),
                   onPressed: () => model.onRemoveGroup(group),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () => Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: group),
                 ),
               ))
           .toList(),

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:focus/service/menu.dart';
+import 'package:focus/route.dart';
 
-enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, EXIT }
+enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, en,mi,de, EXIT }
 
 final List<MenuItem<MainMenuAction>> _menuItems = [
-  MenuItem(value: MainMenuAction.ABOUT, label: 'item1', icon: Icons.add),
-  MenuItem(value: MainMenuAction.ACCOUNT, label: 'Maori', icon: Icons.label),
+  MenuItem(value: MainMenuAction.ABOUT, label: 'about', icon: Icons.add),
+  MenuItem(value: MainMenuAction.ACCOUNT, label: 'account', icon: Icons.label),
+  MenuItem(value: MainMenuAction.en, label: 'en', icon: Icons.map),
+  MenuItem(value: MainMenuAction.mi, label: 'Mi', icon: Icons.map),
+  MenuItem(value: MainMenuAction.de, label: 'de', icon: Icons.map),
   MenuItem(
-      value: MainMenuAction.SETTINGS, label: 'Deutsch', icon: Icons.settings),
+      value: MainMenuAction.SETTINGS, label: 'settings', icon: Icons.settings),
   MenuItem.divider(),
   MenuItem(
       value: MainMenuAction.EXIT,
@@ -21,23 +25,27 @@ final List<MenuItem<MainMenuAction>> _menuItems = [
 final IconData _menuIcon = Icons.reorder;
 
 class MainMenu {
-  MainMenu(Function onChangeLanguage, String lang) {
+  MainMenu(BuildContext context, Function onChangeLanguage, String lang) {
+    _context = context;
     _onChangeLanguage = onChangeLanguage;
     _lang = lang;
   }
 
+  BuildContext _context;
   Function _onChangeLanguage;
   String _lang;
 
   void _onPopupMenuSelected(MainMenuAction item) {
     if (MainMenuAction.EXIT == item) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-    }
-    else if (MainMenuAction.ABOUT == item) {
+    } else if (MainMenuAction.ABOUT == item) {
+      Navigator.pushNamed(_context, ROUTE_ABOUT_PAGE);
+    } else if (MainMenuAction.en == item) {
       _onChangeLanguage('en');
-    }
-    else if (MainMenuAction.ACCOUNT == item) {
+    } else if (MainMenuAction.mi == item) {
       _onChangeLanguage('mi');
+    } else if (MainMenuAction.de == item) {
+      _onChangeLanguage('de');
     } else if (MainMenuAction.SETTINGS == item) {
       _onChangeLanguage('de');
     } else {
