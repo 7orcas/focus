@@ -1,7 +1,11 @@
 import 'package:focus/database/_base.dart';
+import 'package:focus/model/group/comment_entity.dart';
+import 'package:focus/model/group/graph_entity.dart';
+import 'package:focus/model/group/group_conversation.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:focus/model/data/group_entity.dart';
-import 'package:focus/model/group/group.dart';
+import 'package:focus/database/db_scheme.dart';
+import 'package:focus/model/group/group_entity.dart';
+import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/service/util.dart';
 
 // Database Methods
@@ -9,17 +13,41 @@ import 'package:focus/service/util.dart';
 
 class GroupDB extends FocusDB {
 
-  Future<List<Group>> loadGroups() async {
-    Util(StackTrace.current).out('loadGroups');
+  Future<List<GroupTile>> loadGroupTiles() async {
+    await connectDatabase();
+    final List<Map<String, dynamic>> list = await database.query(DB_GROUP);
+    final List<GroupTile> listX = List.generate(list.length, (i) {
+      return GroupTile.db(list[i]['id'], list[i]['name']);
+    });
+    return listX;
+  }
+
+  Future<GroupConversation> loadGroupConversation(int id) async {
     await connectDatabase();
 
-    final List<Map<String, dynamic>> list = await database.query('fgroup');
-    final List<Group> listX = List.generate(list.length, (i) {
-      return Group.db(list[i]['id'], list[i]['name'], list[i]['admin'] == 1);
+    //Load comments
+    var result = await database.rawQuery('SELECT * FROM ' + DB_COMMENT + " WHERE id_fgroup = " + id.toString());
+    List<Map<String, dynamic>> list = result.toList();
+    List<CommentEntity> comments = List.generate(list.length, (i) {
+      return CommentEntity.db(list[i]['id'], list[i]['id_fgroup'], list[i]['id_graph'], list[i]['id_user'], list[i]['comment']);
     });
 
-    Util(StackTrace.current).out('loadGroups size=' + listX.length.toString());
-    return listX;
+    //Load graphs
+    result = await database.rawQuery('SELECT * FROM ' + DB_GRAPH + " WHERE id_fgroup = " + id.toString());
+    list = result.toList();
+    List<GraphEntity> graphs = List.generate(list.length, (i) {
+      int id_graph = list[i]['id'];
+      return GraphEntity.db(id_graph, list[i]['id_fgroup'], list[i]['graph'], comments.where((c) => c.id_graph == id_graph).toList());
+    });
+
+    //Load group
+    result = await database.rawQuery('SELECT id, name FROM ' + DB_GROUP + " WHERE id = " + id.toString());
+    list = result.toList();
+    List<GroupConversation> groups = List.generate(list.length, (i) {
+      return GroupConversation.db(list[i]['id'], list[i]['name'], graphs);
+    });
+
+    return groups[0];
   }
 
   void saveGroup(GroupEntity group) async {
@@ -29,7 +57,7 @@ class GroupDB extends FocusDB {
     // The `conflictAlgorithm` in case the same entity is inserted twice.
     // In this case, replace any previous data.
     int id = await database.insert(
-      'fgroup',
+      DB_GROUP,
       group.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -42,7 +70,7 @@ class GroupDB extends FocusDB {
     await connectDatabase();
 
     int id = await database.delete(
-      'fgroup',
+      DB_GROUP,
       where: "id = ?",
       whereArgs: [group.id],
     );

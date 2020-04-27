@@ -2,13 +2,11 @@
 class GroupEntity {
   final int id;
   final String name;
-  final int admin;
 
-  GroupEntity(this.id, this.name, this.admin);
+  GroupEntity(this.id, this.name);
 
   Map<String, dynamic> toMap() => {
     'id' : id,
     'name' : name,
-    'admin' : admin,
   };
 }

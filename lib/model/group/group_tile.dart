@@ -1,24 +1,21 @@
 import 'package:flutter/foundation.dart';
-import 'package:focus/model/data/group_entity.dart';
+import 'package:focus/model/group/group_entity.dart';
 
-class Group {
+class GroupTile {
   final int id;
   final String name;
-  final bool admin;
 
-  Group({
+  GroupTile({
     @required this.id,
     @required this.name,
-    this.admin = false,
   });
 
-  Group.db(this.id, this.name, this.admin);
+  GroupTile.db(this.id, this.name);
 
-  Group copyWith({int id, String body}) {
-    return Group(
+  GroupTile copyWith({int id, String body}) {
+    return GroupTile(
       id: id ?? this.id,
       name: name ?? this.name,
-      admin: admin ?? this.admin,
     );
   }
 
@@ -29,7 +26,7 @@ class Group {
 //  };
 
   GroupEntity toEntity() {
-    return GroupEntity(id, name, admin?1:0);
+    return GroupEntity(id, name);
   }
 
 

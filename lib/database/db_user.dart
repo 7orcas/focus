@@ -1,5 +1,5 @@
 import 'package:focus/database/_base.dart';
-import 'package:focus/model/data/user_entity.dart';
+import 'package:focus/model/user/user_entity.dart';
 import 'package:focus/service/util.dart';
 
 // Database Methods

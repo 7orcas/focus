@@ -5,7 +5,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/model/app/app.dart';
 import 'package:focus/model/session/session.dart';
-import 'package:focus/model/group/group.dart';
+import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/app/app_reducers.dart';
@@ -162,10 +162,10 @@ class RemoveGroupsButton extends StatelessWidget {
 
 class _ViewModel {
   Language lang;
-  final List<Group> groups;
+  final List<GroupTile> groups;
   final Session session;
   final Function(String) onAddGroup;
-  final Function(Group) onRemoveGroup;
+  final Function(GroupTile) onRemoveGroup;
   final Function() onRemoveGroups;
   final Function(String) onChangeLanguage;
 
@@ -184,7 +184,7 @@ class _ViewModel {
       store.dispatch(AddGroupAction(name));
     }
 
-    _onRemoveGroup(Group group) {
+    _onRemoveGroup(GroupTile group) {
       store.dispatch(RemoveGroupAction(group));
     }
 
