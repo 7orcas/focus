@@ -52,10 +52,9 @@ class MenuItem<T> {
 // Control construction of menu
 class Menu<T> {
 
-  Menu ({@required lang}) : _lang = lang;
+  Menu (this._lang);
 
-  String _lang;
-
+  final String _lang;
 
   //Return list of menu items
   List<PopupMenuEntry<T>> toList(List<MenuItem> items) {

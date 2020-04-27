@@ -1,7 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:focus/database/db_scheme.dart';
-import 'package:focus/database/db_mock_data.dart';
+import 'package:focus/database/_scheme.dart';
+import 'package:focus/database/_mock_data.dart';
 import 'package:focus/service/util.dart';
 
 // Database Methods
@@ -13,6 +13,12 @@ class FocusDB {
   String _databasesPath = null;
 
   Database get database => _database;
+
+  // for unit testing
+  void setMemoryDatabase (var db) {
+    _databasesPath = '';
+    _database = db;
+  }
 
   void connectDatabase () async {
     _databasesPath ??= await getDatabasesPath();
@@ -37,5 +43,6 @@ class FocusDB {
       version: 1,
     );
   }
-
 }
+
+

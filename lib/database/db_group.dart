@@ -1,9 +1,9 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:focus/database/_base.dart';
+import 'package:focus/database/_scheme.dart';
 import 'package:focus/model/group/comment_entity.dart';
 import 'package:focus/model/group/graph_entity.dart';
 import 'package:focus/model/group/group_conversation.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:focus/database/db_scheme.dart';
 import 'package:focus/model/group/group_entity.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/service/util.dart';
@@ -26,26 +26,32 @@ class GroupDB extends FocusDB {
     await connectDatabase();
 
     //Load comments
-    var result = await database.rawQuery('SELECT * FROM ' + DB_COMMENT + " WHERE id_fgroup = " + id.toString());
+    String sql = 'SELECT * FROM ' + DB_COMMENT + " WHERE " + DBK_GROUP + " = " + id.toString();
+    var result = await database.rawQuery(sql);
     List<Map<String, dynamic>> list = result.toList();
     List<CommentEntity> comments = List.generate(list.length, (i) {
-      return CommentEntity.db(list[i]['id'], list[i]['id_fgroup'], list[i]['id_graph'], list[i]['id_user'], list[i]['comment']);
+      return CommentEntity.db(list[i]['id'], list[i][DBK_GROUP], list[i][DBK_GRAPH], list[i][DBK_USER], list[i]['comment']);
     });
+    Util(StackTrace.current).out('loadGroupConversation ' + sql + ' count=' + comments.length.toString());
 
     //Load graphs
-    result = await database.rawQuery('SELECT * FROM ' + DB_GRAPH + " WHERE id_fgroup = " + id.toString());
+    sql = 'SELECT * FROM ' + DB_GRAPH + " WHERE " + DBK_GROUP + " = " + id.toString();
+    result = await database.rawQuery(sql);
     list = result.toList();
     List<GraphEntity> graphs = List.generate(list.length, (i) {
       int id_graph = list[i]['id'];
-      return GraphEntity.db(id_graph, list[i]['id_fgroup'], list[i]['graph'], comments.where((c) => c.id_graph == id_graph).toList());
+      return GraphEntity.db(id_graph, list[i][DBK_GROUP], list[i]['graph'], comments.where((c) => c.id_graph == id_graph).toList());
     });
+    Util(StackTrace.current).out('loadGroupConversation ' + sql + ' count=' + graphs.length.toString() + ' 0 comm=' +  graphs[0].comments.length.toString());
 
     //Load group
-    result = await database.rawQuery('SELECT id, name FROM ' + DB_GROUP + " WHERE id = " + id.toString());
+    sql = 'SELECT id, name FROM ' + DB_GROUP + " WHERE id = " + id.toString();
+    result = await database.rawQuery(sql);
     list = result.toList();
     List<GroupConversation> groups = List.generate(list.length, (i) {
       return GroupConversation.db(list[i]['id'], list[i]['name'], graphs);
     });
+    Util(StackTrace.current).out('loadGroupConversation ' + sql);
 
     return groups[0];
   }

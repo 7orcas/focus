@@ -4,7 +4,7 @@ import 'package:focus/service/menu.dart';
 import 'package:focus/page/home/mainmenu.dart';
 import 'package:focus/service/language.dart';
 
-final String _lang = 'xy';
+final String _lang = LANG_ENGLISH;
 
 void main() {
   testWidgets('Main menu', (WidgetTester tester) async {
@@ -18,7 +18,7 @@ void main() {
     // Verify that the first menu item is shown.
     List<MenuItem<MainMenuAction>> items = MainMenu.menuItems;
 
-    Language lang = Language(lang: _lang);
+    Language lang = Language(LANG_ENGLISH);
     expect(find.text('XXX'), findsNothing);
     expect(find.text(lang.label(items[0].label)), findsOneWidget);
   });
@@ -27,7 +27,7 @@ void main() {
 class MockWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MainMenu mm = MainMenu(null, _lang);
+    MainMenu mm = MainMenu(context, null, _lang);
     return MaterialApp(
       title: 'Flutter Demo',
       home: Scaffold(

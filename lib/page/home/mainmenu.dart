@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:focus/service/language.dart';
 import 'package:focus/service/menu.dart';
 import 'package:focus/route.dart';
 
@@ -41,13 +42,13 @@ class MainMenu {
     } else if (MainMenuAction.ABOUT == item) {
       Navigator.pushNamed(_context, ROUTE_ABOUT_PAGE);
     } else if (MainMenuAction.en == item) {
-      _onChangeLanguage('en');
+      _onChangeLanguage(LANG_ENGLISH);
     } else if (MainMenuAction.mi == item) {
-      _onChangeLanguage('mi');
+      _onChangeLanguage(LANG_MAORI);
     } else if (MainMenuAction.de == item) {
-      _onChangeLanguage('de');
+      _onChangeLanguage(LANG_GERMAN);
     } else if (MainMenuAction.SETTINGS == item) {
-      _onChangeLanguage('de');
+      _onChangeLanguage(LANG_GERMAN);
     } else {
       // do nothing
     }
@@ -58,7 +59,7 @@ class MainMenu {
   get language => _lang;
 
   get menu {
-    Menu m = Menu<MainMenuAction>(lang: _lang);
+    Menu m = Menu<MainMenuAction>(_lang);
     return [
       PopupMenuButton<MainMenuAction>(
           icon: Icon(_menuIcon),

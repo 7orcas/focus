@@ -1,18 +1,28 @@
-import 'package:flutter/material.dart';
+
+const String LANG_ENGLISH = 'en';
+const String LANG_MAORI = 'mi';
+const String LANG_GERMAN = 'de';
 
 
 class Language  {
-  String _code;
+  final String _code;
   Map <String, String> _map;
 
-  Language (String code) {
-    _code = code;
-    if (code == 'mi') _map = _listToMap(_mi);
-    else if (code == 'de') _map = _listToMap(_de);
-    else _map = _listToMap(_en);
+  Language (this._code) {
+
+    switch(_code){
+      case LANG_MAORI :
+        _map = _listToMap(_mi);
+        break;
+      case LANG_GERMAN :
+        _map = _listToMap(_de);
+        break;
+      default :
+        _map = _listToMap(_en);
+    }
 
     //English is default
-    if (code != 'en'){
+    if (_code != LANG_ENGLISH){
       Map <String, String> d = _listToMap(_en);
       d.addAll(_map);
       _map = d;
@@ -26,7 +36,7 @@ class Language  {
   String label (String key) {
     if (key == null) return 'NUll';
     if (_map.containsKey(key)) return _map[key];
-    return '[' + key + ']:' + _code.toString();
+    return '[' + key + ']:' + _code;
   }
 
 }
@@ -34,22 +44,30 @@ class Language  {
 class Lang {
   final String key;
   final String label;
-  Lang(this.key, this.label);
+  String mi;
+  String de;
+  //Maori and German are optional
+  Lang(this.key, this.label , { this.mi, this.de });
 }
 
 List<Lang> _en = [
   Lang('Lang', 'Language'),
-  Lang('AddGroup', 'Add Group'),
+  Lang('AddGroup', 'Add Group', mi:'Add Group Maori', de:'Add Group Deutsch'),
   Lang('DelGroups', 'Delete Groups'),
+
+  //Unit test code
+  Lang('UTCode1', 'Unit Test Code 1'),
+  Lang('UTCode2', 'Unit Test Code 2'),
 ];
 
 List<Lang> _mi = [
-  Lang('AddGroup', 'Add Group Maori'),
   Lang('DelGroups', 'Delete Groups Maori'),
+
+  //Unit test code
+  Lang('UTCode1', 'Unit Test Code 1 Maori'),
 ];
 
 List<Lang> _de = [
   Lang('Lang', 'Sprache'),
-  Lang('AddGroup', 'Add Group Deutsch'),
   Lang('DelGroups', 'Loschen Gruppen Deutsch'),
 ];

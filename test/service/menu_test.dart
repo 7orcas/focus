@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus/service/language.dart';
 import 'package:test/test.dart';
 import 'package:focus/service/menu.dart';
 
@@ -7,7 +8,7 @@ enum TestAction { A1 }
 void main() {
   test('Create menu item', () {
     MenuItem i = MenuItem(value: TestAction.A1, label: 'x', icon: Icons.add);
-    expect(i.label, 'X');
+    expect(i.label, 'x');
     expect(i.isIcon(), true);
     expect(i.isDivider(), false);
   });
@@ -40,7 +41,7 @@ void main() {
       MenuItem(value: TestAction.A1, label: 'logout'),
     ];
 
-    Menu m = Menu<TestAction>();
+    Menu m = Menu<TestAction>(LANG_ENGLISH);
     List<PopupMenuEntry<TestAction>> l = m.toList(items);
     expect(l.length == 3, true);
     expect(l[1] is PopupMenuDivider, true);
