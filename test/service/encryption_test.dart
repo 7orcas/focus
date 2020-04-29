@@ -1,26 +1,48 @@
 import 'package:test/test.dart';
-import 'package:focus/service/encryption.dart';
+import 'package:focus/service/encryptRSA.dart';
+import 'dart:convert';
 
 const List<String> strings = [
   'abcdef',
   '1234567890',
-  'Māori'
+  '''
+My name is John Stewart
+ xx
+z
+
+ ''',
+  '',
+  null,
+  'āēīōū',
+  'Māori',
+  'ātaahua',
+  'tō',
+  'ē',
+  'हैलो',
+  '你好',
 ];
 
 void main() {
 
-  Encrypt encrypt = Encrypt();
 
-  var keyPair = encrypt.generateKeyPair();
+  test('Encrypt: Strings', () {
+    RsaKeyHelper e = RsaKeyHelper();
+    var keyPair = e.generateKeyPair();
 
+    String public = e.encodePublicKeyToPem(keyPair.publicKey);
+    String private = e.encodePrivateKeyToPem(keyPair.privateKey);
 
-  test('Encrypt Strings', () {
+    var publicKey = e.parsePublicKeyFromPem(public);
+    var privateKey = e.parsePrivateKeyFromPem(private);
+    
     for (String x in strings) {
-      var y = encrypt.encrypt(x, keyPair);
-      String z = encrypt.decrypt(y, keyPair);
-      print('String: >>' + x + '<<');
+      print('Testing: \'' + (x ?? 'null') + '\'');
+      var y = e.encrypt(x, publicKey);
+      String z = e.decrypt(y, privateKey);
       expect(x, z);
     }
+
   });
+
 
 }
