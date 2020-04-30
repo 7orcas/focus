@@ -45,13 +45,15 @@ class GroupDB extends FocusDB {
     Util(StackTrace.current).out('loadGroupConversation ' + sql + ' count=' + graphs.length.toString() + ' 0 comm=' +  graphs[0].comments.length.toString());
 
     //Load group
-    sql = 'SELECT id, name FROM ' + DB_GROUP + " WHERE id = " + id.toString();
+    sql = 'SELECT id, name, public_key, private_key FROM ' + DB_GROUP + " WHERE id = " + id.toString();
     result = await database.rawQuery(sql);
     list = result.toList();
     List<GroupConversation> groups = List.generate(list.length, (i) {
-      return GroupConversation.db(list[i]['id'], list[i]['name'], graphs);
+      return GroupConversation.db(list[i]['id'], list[i]['name'], list[i]['public_key'], list[i]['private_key'], graphs);
     });
     Util(StackTrace.current).out('loadGroupConversation ' + sql);
+
+    groups[0].decrypt();
 
     return groups[0];
   }

@@ -44,7 +44,9 @@ const List<String> _instructions = [
   '''
   CREATE TABLE DB_GROUP (
     id INTEGER PRIMARY KEY,
-    name TEXT
+    name TEXT,
+    public_key TEXT,
+    private_key TEXT
     )''',
 
   '''

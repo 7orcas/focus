@@ -77,22 +77,21 @@ class RsaKeyHelper {
 
   String encrypt(String plaintext, RSAPublicKey publicKey) {
     if (plaintext == null || plaintext.length == 0) return plaintext;
-
     plaintext = _encodeAscii(plaintext);
 
     var cipher = new RSAEngine()
       ..init(true, new PublicKeyParameter<RSAPublicKey>(publicKey));
     var cipherText = cipher.process(new Uint8List.fromList(plaintext.codeUnits));
-
-    return new String.fromCharCodes(cipherText);
+    return base64.encode(cipherText);
   }
 
   String decrypt(String ciphertext, RSAPrivateKey privateKey) {
     if (ciphertext == null || ciphertext.length == 0) return ciphertext;
+    Uint8List u = base64.decode(ciphertext);
 
     var cipher = new RSAEngine()
       ..init(false, new PrivateKeyParameter<RSAPrivateKey>(privateKey));
-    var decrypted = cipher.process(new Uint8List.fromList(ciphertext.codeUnits));
+    var decrypted = cipher.process(u);
 
     String s = String.fromCharCodes(decrypted);
     return _decodeAscii(s);
@@ -214,7 +213,7 @@ class RsaKeyHelper {
     topLevelSeq.add(publicKeySeqBitString);
     var dataBase64 = base64.encode(topLevelSeq.encodedBytes);
 
-    return """-----BEGIN PUBLIC KEY-----\r\n$dataBase64\r\n-----END PUBLIC KEY-----""";
+    return """-----BEGIN PUBLIC KEY-----$dataBase64-----END PUBLIC KEY-----""";
   }
 
   String encodePrivateKeyToPem(RSAPrivateKey privateKey) {
@@ -256,6 +255,6 @@ class RsaKeyHelper {
     topLevelSeq.add(publicKeySeqOctetString);
     var dataBase64 = base64.encode(topLevelSeq.encodedBytes);
 
-    return """-----BEGIN PRIVATE KEY-----\r\n$dataBase64\r\n-----END PRIVATE KEY-----""";
+    return """-----BEGIN PRIVATE KEY-----$dataBase64-----END PRIVATE KEY-----""";
   }
 }
