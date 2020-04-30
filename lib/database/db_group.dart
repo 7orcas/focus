@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:focus/database/_base.dart';
 import 'package:focus/database/_scheme.dart';
@@ -53,7 +55,9 @@ class GroupDB extends FocusDB {
     });
     Util(StackTrace.current).out('loadGroupConversation ' + sql);
 
-    groups[0].decrypt();
+
+
+    sleep(Duration(seconds: 3));
 
     return groups[0];
   }
