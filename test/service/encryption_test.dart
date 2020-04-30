@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:focus/service/encryptRSA.dart';
 import 'dart:convert';
 
-const List<String> strings = [
+List<String> strings = [
   'abcdef',
   '1234567890',
   '''
@@ -20,6 +20,14 @@ z
   'ē',
   'हैलो',
   '你好',
+  ASCII_START,
+  ASCII_END,
+  ASCII_END + 'ō',
+  ASCII_START + ASCII_END,
+  ASCII_START + '12344567' + ASCII_END,
+//  Doesn't work
+//  ASCII_START + 'ō',
+//  ASCII_START + '123' + ASCII_END,
 ];
 
 void main() {

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:flutter/cupertino.dart';
 import "package:pointycastle/export.dart";
 import "package:asn1lib/asn1lib.dart";
+
 
 /*
   Public / Private key encryption methods
@@ -12,10 +12,11 @@ import "package:asn1lib/asn1lib.dart";
     - https://gist.github.com/proteye/982d9991922276ccfb011dfc55443d74
  */
 
-const String _ASCII_START = '_*{';
-const String _ASCII_END   = '}*_';
-const int _ASCII_START_LEN = _ASCII_START.length;
-const int _ASCII_END_LEN   = _ASCII_END.length;
+final String _CONST = String.fromCharCode(16);
+final String ASCII_START = '<' + _CONST + _CONST + _CONST;
+final String ASCII_END   = _CONST + '>';
+final int _ASCII_START_LEN = ASCII_START.length;
+final int _ASCII_END_LEN   = ASCII_END.length;
 
 List<int> decodePEM(String pem) {
   var startsWith = [
@@ -103,7 +104,7 @@ class RsaKeyHelper {
     s.runes.forEach((int rune) {
       var character;
       if (rune > 127){
-        character= _ASCII_START + rune.toString() + _ASCII_END;
+        character= ASCII_START + rune.toString() + ASCII_END;
       }
       else{
         character=new String.fromCharCode(rune);
@@ -116,8 +117,8 @@ class RsaKeyHelper {
   //Decode non ascii characters
   String _decodeAscii(String s){
     int p = 0;
-    int x = s.indexOf(_ASCII_START, p);
-    int y = s.indexOf(_ASCII_END, x+1);
+    int x = s.indexOf(ASCII_START, p);
+    int y = s.indexOf(ASCII_END, x+1);
     if (x == -1 || y == -1){
       return s;
     }
@@ -128,19 +129,21 @@ class RsaKeyHelper {
     while (x != -1 && y != -1){
       sb.write(s.substring(p,x));
 
-      String z = s.substring(x + _ASCII_START_LEN, y);
-      int a = int.parse(z);
-      sb.write(String.fromCharCode(a));
       p = y + _ASCII_END_LEN;
+      String char = s.substring(x + _ASCII_START_LEN, y);
+      try{
+        int a = int.parse(char);
+        sb.write(String.fromCharCode(a));
+      } catch (e) {
+        sb.write(s.substring(x, p));
+      }
 
       if (p >= l) break;
 
-      x = s.indexOf(_ASCII_START, p);
-      y = s.indexOf(_ASCII_END, x+1);
+      x = s.indexOf(ASCII_START, p);
+      y = s.indexOf(ASCII_END, x+1);
     }
-
     sb.write(s.substring(p));
-
     return sb.toString();
   }
 
