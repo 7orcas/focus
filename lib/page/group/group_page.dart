@@ -17,45 +17,49 @@ class GroupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Store<AppState> store;
-    return StoreProvider<AppState>(
-      store: store,
-      child: FutureBuilder<GroupConversation>(
-          future: GroupDB().loadGroupConversation(_group.id),
-          builder: (BuildContext context,
-              AsyncSnapshot<GroupConversation> snapshot) {
-            // AsyncSnapshot<Your object type>
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: Text('....Please wait its loading...'));
-            } else if (snapshot.hasError)
-              return Center(child: Text('Error: ${snapshot.error}'));
-            else {
-              GroupConversation c = snapshot.data;
-              return StoreConnector<AppState, _ViewModel>(
-                  converter: (Store<AppState> store) =>
-                      _ViewModel.create(store),
-                  builder: (BuildContext context, _ViewModel viewModel) {
-                    return MaterialApp(
-                      home: Scaffold(
-                        appBar: new AppBar(
-                          title: new Text("GroupPage"),
-                        ),
-                        body: ListView.builder(
-                          itemBuilder: (BuildContext context, int index) =>
-                              GraphItem(c.graphs[index]),
-                          itemCount: c.graphs.length,
-                        ),
-                        floatingActionButton: new FloatingActionButton(
-                          onPressed: () {
-                            viewModel.onAddGraph(_group,GraphEntity.db(-1, c.id, 'xxxx', List<CommentEntity>()));
-                          },
-                          child: new Icon(Icons.add),
-                        ),
-                      ),
-                    );
-                  });
-            }
-          }),
-    );
+    return StoreConnector<AppState, _ViewModel>(
+        converter: (Store<AppState> store) => _ViewModel.create(store),
+        builder: (BuildContext context, _ViewModel viewModel) {
+          return FutureBuilder<GroupConversation>(
+              future: GroupDB().loadGroupConversation(_group.id),
+              builder: (BuildContext context,
+                  AsyncSnapshot<GroupConversation> snapshot) {
+                // AsyncSnapshot<Your object type>
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: Text('....Please wait its loading...'));
+                } else if (snapshot.hasError)
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                else {
+                  GroupConversation c = snapshot.data;
+                  return StoreConnector<AppState, _ViewModel>(
+                      converter: (Store<AppState> store) =>
+                          _ViewModel.create(store),
+                      builder: (BuildContext context, _ViewModel viewModel) {
+                        return MaterialApp(
+                          home: Scaffold(
+                            appBar: new AppBar(
+                              title: new Text("GroupPage"),
+                            ),
+                            body: ListView.builder(
+                              itemBuilder: (BuildContext context, int index) =>
+                                  GraphItem(c.graphs[index]),
+                              itemCount: c.graphs.length,
+                            ),
+                            floatingActionButton: new FloatingActionButton(
+                              onPressed: () {
+                                viewModel.onAddGraph(
+                                    _group,
+                                    GraphEntity.db(101, c.id, 'yyyyy',
+                                        List<CommentEntity>()));
+                              },
+                              child: new Icon(Icons.add),
+                            ),
+                          ),
+                        );
+                      });
+                }
+              });
+        });
   }
 }
 

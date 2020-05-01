@@ -1,4 +1,5 @@
 import 'package:focus/model/group/comment_entity.dart';
+import 'package:focus/database/_scheme.dart';
 
 class GraphEntity {
   final int id;
@@ -10,7 +11,7 @@ class GraphEntity {
 
   Map<String, dynamic> toMap() => {
     'id' : id,
-    'id_group' : id_group,
+    DBK_GROUP : id_group,
     'graph' : graph,
   };
 

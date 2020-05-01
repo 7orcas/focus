@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 const List<String> _filter  = [
   'database/',
+  'group/',
 //  'main.dart'
 ];
 
