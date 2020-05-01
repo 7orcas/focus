@@ -1,6 +1,6 @@
-import 'package:focus/model/group/graph_entity.dart';
-import 'package:focus/model/group/comment_entity.dart';
 import 'package:focus/service/encryptRSA.dart';
+import 'package:focus/model/group/comment_entity.dart';
+import 'package:focus/model/group/graph/graph_entity.dart';
 
 class GroupConversation {
   final int id;

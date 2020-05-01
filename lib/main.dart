@@ -82,7 +82,7 @@ class HomePage extends StatelessWidget {
                 children: <Widget>[
                   AddGroupWidget(viewModel),
                   Expanded(
-                    child: GroupListWidget(viewModel),
+                    child: GroupListWidget(viewModel, store),
                   ),
                   Text(viewModel.lang.label('Lang') + ':' + viewModel.session.language),
                   RemoveGroupsButton(viewModel),
@@ -124,8 +124,9 @@ class _AddGroupState extends State<AddGroupWidget> {
 }
 
 class GroupListWidget extends StatelessWidget {
+  final Store<AppState> store;
   final _ViewModel model;
-  GroupListWidget(this.model);
+  GroupListWidget(this.model, this.store);
 
   @override
   Widget build(BuildContext context) {

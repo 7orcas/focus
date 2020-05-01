@@ -7,4 +7,11 @@ class GraphEntity {
   final List<CommentEntity> comments;
 
   GraphEntity.db(this.id, this.id_group, this.graph, this.comments);
+
+  Map<String, dynamic> toMap() => {
+    'id' : id,
+    'id_group' : id_group,
+    'graph' : graph,
+  };
+
 }

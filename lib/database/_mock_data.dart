@@ -2,15 +2,9 @@ import 'package:focus/database/_scheme.dart';
 
 // Focus client database setup
 
-const String mock_user = "INSERT INTO " + DB_USER + "(id, email, adgj, lang) VALUES ";
+const String mock_user = "INSERT INTO " + DB_USER + "(id, number, email, adgj, lang) VALUES ";
 const List<String> mock_insertUser = [
-  "1, '123@abc.com', '123asd', 'en'",
-];
-
-const String mock_numbers = "INSERT INTO " + DB_NUMBERS + "(id, " + DBK_USER + ", number) VALUES ";
-const List<String> mock_insertNumbers = [
-  "1, 1, '123456'",
-  "2, 1, '456789'",
+  "1, '027 123456789', '123@abc.com', '123asd', 'en'",
 ];
 
 const String mock_group = "INSERT INTO " + DB_GROUP + "(id, name, public_key, private_key) VALUES ";
@@ -34,22 +28,22 @@ const List<String> mock_insertGraph = [
   "2, 1, 'Graph 2'",
   "3, 1, 'Graph 3'",
   "4, 1, 'Graph 4'",
-  "5, 1, 'Graph 5'",
-  "6, 1, 'Graph 6'",
-  "7, 1, 'Graph 7'",
-  "8, 1, 'Graph 8'",
-  "9, 1, 'Graph 9'",
-  "10, 1, 'Graph 10'",
-  "11, 1, 'Graph 11'",
-  "12, 1, 'Graph 12'",
-  "13, 1, 'Graph 13'",
-  "14, 1, 'Graph 14'",
-  "15, 1, 'Graph 15'",
-  "16, 1, 'Graph 16'",
-  "17, 1, 'Graph 17'",
-  "18, 1, 'Graph 18'",
-  "19, 1, 'Graph 19'",
-  "20, 1, 'Graph 20'",
+//  "5, 1, 'Graph 5'",
+//  "6, 1, 'Graph 6'",
+//  "7, 1, 'Graph 7'",
+//  "8, 1, 'Graph 8'",
+//  "9, 1, 'Graph 9'",
+//  "10, 1, 'Graph 10'",
+//  "11, 1, 'Graph 11'",
+//  "12, 1, 'Graph 12'",
+//  "13, 1, 'Graph 13'",
+//  "14, 1, 'Graph 14'",
+//  "15, 1, 'Graph 15'",
+//  "16, 1, 'Graph 16'",
+//  "17, 1, 'Graph 17'",
+//  "18, 1, 'Graph 18'",
+//  "19, 1, 'Graph 19'",
+//  "20, 1, 'Graph 20'",
   "50, 2, 'Graph 1'",
 ];
 
@@ -94,7 +88,6 @@ const List<String> mock_insertComment = [
 
 const mock_instructions = [
   mock_user, mock_insertUser,
-  mock_numbers, mock_insertNumbers,
   mock_group, mock_insertGroup,
   mock_userGroup, mock_insertUserGroup,
   mock_graph, mock_insertGraph,

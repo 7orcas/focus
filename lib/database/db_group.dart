@@ -4,10 +4,10 @@ import 'package:sqflite/sqflite.dart';
 import 'package:focus/database/_base.dart';
 import 'package:focus/database/_scheme.dart';
 import 'package:focus/model/group/comment_entity.dart';
-import 'package:focus/model/group/graph_entity.dart';
 import 'package:focus/model/group/group_conversation.dart';
 import 'package:focus/model/group/group_entity.dart';
 import 'package:focus/model/group/group_tile.dart';
+import 'package:focus/model/group/graph/graph_entity.dart';
 import 'package:focus/service/util.dart';
 
 // Database Methods

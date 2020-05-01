@@ -28,22 +28,19 @@ const List<String> _instructions = [
   '''
   CREATE TABLE DB_USER (
     id INTEGER NOT NULL PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    encoded TEXT,
+    number INTEGER,
     email TEXT,
     adgj TEXT, 
     lang TEXT
     )''',
 
   '''
-  CREATE TABLE DB_NUMBERS (
-    id INTEGER NOT NULL PRIMARY KEY,
-    DBK_USER INTEGER,
-    number INTEGER,
-    FOREIGN KEY(DBK_USER) REFERENCES DB_USER(id)
-    )''',
-
-  '''
   CREATE TABLE DB_GROUP (
     id INTEGER PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    encoded TEXT,
     name TEXT,
     public_key TEXT,
     private_key TEXT
@@ -52,6 +49,8 @@ const List<String> _instructions = [
   '''
   CREATE TABLE DBJ_USER_GROUP (
     id INTEGER PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    encoded TEXT,
     DBK_USER INTEGER,
     DBK_GROUP INTEGER,
     admin INTEGER,
@@ -63,6 +62,8 @@ const List<String> _instructions = [
   '''
   CREATE TABLE DB_GRAPH (
     id INTEGER PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    encoded TEXT,
     DBK_GROUP INTEGER,
     graph TEXT, 
     FOREIGN KEY(DBK_GROUP) REFERENCES DB_GROUP(id)
@@ -71,6 +72,8 @@ const List<String> _instructions = [
   '''
   CREATE TABLE DB_COMMENT (
     id INTEGER PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    encoded TEXT,
     DBK_GROUP INTEGER,
     DBK_GRAPH INTEGER,
     DBK_USER INTEGER,
