@@ -1,4 +1,4 @@
-import 'package:focus/model/group/graph/graph_entity.dart';
+import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/service/util.dart';
 
@@ -6,7 +6,7 @@ import 'package:focus/service/util.dart';
 
 class AddGraphAction {
   final GroupTile group;
-  final GraphEntity graph;
+  final GraphTile graph;
   AddGraphAction(this.group, this.graph){
     Util(StackTrace.current).out('AddGraphAction constructor');
   }

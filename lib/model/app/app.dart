@@ -31,4 +31,11 @@ class AppState {
     return session.toJson().toString();
   }
 
+  GroupTile findGroupTile(int id){
+    for (GroupTile t in groups){
+      if (t.id == id) return t;
+    }
+    return null;
+  }
+
 }

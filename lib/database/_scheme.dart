@@ -61,7 +61,7 @@ const List<String> _instructions = [
 
   '''
   CREATE TABLE DB_GRAPH (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     encoded TEXT,
     DBK_GROUP INTEGER,

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 const List<String> _filter  = [
-  'database/',
-  'group/',
+//  'database/',
+  'graph',
 //  'main.dart'
 ];
 
@@ -14,15 +14,17 @@ class Util {
   Util(this._trace);
 
   void out(String message) {
+
     var frames = this._trace.toString().split("\n");
     var traceString = frames[0];
     var indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_/]+.dart'));
     var fileInfo = indexOfFileName != -1? traceString.substring(indexOfFileName) : '?';
-    String x = fileInfo.toString();
+    String x = fileInfo.toString().toLowerCase();
     bool f = _filter.length == 0;
+    String mf = message.toLowerCase();
 
     for (String s in _filter){
-      if (x.indexOf(s) != -1){
+      if (x.indexOf(s) != -1 || mf.indexOf(s) != -1){
         f = true;
         break;
       }

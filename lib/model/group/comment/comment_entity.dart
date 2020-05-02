@@ -1,4 +1,3 @@
-
 class CommentEntity {
   final int id;
   final int id_group; //here for convenience
@@ -6,6 +5,6 @@ class CommentEntity {
   final int id_user;
   String comment;
 
-  CommentEntity.db(this.id, this.id_group, this.id_graph, this.id_user, this.comment);
-
+  CommentEntity(
+      this.id, this.id_group, this.id_graph, this.id_user, this.comment);
 }

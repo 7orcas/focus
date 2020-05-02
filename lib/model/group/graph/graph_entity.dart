@@ -1,4 +1,4 @@
-import 'package:focus/model/group/comment_entity.dart';
+import 'package:focus/model/group/comment/comment_entity.dart';
 import 'package:focus/database/_scheme.dart';
 
 class GraphEntity {
@@ -7,7 +7,7 @@ class GraphEntity {
   final String graph;
   final List<CommentEntity> comments;
 
-  GraphEntity.db(this.id, this.id_group, this.graph, this.comments);
+  GraphEntity(this.id, this.id_group, this.graph, this.comments);
 
   Map<String, dynamic> toMap() => {
     'id' : id,

@@ -5,23 +5,37 @@ import 'package:flutter/material.dart';
 import 'package:focus/database/db_group.dart';
 import 'package:focus/model/group/group_conversation.dart';
 import 'package:focus/model/group/group_tile.dart';
-import 'package:focus/model/group/graph/graph_entity.dart';
+import 'package:focus/model/group/group_actions.dart';
+import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
-import 'package:focus/model/group/comment_entity.dart';
+import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/service/util.dart';
 
 class GroupPage extends StatelessWidget {
   final GroupTile _group;
-  GroupPage(this._group);
+  GroupPage(this._group){
+    Util(StackTrace.current).out('GroupPage constructor graphs build constains ' + _group.containsGraphs().toString());
+  }
+
+  Future<GroupConversation> getGroupConversation(_ViewModel viewModel){
+    GroupConversation c = viewModel.store.state.findGroupTile(_group.id).toConversation();
+    return Future<GroupConversation>.value(c);
+  }
 
   @override
   Widget build(BuildContext context) {
-    Store<AppState> store;
+
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
         builder: (BuildContext context, _ViewModel viewModel) {
+
+          //ToDo refactor
+          bool load = viewModel.store.state.findGroupTile(_group.id).containsGraphs();
+          var xx = load? getGroupConversation(viewModel) : GroupDB().loadGroupConversation(_group.id);
+
           return FutureBuilder<GroupConversation>(
-              future: GroupDB().loadGroupConversation(_group.id),
+              future: xx,
+//              future: GroupDB().loadGroupConversation(_group.id),
               builder: (BuildContext context,
                   AsyncSnapshot<GroupConversation> snapshot) {
                 // AsyncSnapshot<Your object type>
@@ -31,6 +45,10 @@ class GroupPage extends StatelessWidget {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 else {
                   GroupConversation c = snapshot.data;
+                  if (!load){
+                    viewModel.store.dispatch(AddGraphsAction(c.toGroupTile()));
+                  }
+
                   return StoreConnector<AppState, _ViewModel>(
                       converter: (Store<AppState> store) =>
                           _ViewModel.create(store),
@@ -49,8 +67,8 @@ class GroupPage extends StatelessWidget {
                               onPressed: () {
                                 viewModel.onAddGraph(
                                     _group,
-                                    GraphEntity.db(101, c.id, 'yyyyy',
-                                        List<CommentEntity>()));
+                                    GraphTile(null, c.id, 'yyyy',
+                                        List<CommentTile>()));
                               },
                               child: new Icon(Icons.add),
                             ),
@@ -68,14 +86,14 @@ class GroupPage extends StatelessWidget {
 class GraphItem extends StatelessWidget {
   const GraphItem(this.entry);
 
-  final GraphEntity entry;
+  final GraphTile entry;
 
-  Widget _buildTiles(GraphEntity root) {
+  Widget _buildTiles(GraphTile root) {
     List<StatelessWidget> comments = [GraphX('model of graph')];
     comments.addAll(entry.comments.map((c) => ItemX(c)).toList());
 
     return ExpansionTile(
-      key: PageStorageKey<GraphEntity>(root),
+      key: PageStorageKey<GraphTile>(root),
       title: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Text(root.graph + '  x'),
@@ -109,7 +127,7 @@ class GraphX extends Base {
 }
 
 class ItemX extends Base {
-  final CommentEntity comment;
+  final CommentTile comment;
   ItemX(this.comment);
 
   @override
@@ -126,21 +144,24 @@ class ItemX extends Base {
 }
 
 class _ViewModel {
+  final Store<AppState> store;
   final List<GroupTile> groups;
-  final Function(GroupTile group, GraphEntity graph) onAddGraph;
+  final Function(GroupTile group, GraphTile graph) onAddGraph;
 
   _ViewModel({
+    this.store,
     this.groups,
     this.onAddGraph,
   });
 
   factory _ViewModel.create(Store<AppState> store) {
-    _onAddGraph(GroupTile group, GraphEntity graph) {
+    _onAddGraph(GroupTile group, GraphTile graph) {
       Util(StackTrace.current).out('_onAddGraph');
       store.dispatch(AddGraphAction(group, graph));
     }
 
     return _ViewModel(
+      store: store,
       groups: store.state.groups,
       onAddGraph: _onAddGraph,
     );

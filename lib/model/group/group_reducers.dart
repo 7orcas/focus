@@ -6,6 +6,7 @@ import 'package:focus/service/util.dart';
 // Define peer functions that change state
 
 List<GroupTile> groupReducer(List<GroupTile> state, action) {
+
   if (action is AddGroupAction) {
     GroupTile g = GroupTile(id: state.length + 2, name: action.name);
     action.group = g;
@@ -14,6 +15,25 @@ List<GroupTile> groupReducer(List<GroupTile> state, action) {
     return []
       ..addAll(state)
       ..add(g);
+  }
+
+  //ToDo refactor
+  if (action is AddGraphsAction) {
+    Util(StackTrace.current)
+        .out('groupReducer AddGraphsAction, constains=' + action.group.containsGraphs().toString());
+    List<GroupTile> l = state.map((e) {
+      if (e.id == action.group.id) return action.group;
+      return e;
+    }).toList();
+
+    //ToDo debug only
+    for (GroupTile t in l){
+      if (t.id == action.group.id){
+        Util(StackTrace.current)
+            .out('groupReducer AddGraphsAction, constains=' + t.containsGraphs().toString());
+      }
+    }
+    return l;
   }
 
   if (action is RemoveGroupAction) {
