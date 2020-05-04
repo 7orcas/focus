@@ -28,7 +28,8 @@ class GraphDB extends FocusDB {
     Util(StackTrace.current).out('removeGraph id=' + id_graph.toString());
     await connectDatabase();
     await database
-        .rawDelete(
+        .rawDelete(  need to separate this
+            'DELETE FROM ' + DB_COMMENT + ' WHERE ' + DBK_GRAPH + ' = ' + id_graph.toString() + ';'
             'DELETE FROM ' + DB_GRAPH + ' WHERE id = ' + id_graph.toString())
         .catchError((e) {
       Util(StackTrace.current).out('removeGraph ERROR:' + e.toString());

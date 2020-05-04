@@ -9,6 +9,7 @@ import 'package:focus/model/group/group_conversation.dart';
 import 'package:focus/database/db_group.dart';
 import 'package:focus/database/db_graph.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
+import 'package:focus/service/error.dart';
 import 'package:focus/service/util.dart';
 import 'package:redux/redux.dart';
 
@@ -94,7 +95,7 @@ void groupStateMiddleware(
       break;
     case DeleteGraphAction:
       _removeGraphFromDB(store, action.graph).catchError((e) {
-        Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: group);
+        action.error(FocusError(message: 'Cant delete graph', error : e));
       });
       break;
   }

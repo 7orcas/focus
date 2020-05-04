@@ -52,6 +52,7 @@ class Lang {
 
 List<Lang> _en = [
   Lang('Lang', 'Language'),
+  Lang('Error', 'Error, damn'),
   Lang('AddGroup', 'Add Group', mi:'Add Group Maori', de:'Add Group Deutsch'),
   Lang('DelGroups', 'Delete Groups'),
 

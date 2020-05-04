@@ -14,7 +14,8 @@ class AddGraphAction {
 
 class DeleteGraphAction {
   final GraphTile graph;
-  DeleteGraphAction(this.graph){
+  final Function error;
+  DeleteGraphAction(this.graph, this.error){
     Util(StackTrace.current).out('DeleteGraphAction constructor');
   }
 }

@@ -21,10 +21,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-Util(StackTrace.current).out('HomePage graphs build');
-//for (GroupTile g in store.state.groups){
-//  if (g.id==1) Util(StackTrace.current).out('HomePage graphs build constains ' + g.containsGraphs().toString());
-//}
+    Util(StackTrace.current).out('HomePage graphs build');
 
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
