@@ -8,8 +8,7 @@ import 'package:focus/service/util.dart';
 // ToDo
 
 class GraphDB extends FocusDB {
-
-  void saveGraph(GraphEntity graph) async {
+  Future<GraphEntity> saveGraph(GraphEntity graph) async {
     Util(StackTrace.current).out('saveGraph id=' + graph.id.toString());
     await connectDatabase();
 
@@ -22,7 +21,18 @@ class GraphDB extends FocusDB {
     );
 
     Util(StackTrace.current).out('saveGraph id=' + id.toString());
+    return graph.copyWith(id);
   }
 
-
+  void removeGraph(int id_graph) async {
+    Util(StackTrace.current).out('removeGraph id=' + id_graph.toString());
+    await connectDatabase();
+    await database
+        .rawDelete(
+            'DELETE FROM ' + DB_GRAPH + ' WHERE id = ' + id_graph.toString())
+        .catchError((e) {
+      Util(StackTrace.current).out('removeGraph ERROR:' + e.toString());
+      throw e;
+    });
+  }
 }

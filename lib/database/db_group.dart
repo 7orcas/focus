@@ -116,4 +116,5 @@ class GroupDB extends FocusDB {
     Util(StackTrace.current)
         .out('removeGroup name=' + group.name + ' id=' + id.toString());
   }
+
 }

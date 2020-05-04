@@ -1,5 +1,4 @@
 
-
 // Focus client database setup
 
 const String DB_USER = 'user';
@@ -54,8 +53,14 @@ const List<String> _instructions = [
     DBK_USER INTEGER,
     DBK_GROUP INTEGER,
     admin INTEGER,
-    FOREIGN KEY(DBK_USER) REFERENCES DB_USER(id),
-    FOREIGN KEY(DBK_GROUP) REFERENCES DB_GROUP(id)
+    
+    CONSTRAINT fk_DB_GROUP
+    FOREIGN KEY (DBK_GROUP)
+    REFERENCES DB_GROUP (id),
+    
+    CONSTRAINT fk_DB_USER
+    FOREIGN KEY (DBK_USER)
+    REFERENCES DB_USER (id)
     )''',
 
 
@@ -66,7 +71,10 @@ const List<String> _instructions = [
     encoded TEXT,
     DBK_GROUP INTEGER,
     graph TEXT, 
-    FOREIGN KEY(DBK_GROUP) REFERENCES DB_GROUP(id)
+    
+    CONSTRAINT fk_DB_GROUP
+    FOREIGN KEY (DBK_GROUP)
+    REFERENCES DB_GROUP (id)
     )''',
 
   '''
@@ -78,9 +86,18 @@ const List<String> _instructions = [
     DBK_GRAPH INTEGER,
     DBK_USER INTEGER,
     comment TEXT, 
-    FOREIGN KEY(DBK_GROUP) REFERENCES DB_GROUP(id),
-    FOREIGN KEY(DBK_GRAPH) REFERENCES DB_GRAPH(id),
-    FOREIGN KEY(DBK_USER) REFERENCES DB_USER(id)
+
+    CONSTRAINT fk_DB_GROUP
+    FOREIGN KEY (DBK_GROUP)
+    REFERENCES DB_GROUP (id),
+
+    CONSTRAINT fk_DB_GRAPH
+    FOREIGN KEY (DBK_GRAPH)
+    REFERENCES DB_GRAPH (id),
+
+    CONSTRAINT fk_DB_USER
+    FOREIGN KEY (DBK_USER)
+    REFERENCES DB_USER (id)
     )''',
 
 ];

@@ -22,9 +22,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 Util(StackTrace.current).out('HomePage graphs build');
-for (GroupTile g in store.state.groups){
-  if (g.id==1) Util(StackTrace.current).out('HomePage graphs build constains ' + g.containsGraphs().toString());
-}
+//for (GroupTile g in store.state.groups){
+//  if (g.id==1) Util(StackTrace.current).out('HomePage graphs build constains ' + g.containsGraphs().toString());
+//}
 
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
@@ -93,9 +93,9 @@ class GroupListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-for (GroupTile g in model.groups){
-if (g.id==1) Util(StackTrace.current).out('GroupListWidget graphs build constains ' + g.containsGraphs().toString());
-}
+//for (GroupTile g in model.groups){
+//if (g.id==1) Util(StackTrace.current).out('GroupListWidget graphs build constains ' + g.containsGraphs().toString());
+//}
 
     return ListView(
       children: model.groups

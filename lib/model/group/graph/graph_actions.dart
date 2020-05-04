@@ -11,3 +11,10 @@ class AddGraphAction {
     Util(StackTrace.current).out('AddGraphAction constructor');
   }
 }
+
+class DeleteGraphAction {
+  final GraphTile graph;
+  DeleteGraphAction(this.graph){
+    Util(StackTrace.current).out('DeleteGraphAction constructor');
+  }
+}

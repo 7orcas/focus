@@ -10,9 +10,12 @@ class GraphEntity {
   GraphEntity(this.id, this.id_group, this.graph, this.comments);
 
   Map<String, dynamic> toMap() => {
-    'id' : id,
-    DBK_GROUP : id_group,
-    'graph' : graph,
-  };
+        'id': id,
+        DBK_GROUP: id_group,
+        'graph': graph,
+      };
 
+  GraphEntity copyWith(int id) {
+    return GraphEntity(id ?? this.id, id_group, graph, comments);
+  }
 }

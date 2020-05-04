@@ -12,11 +12,14 @@ class GroupConversation {
   final String publicKey;
   final String privateKey;
   final List<GraphTile> graphs;
+  bool _loadedFromStore = false;
 
   GroupConversation.db(
       this.id, this.name, this.publicKey, this.privateKey, this.graphs);
 
   int get count => graphs.length;
+  bool get loadedFromStore => _loadedFromStore;
+  void set loadedFromStore(bool v) {_loadedFromStore = v;}
 
   GroupTile toGroupTile() {
     return GroupTile(

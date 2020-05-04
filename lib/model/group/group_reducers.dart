@@ -21,19 +21,10 @@ List<GroupTile> groupReducer(List<GroupTile> state, action) {
   if (action is AddGraphsAction) {
     Util(StackTrace.current)
         .out('groupReducer AddGraphsAction, constains=' + action.group.containsGraphs().toString());
-    List<GroupTile> l = state.map((e) {
+    return state.map((e) {
       if (e.id == action.group.id) return action.group;
       return e;
     }).toList();
-
-    //ToDo debug only
-    for (GroupTile t in l){
-      if (t.id == action.group.id){
-        Util(StackTrace.current)
-            .out('groupReducer AddGraphsAction, constains=' + t.containsGraphs().toString());
-      }
-    }
-    return l;
   }
 
   if (action is RemoveGroupAction) {
@@ -48,10 +39,9 @@ List<GroupTile> groupReducer(List<GroupTile> state, action) {
     return action.groups;
   }
 
-  if (action is AddGraphAction) {
-
+  if (action is AddGraphAction || action is DeleteGraphAction) {
     Util(StackTrace.current)
-        .out('groupReducer AddGraphAction, id=' + action.graph.id.toString());
+        .out('groupReducer xxxxGraphAction, type=' + action.runtimeType.toString());
   }
 
   return state;

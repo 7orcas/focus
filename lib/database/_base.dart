@@ -42,6 +42,9 @@ class FocusDB {
       },
       version: 1,
     );
+
+    _database.execute("PRAGMA foreign_keys=ON");
+
   }
 }
 
