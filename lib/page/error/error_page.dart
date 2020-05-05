@@ -16,7 +16,7 @@ class ErrorPage extends StatelessWidget {
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
         builder: (BuildContext context, _ViewModel viewModel) {
-          Language lang = Language(viewModel.session.language);
+          Language lang = Language(viewModel.session.langCode);
 
           return new Scaffold(
               appBar: new AppBar(

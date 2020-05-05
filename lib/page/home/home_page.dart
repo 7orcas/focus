@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/home/mainmenu.dart';
 import 'package:focus/service/util.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -8,7 +9,6 @@ import 'package:focus/model/session/session.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/model/group/group_actions.dart';
-import 'package:focus/service/language.dart';
 import 'package:focus/route.dart';
 
 class HomePage extends StatelessWidget {
@@ -24,15 +24,12 @@ class HomePage extends StatelessWidget {
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(store),
         builder: (BuildContext context, _ViewModel viewModel) {
-          Language lang = Language(viewModel.session.language);
-          viewModel.lang = lang;
-
           return Scaffold(
             appBar: AppBar(
-              title: Text(lang.label(title)),
-              actions:
-                  MainMenu(context, store, lang, viewModel.onChangeLanguage)
-                      .menu,
+              title: Text(viewModel.session.label(title)),
+              actions: MainMenu(context, store, viewModel.language,
+                      viewModel.onChangeLanguage)
+                  .menu,
             ),
             body: Center(
               child: Column(
@@ -41,10 +38,9 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: GroupListWidget(viewModel, store),
                   ),
-                  Text(viewModel.lang.label('Lang') +
+                  Text(viewModel.label('Lang') +
                       ':' +
-                      viewModel.session.language),
-                  RemoveGroupsButton(viewModel),
+                      viewModel.session.langCode),
                 ],
               ),
             ),
@@ -71,7 +67,7 @@ class _AddGroupState extends State<AddGroupWidget> {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        hintText: widget.model.lang.label('AddGroup'),
+        hintText: widget.model.session.label('AddGroup'),
       ),
       onSubmitted: (String s) {
         controller.clear();
@@ -88,10 +84,6 @@ class GroupListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-//for (GroupTile g in model.groups){
-//if (g.id==1) Util(StackTrace.current).out('GroupListWidget graphs build constains ' + g.containsGraphs().toString());
-//}
-
     return ListView(
       children: model.groups
           .map((group) => ListTile(
@@ -112,40 +104,24 @@ class GroupListWidget extends StatelessWidget {
   }
 }
 
-class RemoveGroupsButton extends StatelessWidget {
-  final _ViewModel model;
-  RemoveGroupsButton(this.model);
-
-  @override
-  Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text(model.lang.label('DelGroups')),
-      onPressed: () => model.onRemoveGroups(),
-    );
-  }
-}
-
-class _ViewModel {
-  Language lang;
-  final List<GroupTile> groups;
-  final Session session;
+class _ViewModel extends BaseViewModel {
   final Function(String) onAddGroup;
   final Function(GroupTile) onRemoveGroup;
   final Function() onRemoveGroups;
   final Function(String) onChangeLanguage;
 
   _ViewModel({
-    this.groups,
-    this.session,
+    store,
     this.onAddGroup,
     this.onRemoveGroup,
     this.onRemoveGroups,
     this.onChangeLanguage,
-  });
+  }) : super(store);
 
   factory _ViewModel.create(Store<AppState> store) {
+    Util(StackTrace.current).out('creat viewmodel');
+
     _onAddGroup(String name) {
-      Util(StackTrace.current).out('_onAddGroup, name=' + name);
       store.dispatch(AddGroupAction(name));
     }
 
@@ -162,8 +138,7 @@ class _ViewModel {
     }
 
     return _ViewModel(
-      groups: store.state.groups,
-      session: store.state.session,
+      store: store,
       onAddGroup: _onAddGroup,
       onRemoveGroup: _onRemoveGroup,
       onRemoveGroups: _onRemoveGroups,

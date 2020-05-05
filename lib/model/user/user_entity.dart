@@ -1,7 +1,7 @@
 
 
-enum Language { en, sp }
 
+//ToDO Delete
 class User {
   final int _id;
   final String _lang;

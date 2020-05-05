@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:focus/page/group/group_page.dart';
+import 'package:focus/page/graph/graph_page.dart';
 import 'package:focus/page/home/about_page.dart';
 import 'package:focus/page/error/error_page.dart';
 
-const String ROUTE_GROUP_PAGE = '/GroupPage/';
+const String ROUTE_GROUP_PAGE = '/Group/';
+const String ROUTE_NEW_GRAPH_PAGE = '/NewGraph/';
 const String ROUTE_ABOUT_PAGE = '/About/';
 const String ROUTE_ERROR_PAGE = '/Error/';
 
@@ -19,13 +21,25 @@ Route<dynamic> handleRoute(RouteSettings routeSettings) {
   Object object = routeSettings.arguments;
 
   Widget childWidget;
-  if (name == ROUTE_GROUP_PAGE) {
-    childWidget = GroupPage(object);
-  } else if (name == ROUTE_ABOUT_PAGE) {
-    childWidget = AboutPage();
-  } else {
+
+  switch(name){
+    case ROUTE_GROUP_PAGE:
+      childWidget = GroupPage(object);
+      break;
+
+    case ROUTE_NEW_GRAPH_PAGE:
+      childWidget = GraphPage(object);
+      break;
+
+    case ROUTE_GROUP_PAGE:
+      childWidget = AboutPage();
+      break;
+  }
+
+  if (name == null) {
     childWidget = ErrorPage(object);
   }
+
   return MaterialPageRoute(
       builder: (context) => childWidget);
 }

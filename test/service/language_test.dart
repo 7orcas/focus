@@ -3,7 +3,7 @@ import 'package:focus/service/language.dart';
 
 void main() {
   test('Create language item', () {
-    Lang i = Lang('key', 'value', mi: 'value mi');
+    LangLabel i = LangLabel('key', 'value', mi: 'value mi');
     expect(i.key, 'key');
     expect(i.label, 'value');
     expect(i.mi, 'value mi');

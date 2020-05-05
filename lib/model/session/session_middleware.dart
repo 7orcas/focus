@@ -38,7 +38,7 @@ void sessionStateMiddleware(
 
   if (action is GetLanguageAction) {
     await _loadFromPrefs()
-        .then((state) => store.dispatch(LoadLanguageAction(state.language)));
+        .then((state) => store.dispatch(LoadLanguageAction(state.langCode)));
   }
 
 }

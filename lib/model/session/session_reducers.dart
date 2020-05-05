@@ -6,10 +6,10 @@ import 'package:focus/model/session/session_actions.dart';
 Session sessionReducer(Session state, action){
 
   if (action is ChangeLanguageAction){
-    return Session(language: action.language);
+    return Session(langCode: action.langCode);
   }
   if (action is LoadLanguageAction){
-    return Session(language: action.language);
+    return Session(langCode: action.langCode);
   }
 
   return state;

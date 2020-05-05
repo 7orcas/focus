@@ -4,6 +4,7 @@ const List<String> _filter  = [
 //  'database/',
 //  'graph',
 //  'main.dart'
+    'viewmodel'
 ];
 
 

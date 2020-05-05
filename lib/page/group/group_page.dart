@@ -11,7 +11,7 @@ import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
-import 'package:focus/model/group/comment/comment_tile.dart';
+import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/group/graph_conversation.dart';
 
 
@@ -33,7 +33,7 @@ class GroupPage extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<GroupConversation> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: Text('....Please wait its loading...')); //ToDo graphic
+                  return Center(child: Text(viewModel.label('Loading'))); //ToDo graphic
                 } else if (snapshot.hasError)
                   return Center(child: Text('Error: ${snapshot.error}')); //ToDo route
                 else {
@@ -44,7 +44,7 @@ class GroupPage extends StatelessWidget {
                   return MaterialApp(
                     home: Scaffold(
                       appBar: new AppBar(
-                        title: new Text("GroupPage"),
+                        title: new Text(viewModel.label('Group')),
                       ),
                       body: ListView.builder(
                         itemBuilder: (BuildContext context, int index) =>
@@ -53,10 +53,8 @@ class GroupPage extends StatelessWidget {
                       ),
                       floatingActionButton: new FloatingActionButton(
                         onPressed: () {
-                          viewModel.onAddGraph(
-                              _group,
-                              GraphTile(
-                                  null, c.id, 'yyyy', List<CommentTile>()));
+                          viewModel.onAddGraph(_group);
+
                         },
                         child: new Icon(Icons.add),
                       ),
@@ -68,27 +66,23 @@ class GroupPage extends StatelessWidget {
   }
 }
 
-class _ViewModel {
-  final Store<AppState> store;
-  final List<GroupTile> groups;
-  final Function(GroupTile group, GraphTile graph) onAddGraph;
+class _ViewModel extends BaseViewModel{
+  final Function(GroupTile group) onAddGraph;
   final Function(GraphTile graph) onDeleteGraph;
 
   _ViewModel({
-    this.store,
-    this.groups,
+    store,
     this.onAddGraph,
     this.onDeleteGraph,
-  });
+  }) : super(store);
 
   factory _ViewModel.create(BuildContext context, Store<AppState> store) {
     _onError(FocusError e) {
       Navigator.pushNamed(context, ROUTE_ERROR_PAGE, arguments: e);
     }
 
-    _onAddGraph(GroupTile group, GraphTile graph) {
-      Util(StackTrace.current).out('_onAddGraph');
-      store.dispatch(AddGraphAction(group, graph));
+    _onAddGraph(GroupTile group) {
+      Navigator.pushNamed(context, ROUTE_NEW_GRAPH_PAGE, arguments: group);
     }
 
     _onDeleteGraph(GraphTile graph) {
@@ -98,7 +92,6 @@ class _ViewModel {
 
     return _ViewModel(
       store: store,
-      groups: store.state.groups,
       onAddGraph: _onAddGraph,
       onDeleteGraph: _onDeleteGraph,
     );

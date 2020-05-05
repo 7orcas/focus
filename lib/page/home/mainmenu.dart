@@ -36,13 +36,13 @@ class MainMenu {
     _context = context;
     _store = store;
     _onChangeLanguage = onChangeLanguage;
-    _lang = lang;
+    _language = lang;
   }
 
   BuildContext _context;
   Store<AppState> _store;
   Function _onChangeLanguage;
-  Language _lang;
+  Language _language;
 
   void _onPopupMenuSelected(MainMenuAction item) {
     if (MainMenuAction.EXIT == item) {
@@ -69,10 +69,10 @@ class MainMenu {
 
   static get menuItems => _menuItems;
   static get menuIcon => _menuIcon;
-  get language => _lang;
+  get language => _language;
 
   get menu {
-    Menu m = Menu<MainMenuAction>(_lang);
+    Menu m = Menu<MainMenuAction>(_language);
     return [
       PopupMenuButton<MainMenuAction>(
           icon: Icon(_menuIcon),

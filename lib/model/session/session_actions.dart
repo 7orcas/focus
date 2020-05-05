@@ -5,9 +5,9 @@ import 'package:focus/service/util.dart';
 final util = Util(StackTrace.current);
 
 class ChangeLanguageAction {
-  final String language;
+  final String langCode;
 
-  ChangeLanguageAction(this.language){
+  ChangeLanguageAction(this.langCode){
     util.out('ChangeLanguageAction constructor');
   }
 
@@ -20,9 +20,9 @@ class GetLanguageAction {
 }
 
 class LoadLanguageAction {
-  final String language;
+  final String langCode;
 
-  LoadLanguageAction(this.language){
+  LoadLanguageAction(this.langCode){
     util.out('LoadLanguageAction constructor');
   }
 

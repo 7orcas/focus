@@ -18,9 +18,11 @@ class AppState {
 
   AppState.initialState(){
     util.out('AppState initialState constructor');
-    session = Session(language: 'en');
+    session = Session(langCode: 'en');
     groups = List.unmodifiable(<GroupTile>[]);
   }
+
+//  Session get session => session;
 
   static LoadAppAction getLoadAppAction() {
     return LoadAppAction();

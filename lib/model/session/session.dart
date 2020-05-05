@@ -1,29 +1,48 @@
 import 'package:flutter/foundation.dart';
+import 'package:focus/service/language.dart';
 
 class Session {
-  final String language;
+  String _langCode;
+  Language _language;
 
-  Session({
-    @required this.language,
-  });
+  _initialise (String code){
+    _langCode = code;
+    _language = Language(langCode);
+  }
 
-  Session.initialState() : language = 'en';
+  Session({@required String langCode}) {
+    _initialise(langCode);
+  }
 
-  Session copyWith({String language}) {
+  Session.initialState() {
+    _initialise(LANG_DEFAULT);
+  }
+
+  Session.fromJson(Map json){
+    _initialise(json['lang']);
+  }
+
+  Map toJson() => {
+        'lang': _langCode,
+      };
+
+  Session copyWith({String langCode}) {
     return Session(
-      language: language ?? this.language,
+      langCode: langCode ?? this._langCode,
     );
   }
 
-  Session.fromJson(Map json)
-    : language = json['lang'];
+  String get langCode => _langCode;
+  Language get language => _language;
 
-  Map toJson() => {
-    'lang' : language,
-  };
+  //Convenience method
+  String label(String key) {
+    if (_language == null) return Language.labelNoLanguage(key);
+    return _language.label(key);
+  }
 
   @override
-  String toString(){
+  String toString() {
     return toJson().toString();
   }
 
