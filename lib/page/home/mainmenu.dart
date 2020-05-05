@@ -1,10 +1,13 @@
+import 'package:redux/redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:focus/route.dart';
 import 'package:focus/service/language.dart';
 import 'package:focus/service/menu.dart';
-import 'package:focus/route.dart';
+import 'package:focus/model/app/app.dart';
+import 'package:focus/database/_mock_data.dart';
 
-enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, en,mi,de, EXIT }
+enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, RELOAD, en, mi, de, EXIT }
 
 final List<MenuItem<MainMenuAction>> _menuItems = [
   MenuItem(value: MainMenuAction.ABOUT, label: 'about', icon: Icons.add),
@@ -16,6 +19,8 @@ final List<MenuItem<MainMenuAction>> _menuItems = [
       value: MainMenuAction.SETTINGS, label: 'settings', icon: Icons.settings),
   MenuItem.divider(),
   MenuItem(
+      value: MainMenuAction.RELOAD, label: 'Reload', icon: Icons.data_usage),
+  MenuItem(
       value: MainMenuAction.EXIT,
       label: 'logout',
       labelColor: Colors.redAccent,
@@ -26,19 +31,27 @@ final List<MenuItem<MainMenuAction>> _menuItems = [
 final IconData _menuIcon = Icons.reorder;
 
 class MainMenu {
-  MainMenu(BuildContext context, Function onChangeLanguage, String lang) {
+  MainMenu(BuildContext context, Store<AppState> store, Language lang,
+      Function onChangeLanguage) {
     _context = context;
+    _store = store;
     _onChangeLanguage = onChangeLanguage;
     _lang = lang;
   }
 
   BuildContext _context;
+  Store<AppState> _store;
   Function _onChangeLanguage;
-  String _lang;
+  Language _lang;
 
   void _onPopupMenuSelected(MainMenuAction item) {
     if (MainMenuAction.EXIT == item) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    } else if (MainMenuAction.RELOAD == item) {
+      //ToDo Mock, delete
+      DatabaseMockData().reload().then((value) {
+        _store.dispatch(AppState.getLoadAppAction());
+      });
     } else if (MainMenuAction.ABOUT == item) {
       Navigator.pushNamed(_context, ROUTE_ABOUT_PAGE);
     } else if (MainMenuAction.en == item) {

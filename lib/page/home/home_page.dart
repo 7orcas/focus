@@ -11,8 +11,6 @@ import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/service/language.dart';
 import 'package:focus/route.dart';
 
-
-
 class HomePage extends StatelessWidget {
   final Store<AppState> store;
   HomePage(this.store);
@@ -32,9 +30,9 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(lang.label(title)),
-              actions: MainMenu(context,
-                  viewModel.onChangeLanguage, viewModel.session.language)
-                  .menu,
+              actions:
+                  MainMenu(context, store, lang, viewModel.onChangeLanguage)
+                      .menu,
             ),
             body: Center(
               child: Column(
@@ -43,7 +41,9 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: GroupListWidget(viewModel, store),
                   ),
-                  Text(viewModel.lang.label('Lang') + ':' + viewModel.session.language),
+                  Text(viewModel.lang.label('Lang') +
+                      ':' +
+                      viewModel.session.language),
                   RemoveGroupsButton(viewModel),
                 ],
               ),
@@ -65,7 +65,6 @@ class AddGroupWidget extends StatefulWidget {
 
 class _AddGroupState extends State<AddGroupWidget> {
   final TextEditingController controller = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +88,6 @@ class GroupListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
 //for (GroupTile g in model.groups){
 //if (g.id==1) Util(StackTrace.current).out('GroupListWidget graphs build constains ' + g.containsGraphs().toString());
 //}
@@ -97,16 +95,18 @@ class GroupListWidget extends StatelessWidget {
     return ListView(
       children: model.groups
           .map((group) => ListTile(
-        title: Text(group.name),
-        leading: IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: () => model.onRemoveGroup(group),
-        ),
-        trailing: IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: group),
-        ),
-      ))
+                title: Text(group.name),
+                leading: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => model.onRemoveGroup(group),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () => Navigator.pushNamed(
+                      context, ROUTE_GROUP_PAGE,
+                      arguments: group),
+                ),
+              ))
           .toList(),
     );
   }

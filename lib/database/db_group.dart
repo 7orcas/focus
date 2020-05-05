@@ -63,11 +63,12 @@ class GroupDB extends FocusDB {
       return GraphTile(id_graph, list[i][DBK_GROUP], list[i]['graph'], commentsT);
     });
     Util(StackTrace.current).out('loadGroupConversation ' +
+        (graphs.length==0? ' count=0' :
         sql +
         ' count=' +
         graphs.length.toString() +
         ' 0 comm=' +
-        graphs[0].comments.length.toString());
+        graphs[0].comments.length.toString()));
 
     //Load group
     sql = 'SELECT id, name, public_key, private_key FROM ' +

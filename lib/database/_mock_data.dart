@@ -1,4 +1,5 @@
 import 'package:focus/database/_scheme.dart';
+import 'package:focus/database/_base.dart';
 
 // Focus client database setup
 
@@ -95,7 +96,8 @@ const mock_instructions = [
 ];
 
 
-class DatabaseMockData {
+class DatabaseMockData extends FocusDB {
+
   static List<String> data () {
     List<String> d = [];
 
@@ -110,4 +112,23 @@ class DatabaseMockData {
 
     return d;
   }
+
+  Future<bool> reload () async {
+    List<String> t = [
+      'DELETE FROM ' + DB_COMMENT,
+      'DELETE FROM ' + DB_GRAPH,
+      'DELETE FROM ' + DBJ_USER_GROUP,
+      'DELETE FROM ' + DB_GROUP,
+      'DELETE FROM ' + DB_USER,
+    ];
+    List<String> d = data();
+    t.addAll(d);
+
+    await connectDatabase();
+    for (String s in t){
+      await database.execute(s);
+    }
+    return Future.value(true);
+  }
+
 }

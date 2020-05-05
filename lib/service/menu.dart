@@ -54,11 +54,10 @@ class Menu<T> {
 
   Menu (this._lang);
 
-  final String _lang;
+  final Language _lang;
 
   //Return list of menu items
   List<PopupMenuEntry<T>> toList(List<MenuItem> items) {
-    Language lang = Language(_lang);
     List<PopupMenuEntry<T>> list = [];
     items.forEach((item) {
       if (item.isDivider()) {
@@ -67,7 +66,7 @@ class Menu<T> {
         //Get menu item attributes
         List<Widget> w = [
           Text(
-            lang.label(item.label),
+            _lang.label(item.label),
             style: TextStyle(color: item.labelColor),
           )
         ];
