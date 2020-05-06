@@ -41,7 +41,7 @@ void main() {
       MenuItem(value: TestAction.A1, label: 'logout'),
     ];
 
-    Menu m = Menu<TestAction>(LANG_ENGLISH);
+    Menu m = Menu<TestAction>(Language(LANG_ENGLISH));
     List<PopupMenuEntry<TestAction>> l = m.toList(items);
     expect(l.length == 3, true);
     expect(l[1] is PopupMenuDivider, true);

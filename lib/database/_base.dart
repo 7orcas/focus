@@ -34,11 +34,9 @@ class FocusDB {
         for (String q in DatabaseScheme().scheme()){
           db.execute(q);
         }
-
         for (String q in DatabaseMockData.data()){
           db.execute(q);
         }
-
       },
       version: 1,
     );

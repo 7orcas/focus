@@ -27,7 +27,7 @@ void main() {
 class MockWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MainMenu mm = MainMenu(context, null, _lang);
+    MainMenu mm = MainMenu(context, null, Language(LANG_ENGLISH), null);
     return MaterialApp(
       title: 'Flutter Demo',
       home: Scaffold(

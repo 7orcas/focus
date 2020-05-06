@@ -27,7 +27,7 @@ const List<String> _keys = [
 
 const List<String> _instructions = [
   '''
-  CREATE TABLE DB_USER (
+  CREATE TABLE IF NOT EXISTS DB_USER (
     id INTEGER NOT NULL PRIMARY KEY,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     encoded TEXT,
@@ -38,7 +38,7 @@ const List<String> _instructions = [
     )''',
 
   '''
-  CREATE TABLE DB_GROUP (
+  CREATE TABLE IF NOT EXISTS DB_GROUP (
     id INTEGER PRIMARY KEY,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     encoded TEXT,
@@ -48,7 +48,7 @@ const List<String> _instructions = [
     )''',
 
   '''
-  CREATE TABLE DBJ_USER_GROUP (
+  CREATE TABLE IF NOT EXISTS DBJ_USER_GROUP (
     id INTEGER PRIMARY KEY,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     encoded TEXT,
@@ -67,7 +67,7 @@ const List<String> _instructions = [
 
 
   '''
-  CREATE TABLE DB_GRAPH (
+  CREATE TABLE IF NOT EXISTS DB_GRAPH (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     encoded TEXT,
@@ -80,7 +80,7 @@ const List<String> _instructions = [
     )''',
 
   '''
-  CREATE TABLE DB_COMMENT (
+  CREATE TABLE IF NOT EXISTS DB_COMMENT (
     id INTEGER PRIMARY KEY,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     encoded TEXT,
@@ -111,13 +111,13 @@ class DatabaseScheme {
     List<String> x = [];
 
     for (String sql in _instructions){
-      for (int x = 0; x < [tables].length; x += 2) {
+      for (int x = 0; x < tables.length; x += 2) {
         String code = tables[x];
         String name = tables[x+1];
         sql = sql.replaceAll(code, name);
       }
-      x.add(sql);
-      for (int x = 0; x < [_keys].length; x += 2) {
+
+      for (int x = 0; x < _keys.length; x += 2) {
         String code = _keys[x];
         String name = _keys[x+1];
         sql = sql.replaceAll(code, name);
