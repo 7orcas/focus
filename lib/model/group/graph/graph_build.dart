@@ -21,7 +21,6 @@ class GraphBuild {
     return !_stop;
   }
 
-
   void start(_) async {
     double x = _count.ceilToDouble();
     Util(StackTrace.current).out('graph number ' + x.toString());
