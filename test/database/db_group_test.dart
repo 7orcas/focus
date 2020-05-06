@@ -2,6 +2,7 @@ import 'package:test/test.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import './base.dart';
 import 'package:focus/database/_scheme.dart';
 import 'package:focus/database/_mock_data.dart';
 import 'package:focus/database/db_group.dart';
@@ -13,24 +14,11 @@ import 'package:focus/model/group/group_conversation.dart';
  */
 
 void main() {
-  sqfliteFfiInit();
-  var db;
+  DB_TEST dbx = DB_TEST();
   GroupDB gdb;
 
   Future<GroupDB> setup() async {
-    db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-
-    for (String q in DatabaseScheme().scheme()) {
-      db.execute(q);
-    }
-    for (String q in DatabaseMockData.data()) {
-      db.execute(q);
-    }
-
-    gdb = GroupDB();
-    gdb.setMemoryDatabase(db);
-
-    return gdb;
+    return await dbx.setup(GroupDB());
   }
 
   test('Load group tiles', () async {
@@ -41,7 +29,7 @@ void main() {
 
   test('Load first group conversation', () async {
     gdb ??= await setup();
-    var count = Sqflite.firstIntValue(await db.rawQuery(
+    var count = Sqflite.firstIntValue(await dbx.db.rawQuery(
         'SELECT COUNT (*) AS x FROM ' +
             DB_GRAPH +
             ' WHERE ' +
