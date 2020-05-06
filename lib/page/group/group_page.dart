@@ -11,9 +11,9 @@ import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
+import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/group/graph_conversation.dart';
-
 
 class GroupPage extends StatelessWidget {
   final GroupTile _group;
@@ -33,9 +33,11 @@ class GroupPage extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<GroupConversation> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: Text(viewModel.label('Loading'))); //ToDo graphic
+                  return Center(
+                      child: Text(viewModel.label('Loading'))); //ToDo graphic
                 } else if (snapshot.hasError)
-                  return Center(child: Text('Error: ${snapshot.error}')); //ToDo route
+                  return Center(
+                      child: Text('Error: ${snapshot.error}')); //ToDo route
                 else {
                   GroupConversation c = snapshot.data;
                   if (!c.loadedFromStore) {
@@ -54,7 +56,6 @@ class GroupPage extends StatelessWidget {
                       floatingActionButton: new FloatingActionButton(
                         onPressed: () {
                           viewModel.onAddGraph(_group);
-
                         },
                         child: new Icon(Icons.add),
                       ),
@@ -66,7 +67,7 @@ class GroupPage extends StatelessWidget {
   }
 }
 
-class _ViewModel extends BaseViewModel{
+class _ViewModel extends BaseViewModel {
   final Function(GroupTile group) onAddGraph;
   final Function(GraphTile graph) onDeleteGraph;
 
@@ -82,6 +83,10 @@ class _ViewModel extends BaseViewModel{
     }
 
     _onAddGraph(GroupTile group) {
+      Util(StackTrace.current).out('_onAddGraph');
+      //ToDo needs more validation to test if graph is running
+      GraphBuild.addGraphToStore(store);
+      Util(StackTrace.current).out('graph added to store');
       Navigator.pushNamed(context, ROUTE_NEW_GRAPH_PAGE, arguments: group);
     }
 

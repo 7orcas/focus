@@ -1,6 +1,4 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/src/exception.dart';
-import 'package:flutter/material.dart';
 
 class FocusError {
   String _message;
@@ -8,7 +6,6 @@ class FocusError {
 
   FocusError({message, error}) {
     assert(message != null);
-    assert(error != null);
     this._message = message;
     this._error = error;
   }
