@@ -2,6 +2,8 @@ import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart';
+import 'package:charts_common/src/chart/cartesian/axis/numeric_tick_provider.dart';
+import 'package:charts_common/src/chart/cartesian/axis/end_points_tick_provider.dart';
 import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/service/error.dart';
@@ -50,8 +52,22 @@ class GraphPage extends StatelessWidget {
                       children: <Widget>[
                         _ControlButtonsWidget(viewModel, graphBuild),
 //                        Text(graphBuild.numbers.toString()),
-                        Expanded(child: LineChart(graphBuild.chartData())),
+                        Expanded(
+                            child: LineChart(graphBuild.chartData(),
+                                primaryMeasureAxis:
+                                NumericAxisSpec(renderSpec: SmallTickRendererSpec(),
+                                    showAxisLine: true,
+                                    tickProviderSpec: TickProviderSpec(),
 
+                                )
+
+                    ,
+
+                                domainAxis: OrdinalAxisSpec(
+                                    // Make sure that we draw the domain axis line.
+                                    showAxisLine: true,
+                                    // But don't draw anything else.
+                                    renderSpec: NoneRenderSpec()))),
                       ],
                     );
                   }),
@@ -100,6 +116,61 @@ class _ControlButtonsWidget extends StatelessWidget {
     return Row(children: actions);
   }
 }
+
+class TickProviderSpec implements NumericTickProviderSpec {
+  final bool zeroBound = true;
+  final bool dataIsInWholeNumbers = false;
+  final int desiredTickCount = 4;
+  final int desiredMinTickCount = 4;
+  final int desiredMaxTickCount = 4;
+
+  @override
+  NumericTickProvider createTickProvider(ChartContext context) {
+    final provider = NumericTickProvider();
+//    provider.getTicks(context: null, graphicsFactory: null, scale: null, formatter: null, formatterValueCache: null, tickDrawStrategy: null, orientation: null)
+//    provider.createTicks([0,0.25,0.5,0.75,1], context: context,
+//        graphicsFactory: provider.getTicks().graphicsFactory,
+//        scale: null,
+//        formatter: null,
+//        formatterValueCache: null,
+//        tickDrawStrategy: null
+//    );
+    if (zeroBound != null) {
+      provider.zeroBound = zeroBound;
+    }
+    if (dataIsInWholeNumbers != null) {
+      provider.dataIsInWholeNumbers = dataIsInWholeNumbers;
+    }
+
+    if (desiredMinTickCount != null ||
+        desiredMaxTickCount != null ||
+        desiredTickCount != null) {
+      provider.setTickCount(desiredMaxTickCount ?? desiredTickCount ?? 10,
+          desiredMinTickCount ?? desiredTickCount ?? 2);
+    }
+    return provider;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is BasicNumericTickProviderSpec &&
+          zeroBound == other.zeroBound &&
+          dataIsInWholeNumbers == other.dataIsInWholeNumbers &&
+          desiredTickCount == other.desiredTickCount &&
+          desiredMinTickCount == other.desiredMinTickCount &&
+          desiredMaxTickCount == other.desiredMaxTickCount;
+
+  @override
+  int get hashCode {
+    int hashcode = zeroBound?.hashCode ?? 0;
+    hashcode = (hashcode * 37) + dataIsInWholeNumbers?.hashCode ?? 0;
+    hashcode = (hashcode * 37) + desiredTickCount?.hashCode ?? 0;
+    hashcode = (hashcode * 37) + desiredMinTickCount?.hashCode ?? 0;
+    hashcode = (hashcode * 37) + desiredMaxTickCount?.hashCode ?? 0;
+    return hashcode;
+  }
+}
+
 
 class _ViewModel {
   final Store<AppState> store;

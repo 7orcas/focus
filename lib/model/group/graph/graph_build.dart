@@ -52,8 +52,12 @@ class GraphBuild {
     }
 
     if (status == RunStatus.STARTED){
-      int z = _random.nextInt(10);
-      double x = z.toDouble() / 10;
+      int z = 0;
+      for (int i = 0; i < 200; i++){
+        int y = _random.nextInt(2);
+        z += y;
+      }
+      double x = z.toDouble() / 200;
       Util(StackTrace.current).out('graph number ' + x.toString());
       numbers.add(x);
       _points.add(RngPoint(_count, x));
