@@ -5,6 +5,8 @@ import 'package:focus/model/app/app.dart';
 import 'package:focus/model/app/app_reducers.dart';
 import 'package:focus/model/app/app_middleware.dart';
 import 'package:focus/route.dart';
+import 'package:focus/page/graph/graph_page.dart';
+import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/home/home_page.dart';
 
 //import 'package:redux_dev_tools/redux_dev_tools.dart';  //TODO delete dev tool
@@ -37,8 +39,13 @@ class FocusApp extends StatelessWidget {
         onGenerateRoute: handleRoute,
         home: StoreBuilder<AppState>(
             onInit: (store) => store.dispatch(AppState.getLoadAppAction()),
-            builder: (BuildContext context, Store<AppState> store) =>
-                HomePage(store)),
+            builder: (BuildContext context, Store<AppState> store)
+            {
+//                HomePage(store)
+              GraphBuild.addGraphToStore(store);
+              return GraphPage(null);
+            }
+        ),
       ),
     );
   }

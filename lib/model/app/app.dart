@@ -24,7 +24,7 @@ class AppState {
 
   GraphBuild get graph => this._graph;
   bool isGraphBlocRunning () {
-    return this._graph != null && this._graph.isRunning();
+    return this._graph != null && this._graph.isActive;
   }
 
   set graph (GraphBuild b){
