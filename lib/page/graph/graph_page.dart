@@ -49,7 +49,7 @@ class GraphPage extends StatelessWidget {
                     return Column(
                       children: <Widget>[
                         _ControlButtonsWidget(viewModel, graphBuild),
-                        Text(graphBuild.numbers.toString()),
+//                        Text(graphBuild.numbers.toString()),
                         Expanded(child: LineChart(graphBuild.chartData())),
 
                       ],
