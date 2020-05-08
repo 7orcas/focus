@@ -14,10 +14,10 @@ import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
 
 class GraphPage extends StatelessWidget {
-  final GroupTile _group;
-  GraphPage(this._group) {
-    Util(StackTrace.current).out('GraphPage constructor graphs group ' +
-        (_group == null ? 'null' : 'not null'));
+  final int _id_group;
+  GraphPage(this._id_group) {
+    Util(StackTrace.current).out('GraphPage constructor graphs _id_group=' +
+        (_id_group == null ? 'null' : _id_group.toString()));
   }
 
   @override
@@ -50,8 +50,8 @@ class GraphPage extends StatelessWidget {
 
                     return Column(
                       children: <Widget>[
-                        _ControlButtonsWidget(viewModel, graphBuild),
-//                        Text(graphBuild.numbers.toString()),
+                        _ControlButtonsWidget(viewModel, _id_group, graphBuild),
+                        Text(graphBuild.timer()),
                         Expanded(
                             child: LineChart(graphBuild.chartData(),
                                 primaryMeasureAxis:
@@ -63,11 +63,13 @@ class GraphPage extends StatelessWidget {
 
                     ,
 
-                                domainAxis: OrdinalAxisSpec(
-                                    // Make sure that we draw the domain axis line.
-                                    showAxisLine: true,
-                                    // But don't draw anything else.
-                                    renderSpec: NoneRenderSpec()))),
+//                                domainAxis: OrdinalAxisSpec(
+//                                    // Make sure that we draw the domain axis line.
+//                                    showAxisLine: true,
+//                                    // But don't draw anything else.
+//                                    renderSpec: NoneRenderSpec())
+                            )
+                        ),
                       ],
                     );
                   }),
@@ -78,37 +80,47 @@ class GraphPage extends StatelessWidget {
 }
 
 class _ControlButtonsWidget extends StatelessWidget {
-  final GraphBuild graphBuild;
-  final _ViewModel model;
-  _ControlButtonsWidget(this.model, this.graphBuild);
+  final int _id_group;
+  final GraphBuild _graphBuild;
+  final _ViewModel _viewModel;
+  _ControlButtonsWidget(this._viewModel, this._id_group, this._graphBuild);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> actions = [];
 
-    if (graphBuild.isWaiting || graphBuild.isPaused) {
+    if (_graphBuild.isWaiting || _graphBuild.isPaused) {
       actions.add(IconButton(
         icon: Icon(Icons.play_circle_filled),
         onPressed: () {
-          graphBuild.start();
+          _graphBuild.start();
         },
       ));
     }
 
-    if (graphBuild.isRunning) {
+    if (_graphBuild.isRunning) {
       actions.add(IconButton(
         icon: Icon(Icons.pause_circle_filled),
         onPressed: () {
-          graphBuild.pause();
+          _graphBuild.pause();
         },
       ));
     }
 
-    if (!graphBuild.isStopped) {
+    if (!_graphBuild.isStopped) {
       actions.add(IconButton(
         icon: Icon(Icons.stop),
         onPressed: () {
-          graphBuild.stop();
+          _graphBuild.stop();
+        },
+      ));
+    }
+
+    if (_graphBuild.isStopped) {
+      actions.add(IconButton(
+        icon: Icon(Icons.save),
+        onPressed: () {
+          _viewModel.onAddGraph(_id_group, _graphBuild);
         },
       ));
     }
@@ -175,7 +187,7 @@ class TickProviderSpec implements NumericTickProviderSpec {
 class _ViewModel {
   final Store<AppState> store;
   final List<GroupTile> groups;
-  final Function(GroupTile group, GraphTile graph) onAddGraph;
+  final Function(int id_group, GraphBuild graph) onAddGraph;
   final Function(GraphTile graph) onDeleteGraph;
 
   _ViewModel({
@@ -193,9 +205,9 @@ class _ViewModel {
       Navigator.pushNamed(context, ROUTE_ERROR_PAGE, arguments: e);
     }
 
-    _onAddGraph(GroupTile group, GraphTile graph) {
+    _onAddGraph(int id_group, GraphBuild graph) {
       Util(StackTrace.current).out('_onAddGraph');
-      store.dispatch(AddGraphAction(group, graph));
+      store.dispatch(AddGraphAction(id_group, graph));
     }
 
     _onDeleteGraph(GraphTile graph) {

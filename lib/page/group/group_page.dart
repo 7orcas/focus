@@ -35,33 +35,35 @@ class GroupPage extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                       child: Text(viewModel.label('Loading'))); //ToDo graphic
-                } else if (snapshot.hasError)
+                }
+
+                if (snapshot.hasError)
                   return Center(
                       child: Text('Error: ${snapshot.error}')); //ToDo route
-                else {
-                  GroupConversation c = snapshot.data;
-                  if (!c.loadedFromStore) {
-                    viewModel.store.dispatch(AddGraphsAction(c.toGroupTile()));
-                  }
-                  return MaterialApp(
-                    home: Scaffold(
-                      appBar: new AppBar(
-                        title: new Text(viewModel.label('Group')),
-                      ),
-                      body: ListView.builder(
-                        itemBuilder: (BuildContext context, int index) =>
-                            GraphItem(c.graphs[index], viewModel.onDeleteGraph),
-                        itemCount: c.graphs.length,
-                      ),
-                      floatingActionButton: new FloatingActionButton(
-                        onPressed: () {
-                          viewModel.onAddGraph(_group);
-                        },
-                        child: new Icon(Icons.add),
-                      ),
+
+                GroupConversation c = snapshot.data;
+//                if (!c.loadedFromStore) {
+//                  viewModel.store.dispatch(AddGraphsAction(c.toGroupTile()));
+//                }
+
+                return MaterialApp(
+                  home: Scaffold(
+                    appBar: new AppBar(
+                      title: new Text(viewModel.label('Group')),
                     ),
-                  );
-                }
+                    body: ListView.builder(
+                      itemBuilder: (BuildContext context, int index) =>
+                          GraphItem(c.graphs[index], viewModel.onDeleteGraph),
+                      itemCount: c.graphs.length,
+                    ),
+                    floatingActionButton: new FloatingActionButton(
+                      onPressed: () {
+                        viewModel.onAddGraph(_group);
+                      },
+                      child: new Icon(Icons.add),
+                    ),
+                  ),
+                );
               });
         });
   }
@@ -87,7 +89,7 @@ class _ViewModel extends BaseViewModel {
       //ToDo needs more validation to test if graph is running
       GraphBuild.addGraphToStore(store);
       Util(StackTrace.current).out('graph added to store');
-      Navigator.pushNamed(context, ROUTE_NEW_GRAPH_PAGE, arguments: group);
+      Navigator.pushNamed(context, ROUTE_NEW_GRAPH_PAGE, arguments: group.id);
     }
 
     _onDeleteGraph(GraphTile graph) {

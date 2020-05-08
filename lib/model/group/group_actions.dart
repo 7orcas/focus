@@ -11,13 +11,6 @@ class AddGroupAction {
   }
 }
 
-class AddGraphsAction {
-  final GroupTile group;
-  AddGraphsAction(this.group){
-    Util(StackTrace.current).out('AddGraphsAction constructor');
-  }
-}
-
 class RemoveGroupAction {
   final GroupTile group;
   RemoveGroupAction(this.group);

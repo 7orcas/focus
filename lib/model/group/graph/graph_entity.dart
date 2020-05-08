@@ -9,6 +9,10 @@ class GraphEntity {
 
   GraphEntity(this.id, this.id_group, this.graph, this.comments);
 
+  GraphEntity.build(this.id_group, this.graph)
+      : id = null,
+        comments = List<CommentEntity>();
+
   Map<String, dynamic> toMap() => {
         'id': id,
         DBK_GROUP: id_group,

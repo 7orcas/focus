@@ -39,13 +39,11 @@ class FocusApp extends StatelessWidget {
         onGenerateRoute: handleRoute,
         home: StoreBuilder<AppState>(
             onInit: (store) => store.dispatch(AppState.getLoadAppAction()),
-            builder: (BuildContext context, Store<AppState> store)
-            {
-//                HomePage(store)
-              GraphBuild.addGraphToStore(store);
-              return GraphPage(null);
-            }
-        ),
+            builder: (BuildContext context, Store<AppState> store) {
+              return HomePage(store);
+//              GraphBuild.addGraphToStore(store);
+//              return GraphPage(null);
+            }),
       ),
     );
   }
