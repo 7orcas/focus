@@ -1,12 +1,10 @@
+import 'package:focus/model/group/group_tile.dart';
 import 'package:test/test.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import './base.dart';
 import 'package:focus/database/_scheme.dart';
 import 'package:focus/database/_mock_data.dart';
 import 'package:focus/database/db_group.dart';
-import 'package:focus/model/group/group_conversation.dart';
 
 /*
   Unit testing of database functions
@@ -23,7 +21,7 @@ void main() {
 
   test('Load group tiles', () async {
     gdb ??= await setup();
-    GroupConversation c = await gdb.loadGroupConversation(1);
+    GroupTile c = await gdb.loadGroupConversation(1);
     expect(await c.graphs.length, mock_insertGroup.length);
   });
 
@@ -35,7 +33,7 @@ void main() {
             ' WHERE ' +
             DBK_GROUP +
             ' = 1'));
-    GroupConversation l = await gdb.loadGroupConversation(1);
-    expect(await l.graphs.length, count);
+    GroupTile t = await gdb.loadGroupConversation(1);
+    expect(await t.graphs.length, count);
   });
 }

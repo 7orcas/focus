@@ -6,9 +6,7 @@ import 'package:focus/service/util.dart';
 import 'package:focus/service/error.dart';
 import 'package:focus/model/app/app.dart';
 import 'package:focus/model/group/group_middleware.dart';
-import 'package:focus/model/group/group_conversation.dart';
 import 'package:focus/model/group/group_tile.dart';
-import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
@@ -28,10 +26,11 @@ class GroupPage extends StatelessWidget {
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(context, store),
         builder: (BuildContext context, _ViewModel viewModel) {
-          return FutureBuilder<GroupConversation>(
+
+          return FutureBuilder<GroupTile>(
               future: getGroupConversation(viewModel.store, _group.id),
               builder: (BuildContext context,
-                  AsyncSnapshot<GroupConversation> snapshot) {
+                  AsyncSnapshot<GroupTile> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                       child: Text(viewModel.label('Loading'))); //ToDo graphic
@@ -41,7 +40,7 @@ class GroupPage extends StatelessWidget {
                   return Center(
                       child: Text('Error: ${snapshot.error}')); //ToDo route
 
-                GroupConversation c = snapshot.data;
+                GroupTile c = snapshot.data;
 //                if (!c.loadedFromStore) {
 //                  viewModel.store.dispatch(AddGraphsAction(c.toGroupTile()));
 //                }

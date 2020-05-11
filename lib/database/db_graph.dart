@@ -20,7 +20,7 @@ class GraphDB extends FocusDB {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    Util(StackTrace.current).out('saveGraph id=' + id.toString());
+    Util(StackTrace.current).out('saveGraph saved id=' + id.toString());
     return graph.copyWith(id);
   }
 

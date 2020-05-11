@@ -1,9 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart';
-import 'package:charts_common/src/chart/cartesian/axis/numeric_tick_provider.dart';
-import 'package:charts_common/src/chart/cartesian/axis/end_points_tick_provider.dart';
 import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/service/error.dart';
@@ -12,6 +9,7 @@ import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
+import 'package:focus/page/graph/graph_chart.dart';
 
 class GraphPage extends StatelessWidget {
   final int _id_group;
@@ -27,8 +25,13 @@ class GraphPage extends StatelessWidget {
         builder: (BuildContext context, _ViewModel viewModel) {
           GraphBuild graph = viewModel.store.state.graph;
 
-          Util(StackTrace.current)
-              .out('graph=' + (graph != null ? 'NULL' : 'OK'));
+
+          Util(StackTrace.current).out('graph=' + (graph != null ? 'OK' : 'Null'));
+          Util(StackTrace.current).out('graph is running=' + viewModel.store.state.isGraphBlocRunning().toString());
+
+          if (graph == null){
+            return MaterialApp(home: Container());
+          }
 
           return MaterialApp(
             home: Scaffold(
@@ -53,23 +56,9 @@ class GraphPage extends StatelessWidget {
                         _ControlButtonsWidget(viewModel, _id_group, graphBuild),
                         Text(graphBuild.timer()),
                         Expanded(
-                            child: LineChart(graphBuild.chartData(),
-                                primaryMeasureAxis:
-                                NumericAxisSpec(renderSpec: SmallTickRendererSpec(),
-                                    showAxisLine: true,
-                                    tickProviderSpec: TickProviderSpec(),
-
-                                )
-
-                    ,
-
-//                                domainAxis: OrdinalAxisSpec(
-//                                    // Make sure that we draw the domain axis line.
-//                                    showAxisLine: true,
-//                                    // But don't draw anything else.
-//                                    renderSpec: NoneRenderSpec())
-                            )
-                        ),
+                            child: FocusChart(
+                          graphBuild.chartData()),
+                        )
                       ],
                     );
                   }),
@@ -129,60 +118,6 @@ class _ControlButtonsWidget extends StatelessWidget {
   }
 }
 
-class TickProviderSpec implements NumericTickProviderSpec {
-  final bool zeroBound = true;
-  final bool dataIsInWholeNumbers = false;
-  final int desiredTickCount = 4;
-  final int desiredMinTickCount = 4;
-  final int desiredMaxTickCount = 4;
-
-  @override
-  NumericTickProvider createTickProvider(ChartContext context) {
-    final provider = NumericTickProvider();
-//    provider.getTicks(context: null, graphicsFactory: null, scale: null, formatter: null, formatterValueCache: null, tickDrawStrategy: null, orientation: null)
-//    provider.createTicks([0,0.25,0.5,0.75,1], context: context,
-//        graphicsFactory: provider.getTicks().graphicsFactory,
-//        scale: null,
-//        formatter: null,
-//        formatterValueCache: null,
-//        tickDrawStrategy: null
-//    );
-    if (zeroBound != null) {
-      provider.zeroBound = zeroBound;
-    }
-    if (dataIsInWholeNumbers != null) {
-      provider.dataIsInWholeNumbers = dataIsInWholeNumbers;
-    }
-
-    if (desiredMinTickCount != null ||
-        desiredMaxTickCount != null ||
-        desiredTickCount != null) {
-      provider.setTickCount(desiredMaxTickCount ?? desiredTickCount ?? 10,
-          desiredMinTickCount ?? desiredTickCount ?? 2);
-    }
-    return provider;
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      other is BasicNumericTickProviderSpec &&
-          zeroBound == other.zeroBound &&
-          dataIsInWholeNumbers == other.dataIsInWholeNumbers &&
-          desiredTickCount == other.desiredTickCount &&
-          desiredMinTickCount == other.desiredMinTickCount &&
-          desiredMaxTickCount == other.desiredMaxTickCount;
-
-  @override
-  int get hashCode {
-    int hashcode = zeroBound?.hashCode ?? 0;
-    hashcode = (hashcode * 37) + dataIsInWholeNumbers?.hashCode ?? 0;
-    hashcode = (hashcode * 37) + desiredTickCount?.hashCode ?? 0;
-    hashcode = (hashcode * 37) + desiredMinTickCount?.hashCode ?? 0;
-    hashcode = (hashcode * 37) + desiredMaxTickCount?.hashCode ?? 0;
-    return hashcode;
-  }
-}
-
 
 class _ViewModel {
   final Store<AppState> store;
@@ -199,7 +134,7 @@ class _ViewModel {
 
   factory _ViewModel.create(BuildContext context, Store<AppState> store) {
     Util(StackTrace.current).out('graph view create, store.state.graph=' +
-        (store.state.graph != null ? 'NULL' : 'OK'));
+        (store.state.graph != null ? 'OK' : 'Null'));
 
     _onError(FocusError e) {
       Navigator.pushNamed(context, ROUTE_ERROR_PAGE, arguments: e);
@@ -208,6 +143,8 @@ class _ViewModel {
     _onAddGraph(int id_group, GraphBuild graph) {
       Util(StackTrace.current).out('_onAddGraph');
       store.dispatch(AddGraphAction(id_group, graph));
+      GroupTile gt = store.state.findGroupTile(id_group);
+      Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: gt);
     }
 
     _onDeleteGraph(GraphTile graph) {

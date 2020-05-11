@@ -31,7 +31,7 @@ Route<dynamic> handleRoute(RouteSettings routeSettings) {
       childWidget = GraphPage(object);
       break;
 
-    case ROUTE_GROUP_PAGE:
+    case ROUTE_ABOUT_PAGE:
       childWidget = AboutPage();
       break;
   }

@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:focus/model/group/graph/graph_tile.dart';
+import 'package:focus/model/group/group_tile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:focus/database/_base.dart';
 import 'package:focus/database/_scheme.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/model/group/comment/comment_entity.dart';
-import 'package:focus/model/group/group_conversation.dart';
 import 'package:focus/model/group/group_entity.dart';
-import 'package:focus/model/group/graph/graph_entity.dart';
 import 'package:focus/service/util.dart';
 
 // Database Methods
@@ -24,7 +23,7 @@ class GroupDB extends FocusDB {
     return listX;
   }
 
-  Future<GroupConversation> loadGroupConversation(int id) async {
+  Future<GroupTile> loadGroupConversation(int id) async {
     await connectDatabase();
 
     //Load comments
@@ -40,6 +39,7 @@ class GroupDB extends FocusDB {
       return CommentEntity(list[i]['id'], list[i][DBK_GROUP],
           list[i][DBK_GRAPH], list[i][DBK_USER], list[i]['comment']);
     });
+
     Util(StackTrace.current).out('loadGroupConversation ' +
         sql +
         ' count=' +
@@ -57,18 +57,23 @@ class GroupDB extends FocusDB {
 
     List<GraphTile> graphs = List.generate(list.length, (i) {
       int id_graph = list[i]['id'];
-      List<CommentEntity> commentsE = comments.where((c) => c.id_graph == id_graph).toList();
-      List<CommentTile> commentsT = commentsE.map((e) => CommentTile.entity(e)).toList();
+      List<CommentEntity> commentsE =
+          comments.where((c) => c.id_graph == id_graph).toList();
+      List<CommentTile> commentsT =
+          commentsE.map((e) => CommentTile.entity(e)).toList();
 
-      return GraphTile(id_graph, list[i][DBK_GROUP], list[i]['graph'], commentsT);
+      return GraphTile(
+          id_graph, list[i][DBK_GROUP], list[i]['graph'], commentsT);
     });
+
     Util(StackTrace.current).out('loadGroupConversation ' +
-        (graphs.length==0? ' count=0' :
-        sql +
-        ' count=' +
-        graphs.length.toString() +
-        ' 0 comm=' +
-        graphs[0].comments.length.toString()));
+        (graphs.length == 0
+            ? ' count=0'
+            : sql +
+                ' count=' +
+                graphs.length.toString() +
+                ' 0 comm=' +
+                graphs[0].comments.length.toString()));
 
     //Load group
     sql = 'SELECT id, name, public_key, private_key FROM ' +
@@ -77,9 +82,13 @@ class GroupDB extends FocusDB {
         id.toString();
     result = await database.rawQuery(sql);
     list = result.toList();
-    List<GroupConversation> groups = List.generate(list.length, (i) {
-      return GroupConversation.db(list[i]['id'], list[i]['name'],
-          list[i]['public_key'], list[i]['private_key'], graphs);
+    List<GroupTile> groups = List.generate(list.length, (i) {
+      return GroupTile(
+          id: list[i]['id'],
+          name: list[i]['name'],
+          publicKey: list[i]['public_key'],
+          privateKey: list[i]['private_key'],
+          graphs: graphs);
     });
     Util(StackTrace.current).out('loadGroupConversation ' + sql);
 
@@ -117,5 +126,4 @@ class GroupDB extends FocusDB {
     Util(StackTrace.current)
         .out('removeGroup name=' + group.name + ' id=' + id.toString());
   }
-
 }

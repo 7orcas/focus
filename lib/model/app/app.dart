@@ -48,4 +48,9 @@ class AppState {
     return null;
   }
 
+  void setGroupTile(GroupTile tile){
+    groups = groups.map((e) => e).where((t) => t.id != tile.id).toList();
+    groups.add(tile);
+  }
+
 }

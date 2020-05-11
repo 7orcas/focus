@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:focus/model/group/graph/graph_entity.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/model/app/app.dart';
 import 'package:focus/service/util.dart';
 import 'package:charts_flutter/flutter.dart';
-import 'package:focus/service/error.dart';
 
 enum RunStatus { WAIT, RUNNING, PAUSED, STOPPED }
 
@@ -16,6 +14,9 @@ class GraphBuild {
   int _count = 0;
   final _random = new Random();
   ClockTimer _timer;
+
+  final _controller = StreamController<GraphBuild>();
+  Stream<GraphBuild> get stream => _controller.stream;
 
   GraphBuild() {
     _timer = ClockTimer(() {_controller.sink.add(this);});
@@ -80,6 +81,10 @@ class GraphBuild {
         .then(_startRun); //ToDo put in session parameters
   }
 
+  List<Series<RngPoint, int>> chartData() {
+    return _getChartDataX(_points);
+  }
+
   String toList(){
     StringBuffer b = StringBuffer();
     for (int i=0;i<numbers.length;i++){
@@ -88,21 +93,34 @@ class GraphBuild {
     return b.toString();
   }
 
+  static List<double> fromList(String list){
+    List<double> numbers = [];
+    list.split(',').forEach((s) {
+      numbers.add(double.parse(s));
+    });
+    return numbers;
+  }
 
-  List<Series<RngPoint, int>> chartData() {
+
+  static List<Series<RngPoint, int>> getChartData(List<double> numbers){
+    List points = List<RngPoint>();
+    for (int i=0;i<numbers.length;i++){
+      points.add(RngPoint(i, numbers[i]));
+    }
+    return _getChartDataX(points);
+  }
+
+  static List<Series<RngPoint, int>> _getChartDataX(List<RngPoint> points){
     return [
       new Series<RngPoint, int>(
         id: 'RNG',
         colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
         domainFn: (RngPoint p, _) => p.point,
         measureFn: (RngPoint p, _) => p.value,
-        data: _points,
+        data: points,
       )
     ];
   }
-
-  final _controller = StreamController<GraphBuild>();
-  Stream<GraphBuild> get stream => _controller.stream;
 
   static addGraphToStore(Store<AppState> store) async {
     if (store.state.isGraphBlocRunning()) {

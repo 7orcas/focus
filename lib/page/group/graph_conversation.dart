@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
+import 'package:focus/model/group/graph/graph_build.dart';
+import 'package:focus/page/graph/graph_chart.dart';
 
 class GraphItem extends StatelessWidget {
   const GraphItem(this._entry, this._onDeleteGraph);
@@ -10,7 +12,7 @@ class GraphItem extends StatelessWidget {
 
   Widget _buildTiles(GraphTile graph) {
 
-    List<StatelessWidget> comments = [Graph('model of graph')];
+    List<StatelessWidget> comments = [Graph(graph.graph)];
     comments.addAll(_entry.comments.map((c) => Comment(c)).toList());
 
     return ExpansionTile(
@@ -21,7 +23,7 @@ class GraphItem extends StatelessWidget {
           width: 100,
           child: Row(
             children: <Widget>[
-              Text(graph.graph),
+              Text(graph.graph.substring(0, 7)), //ToDo delete
               IconButton(icon: Icon(Icons.delete), onPressed: ()=>
                   _onDeleteGraph (graph),),
               Spacer(),
@@ -50,13 +52,17 @@ class Graph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Text(
-        _graph,
-        style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+    return SizedBox(
+      width: 200.0,
+      height: 200.0,
+      child: FocusChart(
+          GraphBuild.getChartData(GraphBuild.fromList(_graph != null? _graph : '0.0,1.0'),
+
       ),
+                ),
     );
+
+
   }
 }
 
