@@ -13,7 +13,7 @@ class DB_TEST {
 
     db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
 
-    for (String q in DatabaseScheme().scheme()) {
+    for (String q in DatabaseScheme.scheme()) {
       db.execute(q);
     }
     for (String q in DatabaseMockData.data()) {

@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:focus/service/language.dart';
 
+const int ID_USER_ME = 1;
+
+
 class Session {
   String _langCode;
   Language _language;

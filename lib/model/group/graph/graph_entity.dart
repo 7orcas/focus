@@ -1,5 +1,5 @@
-import 'package:focus/model/group/comment/comment_entity.dart';
 import 'package:focus/database/_scheme.dart';
+import 'package:focus/model/group/comment/comment_entity.dart';
 
 class GraphEntity {
   final int id;

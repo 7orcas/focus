@@ -15,8 +15,8 @@ void appMiddleware(
   Util(StackTrace.current).out('appMiddleware action=' + action.runtimeType.toString());
 
   if (action is LoadAppAction) {
-    sessionStateMiddleware(store, GetLanguageAction(), next);
-    groupStateMiddleware(store, GetGroupsAction(), next);
+    groupStateMiddleware(store, GetGroupsAction(), null);
+    sessionStateMiddleware(store, GetLanguageAction(), null);
     return;
   }
 }

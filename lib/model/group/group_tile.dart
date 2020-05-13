@@ -35,6 +35,14 @@ class GroupTile {
     );
   }
 
+  GraphTile findGraphTile(int id){
+    if (!containsGraphs ()) return null;
+    for (GraphTile t in graphs){
+      if (t.id == id) return t;
+    }
+    return null;
+  }
+
   bool containsGraphs () {
     Util(StackTrace.current).out('containsGraphs :' + (graphs != null).toString());
     return graphs != null;

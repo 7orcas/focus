@@ -66,8 +66,10 @@ List<LangLabel> _en = [
   LangLabel('Error', 'Error, damn'),
   LangLabel('Group', 'Group', mi:'Group Maori', de:'Gruppe'),
   LangLabel('AddGroup', 'Add Group', mi:'Add Group Maori', de:'Add Group Deutsch'),
+  LangLabel('AddComment', 'Add a comment'),
   LangLabel('DelGroups', 'Delete Groups'),
   LangLabel('Loading', 'Please wait its loading...'),
+  LangLabel('InvalidGraph', 'Invalid Graph!'),
 
   //Unit test code
   LangLabel('UTCode1', 'Unit Test Code 1'),

@@ -22,6 +22,18 @@ class GraphTile {
         graph = e.graph,
         comments = List<CommentTile>();
 
+  CommentTile addComment(String comment, int id_user) {
+    CommentTile t = CommentTile(
+        id: null,
+        id_group: id_group,
+        id_graph: id,
+        id_user: id_user,
+        comment: comment,
+        comment_read: true);
+    comments.add(t);
+    return t;
+  }
+
   GraphEntity toEntity() {
     List<CommentEntity> list = comments.map((t) => t.toEntity()).toList();
     return GraphEntity(id, id_group, graph, list);

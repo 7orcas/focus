@@ -28,7 +28,8 @@ Future<Session> _loadFromPrefs() async {
 
 void sessionStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
-  next(action);
+
+  if (next != null) next(action);
 
   Util(StackTrace.current).out('sessionStateMiddleware action=' + action.runtimeType.toString());
 

@@ -4,7 +4,7 @@ const List<String> _filter  = [
 //  'database/',
 //  'graph',
 //  'main.dart'
-    'graph'
+//    'database'
 ];
 
 
@@ -32,6 +32,11 @@ class Util {
     }
 
     if (f) debugPrint('>> ' + message + '  [' + fileInfo + ']');
+  }
+
+  static String id (int id){
+    if (id == null) return 'null';
+    return id.toString();
   }
 
 

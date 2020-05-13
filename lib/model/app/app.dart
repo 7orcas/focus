@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/session/session.dart';
 import 'package:focus/model/group/group_tile.dart';
@@ -10,6 +13,7 @@ class AppState {
   Session session;
   List<GroupTile> groups;
   GraphBuild _graph;
+  Map<String, bool> expansionKeys = {};
 
   AppState({
     @required this.session,
@@ -52,5 +56,13 @@ class AppState {
     groups = groups.map((e) => e).where((t) => t.id != tile.id).toList();
     groups.add(tile);
   }
+
+  void setExpansionKey(String k, bool v) {
+    expansionKeys[k] = v;
+  }
+  bool isExpansionKey(String k) {
+    return expansionKeys.containsKey(k)? expansionKeys[k] : false;
+  }
+
 
 }

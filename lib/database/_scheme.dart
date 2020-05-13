@@ -1,6 +1,7 @@
 
 // Focus client database setup
 
+const String DB_SYSTEM = 'focus';
 const String DB_USER = 'user';
 const String DBK_USER = 'id_user';
 const String DB_GROUP = 'fgroup';
@@ -11,6 +12,7 @@ const String DBK_GRAPH = 'id_graph';
 const String DB_COMMENT = 'comment';
 
 const List<String> tables = [
+  'DB_SYSTEM',      DB_SYSTEM,
   'DB_USER',        DB_USER,
   'DB_GROUP',       DB_GROUP,
   'DBJ_USER_GROUP', DBJ_USER_GROUP,
@@ -25,7 +27,17 @@ const List<String> _keys = [
   'DBK_GRAPH',      DBK_GRAPH,
 ];
 
+
 const List<String> _instructions = [
+  '''
+  CREATE TABLE IF NOT EXISTS DB_SYSTEM (
+    id INTEGER NOT NULL PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    version INTEGER DEFAULT 1,
+    public_key TEXT,
+    lang TEXT DEFAULT 'en'
+    )''',
+
   '''
   CREATE TABLE IF NOT EXISTS DB_USER (
     id INTEGER NOT NULL PRIMARY KEY,
@@ -88,6 +100,7 @@ const List<String> _instructions = [
     DBK_GRAPH INTEGER,
     DBK_USER INTEGER,
     comment TEXT, 
+    comment_read INTEGER DEFAULT 0,
 
     CONSTRAINT fk_DB_GROUP
     FOREIGN KEY (DBK_GROUP)
@@ -105,9 +118,16 @@ const List<String> _instructions = [
 ];
 
 
+const String _system = "INSERT INTO " + DB_SYSTEM + "(id, version, public_key) VALUES ";
+const List<String> _insertSystem = [
+  "1, 1, 'xyz'",
+];
+const _data = [_system, _insertSystem];
+
+
 class DatabaseScheme {
 
-  List<String> scheme () {
+  static List<String> scheme () {
     List<String> x = [];
 
     for (String sql in _instructions){
@@ -126,6 +146,20 @@ class DatabaseScheme {
     }
 
     return x;
+  }
+
+  static List<String> data () {
+    List<String> d = [];
+
+    for (int x = 0; x < _data.length; x += 2){
+      String sql = _data[x];
+      List<String> data = _data[x+1];
+
+      for (int i = 0; i< data.length; i++){
+        d.add(sql + "(" + data[i] + ")");
+      }
+    }
+    return d;
   }
 
 }

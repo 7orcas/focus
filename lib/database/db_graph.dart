@@ -1,3 +1,4 @@
+import 'package:focus/model/group/comment/comment_entity.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:focus/database/_base.dart';
 import 'package:focus/database/_scheme.dart';
@@ -24,15 +25,37 @@ class GraphDB extends FocusDB {
     return graph.copyWith(id);
   }
 
+  Future<CommentEntity> saveGraphComment(CommentEntity comment) async {
+    Util(StackTrace.current).out('saveGraphComment id=' + Util.id(comment.id));
+    await connectDatabase();
+
+    // The `conflictAlgorithm` in case the same entity is inserted twice.
+    // In this case, replace any previous data.
+    int id = await database.insert(
+      DB_COMMENT,
+      comment.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    Util(StackTrace.current).out('saveGraphComment saved id=' + id.toString());
+    return comment.copyWith(id);
+  }
+
   void removeGraph(int id_graph) async {
     Util(StackTrace.current).out('removeGraph id=' + id_graph.toString());
 
     List<String> sql = [
-      'DELETE FROM ' + DB_COMMENT + ' WHERE ' + DBK_GRAPH + ' = ' + id_graph.toString(),
-      'DELETE FROM ' + DB_GRAPH + ' WHERE id = ' + id_graph.toString()];
+      'DELETE FROM ' +
+          DB_COMMENT +
+          ' WHERE ' +
+          DBK_GRAPH +
+          ' = ' +
+          id_graph.toString(),
+      'DELETE FROM ' + DB_GRAPH + ' WHERE id = ' + id_graph.toString()
+    ];
 
     await connectDatabase();
-    for (String s in sql){
+    for (String s in sql) {
       await database.execute(s).catchError((e) {
         Util(StackTrace.current).out('removeGraph ERROR:' + e.toString());
         throw e;

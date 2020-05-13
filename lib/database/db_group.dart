@@ -37,7 +37,8 @@ class GroupDB extends FocusDB {
     List<Map<String, dynamic>> list = result.toList();
     List<CommentEntity> comments = List.generate(list.length, (i) {
       return CommentEntity(list[i]['id'], list[i][DBK_GROUP],
-          list[i][DBK_GRAPH], list[i][DBK_USER], list[i]['comment']);
+          list[i][DBK_GRAPH], list[i][DBK_USER],
+          list[i]['comment'], list[i]['comment_read']);
     });
 
     Util(StackTrace.current).out('loadGroupConversation ' +

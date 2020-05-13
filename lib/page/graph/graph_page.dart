@@ -25,11 +25,12 @@ class GraphPage extends StatelessWidget {
         builder: (BuildContext context, _ViewModel viewModel) {
           GraphBuild graph = viewModel.store.state.graph;
 
+          Util(StackTrace.current)
+              .out('graph=' + (graph != null ? 'OK' : 'Null'));
+          Util(StackTrace.current).out('graph is running=' +
+              viewModel.store.state.isGraphBlocRunning().toString());
 
-          Util(StackTrace.current).out('graph=' + (graph != null ? 'OK' : 'Null'));
-          Util(StackTrace.current).out('graph is running=' + viewModel.store.state.isGraphBlocRunning().toString());
-
-          if (graph == null){
+          if (graph == null) {
             return MaterialApp(home: Container());
           }
 
@@ -55,10 +56,7 @@ class GraphPage extends StatelessWidget {
                       children: <Widget>[
                         _ControlButtonsWidget(viewModel, _id_group, graphBuild),
                         Text(graphBuild.timer()),
-                        Expanded(
-                            child: FocusChart(
-                          graphBuild.chartData()),
-                        )
+                        Expanded(child: FocusChart(graphBuild.chartData()))
                       ],
                     );
                   }),
@@ -117,7 +115,6 @@ class _ControlButtonsWidget extends StatelessWidget {
     return Row(children: actions);
   }
 }
-
 
 class _ViewModel {
   final Store<AppState> store;

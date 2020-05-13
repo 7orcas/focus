@@ -20,3 +20,11 @@ class DeleteGraphAction {
     Util(StackTrace.current).out('DeleteGraphAction constructor');
   }
 }
+
+class AddGraphCommentAction {
+  final GraphTile graph;
+  final String comment;
+  AddGraphCommentAction(this.graph, this.comment){
+    Util(StackTrace.current).out('AddGraphCommentAction constructor');
+  }
+}

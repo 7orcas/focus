@@ -1,5 +1,9 @@
 import 'package:focus/model/app/app.dart';
-import 'package:focus/page/group/graph_conversation.dart';
+import 'package:focus/model/base_entity.dart';
+import 'package:focus/model/group/comment/comment_entity.dart';
+import 'package:focus/model/group/comment/comment_tile.dart';
+import 'package:focus/model/session/session.dart';
+import 'file:///C:/Projects/focus/lib/page/graph/graph_conversation.dart';
 import 'package:focus/route.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_entity.dart';
@@ -60,6 +64,27 @@ Future<bool> _saveGraphToDB(Store<AppState> store, int id_group, GraphBuild grap
   return true;
 }
 
+Future<bool> _saveGraphCommentToDB(Store<AppState> store, GraphTile graph, String comment) async {
+  Util(StackTrace.current).out('saveToDB graph comment');
+
+  //Save to DB
+  var entity = CommentEntity(null, graph.id_group, graph.id, ID_USER_ME, comment, BaseEntity.fromBoolean(true));
+  entity = await GraphDB().saveGraphComment(entity);
+
+  //Add back to store
+  var e1 = store.state.findGroupTile(graph.id_group);
+  if (e1 == null) return false;
+  var e2 = e1.findGraphTile(graph.id);
+  e2.comments.add(CommentTile.entity(entity));
+
+  store.state.groups = store.state.groups.map((e) {
+    if (e.id == graph.id_group) return e1;
+    return e;
+  }).toList();
+
+  return true;
+}
+
 void _removeGroupFromDB(GroupTile group) async {
   Util(StackTrace.current).out('removeGroupFromDB');
   GroupDB().removeGroup(group.toEntity());
@@ -85,7 +110,8 @@ Future<bool> _removeGraphFromDB(Store<AppState> store, GraphTile graph) async {
 
 void groupStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
-  next(action);
+
+  if (next != null) next(action);
 
   Util(StackTrace.current)
       .out('groupMiddleware action=' + action.runtimeType.toString());
@@ -106,7 +132,13 @@ void groupStateMiddleware(
 
     case AddGraphAction:
       _saveGraphToDB(store, action.id_group, action.graph).catchError((e) {
-        action.error(FocusError(message: 'Cant delete graph', error : e));
+        action.error(FocusError(message: 'Cant add graph', error : e));
+      });
+      break;
+
+    case AddGraphCommentAction:
+      _saveGraphCommentToDB(store, action.graph, action.comment).catchError((e) {
+        action.error(FocusError(message: 'Cant add graph comment', error : e));
       });
       break;
 
