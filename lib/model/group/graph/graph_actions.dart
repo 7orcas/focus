@@ -1,3 +1,4 @@
+import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/group_tile.dart';
@@ -26,5 +27,12 @@ class AddGraphCommentAction {
   final String comment;
   AddGraphCommentAction(this.graph, this.comment){
     Util(StackTrace.current).out('AddGraphCommentAction constructor');
+  }
+}
+
+class RemoveGraphCommentAction {
+  final CommentTile comment;
+  RemoveGraphCommentAction(this.comment){
+    Util(StackTrace.current).out('RemoveGraphCommentAction constructor');
   }
 }

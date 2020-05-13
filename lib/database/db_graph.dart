@@ -62,4 +62,22 @@ class GraphDB extends FocusDB {
       });
     }
   }
+
+  void removeGraphComment(int id_comment) async {
+    Util(StackTrace.current)
+        .out('removeGraphComment id=' + id_comment.toString());
+
+    List<String> sql = [
+      'DELETE FROM ' + DB_COMMENT + ' WHERE id = ' + id_comment.toString()
+    ];
+
+    await connectDatabase();
+    for (String s in sql) {
+      await database.execute(s).catchError((e) {
+        Util(StackTrace.current)
+            .out('removeGraphComment ERROR:' + e.toString());
+        throw e;
+      });
+    }
+  }
 }

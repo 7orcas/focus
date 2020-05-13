@@ -1,9 +1,10 @@
+import 'package:focus/model/app/app.dart';
 import 'package:focus/model/session/session.dart';
 import 'package:focus/model/session/session_actions.dart';
 
 // Define peer functions that change state
 
-Session sessionReducer(Session state, action){
+Session sessionReducer(AppState state, action){
 
   if (action is ChangeLanguageAction){
     return Session(langCode: action.langCode);
@@ -12,5 +13,5 @@ Session sessionReducer(Session state, action){
     return Session(langCode: action.langCode);
   }
 
-  return state;
+  return state.session;
 }

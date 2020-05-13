@@ -15,10 +15,20 @@ class AppState {
   GraphBuild _graph;
   Map<String, bool> expansionKeys = {};
 
-  AppState({
+  AppState._({
     @required this.session,
     @required this.groups,
   });
+
+  AppState copyWith(session, groups) {
+    var app = AppState._(
+      session: session ?? this.session,
+      groups: groups ?? this.groups,
+    );
+    app._graph = this._graph;
+    app.expansionKeys = this.expansionKeys;
+    return app;
+  }
 
   AppState.initialState(){
     Util(StackTrace.current).out('AppState initialState constructor');

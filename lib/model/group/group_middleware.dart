@@ -108,6 +108,25 @@ Future<bool> _removeGraphFromDB(Store<AppState> store, GraphTile graph) async {
   return true;
 }
 
+Future<bool> _removeGraphCommentFromDB(Store<AppState> store, CommentTile comment) async {
+  Util(StackTrace.current).out('_removeGraphCommentFromDB');
+
+  await GraphDB().removeGraphComment(comment.id);
+
+  //remove from store
+  GroupTile e1 = store.state.findGroupTile(comment.id_group);
+  if (e1 == null) return true;
+  GraphTile e2 = e1.findGraphTile(comment.id_graph);
+
+  e2.comments.removeWhere((g) => g.id == comment.id);
+  store.state.groups = store.state.groups.map((e) {
+    if (e.id == comment.id_group) return e1;
+    return e;
+  }).toList();
+
+  return true;
+}
+
 void groupStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
 
@@ -140,6 +159,10 @@ void groupStateMiddleware(
       _saveGraphCommentToDB(store, action.graph, action.comment).catchError((e) {
         action.error(FocusError(message: 'Cant add graph comment', error : e));
       });
+      break;
+
+    case RemoveGraphCommentAction:
+      _removeGraphCommentFromDB(store, action.comment);
       break;
 
     case DeleteGraphAction:

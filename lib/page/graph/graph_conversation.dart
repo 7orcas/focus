@@ -11,35 +11,36 @@ import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/graph/graph_chart.dart';
 
-class GraphItem extends StatefulWidget {
-  const GraphItem(this._id_graph, this._id_group, this._onDeleteGraph, this._lang);
+class GraphItem extends StatelessWidget {
+  const GraphItem(
+      this._id_graph, this._id_group, this._onDeleteGraph, this._lang);
 
   final int _id_group;
   final int _id_graph;
   final Function _onDeleteGraph;
   final Function _lang;
 
-  @override
-  _GraphItemState createState() => _GraphItemState();
-}
-
-class _GraphItemState extends State<GraphItem> {
-
   Widget _buildTiles() {
     return StoreConnector<AppState, _ViewModel>(
-        converter: (Store<AppState> store) => _ViewModel.create(store, widget._id_graph, widget._id_group),
-        builder: (BuildContext context, _ViewModel viewModel) {
-
-          GraphTile _graph = viewModel.getGraph();
+        converter: (Store<AppState> store) =>
+            _ViewModel.create(store, _id_graph, _id_group),
+        builder: (BuildContext context, _ViewModel model) {
+          GraphTile _graph = model.getGraph();
           var _key = 'graph' + _graph.id.toString();
-          List<Widget> comments = [Graph(_graph.graph, widget._lang)];
-          comments.addAll(_graph.comments.map((c) => Comment(c)).toList());
-          comments.add(AddCommentWidget(viewModel));
+          List<Widget> comments = [Graph(_graph.graph, _lang)];
+          comments.addAll(_graph.comments.map((c) => CommentWidget(c, model)).toList());
+          comments.add(AddCommentWidget(model));
+
+          Util(StackTrace.current).out('_GraphItemState Comment key=' +
+              _key +
+              ' value=' +
+              model.store.state.isExpansionKey(_key).toString());
 
           return ExpansionTile(
             key: PageStorageKey<String>(_key),
-            initiallyExpanded: viewModel.store.state.isExpansionKey(_key),
-            onExpansionChanged: (v) =>  viewModel.store.state.setExpansionKey(_key, v),
+            initiallyExpanded: model.store.state.isExpansionKey(_key),
+            onExpansionChanged: (v) =>
+                model.store.state.setExpansionKey(_key, v),
             title: Padding(
               padding: const EdgeInsets.all(20.0),
               child: SizedBox(
@@ -49,7 +50,7 @@ class _GraphItemState extends State<GraphItem> {
                     Text(_graph.graph.substring(0, 7)), //ToDo delete
                     IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () => widget._onDeleteGraph(_graph),
+                      onPressed: () => _onDeleteGraph(_graph),
                     ),
                     Spacer(),
                     IconButton(
@@ -92,9 +93,10 @@ class Graph extends StatelessWidget {
   }
 }
 
-class Comment extends StatelessWidget {
+class CommentWidget extends StatelessWidget {
   final CommentTile _comment;
-  Comment(this._comment);
+  final _ViewModel model;
+  CommentWidget(this._comment, this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +104,21 @@ class Comment extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text(_comment.comment),
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () => model.onRemoveComment(_comment),
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () => {},
+              ),
+              Text(_comment.comment),
+            ],
+          ),
         ),
+
       ],
     );
   }
@@ -139,7 +154,7 @@ class _ViewModel extends BaseViewModel {
   GraphTile graph;
   final Function() getGraph;
   final Function(String) onAddComment;
-  final Function(GroupTile) onRemoveComment;
+  final Function(CommentTile) onRemoveComment;
 
   _ViewModel({
     store,
@@ -149,22 +164,22 @@ class _ViewModel extends BaseViewModel {
     this.onRemoveComment,
   }) : super(store);
 
-  factory _ViewModel.create(Store<AppState> store, int id_graph, int id_group
-  ) {
+  factory _ViewModel.create(Store<AppState> store, int id_graph, int id_group) {
     GroupTile _group = store.state.findGroupTile(id_group);
     GraphTile graph = _group.findGraphTile(id_graph);
 
-    _getGraph(){
+    _getGraph() {
       return graph;
     }
+
     _onAddComment(String comment) {
-//      graph.addComment(comment, ID_USER_ME); //ToDo delete
       Util(StackTrace.current).out('_onAddComment');
       store.dispatch(AddGraphCommentAction(graph, comment));
     }
 
-    _onRemoveComment(GroupTile group) {
-
+    _onRemoveComment(CommentTile comment) {
+      Util(StackTrace.current).out('_onRemoveComment');
+      store.dispatch(RemoveGraphCommentAction(comment));
     }
 
     return _ViewModel(
