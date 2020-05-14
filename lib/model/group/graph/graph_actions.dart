@@ -24,8 +24,9 @@ class DeleteGraphAction {
 
 class AddGraphCommentAction {
   final GraphTile graph;
+  final int id_comment;
   final String comment;
-  AddGraphCommentAction(this.graph, this.comment){
+  AddGraphCommentAction(this.graph, this.id_comment, this.comment){
     Util(StackTrace.current).out('AddGraphCommentAction constructor');
   }
 }

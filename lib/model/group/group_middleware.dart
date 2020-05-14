@@ -43,7 +43,8 @@ void _saveGroupToDB(GroupTile group) async {
   GroupDB().saveGroup(group.toEntity());
 }
 
-Future<bool> _saveGraphToDB(Store<AppState> store, int id_group, GraphBuild graph) async {
+Future<bool> _saveGraphToDB(
+    Store<AppState> store, int id_group, GraphBuild graph) async {
   Util(StackTrace.current).out('saveToDB graph');
 
   //Save to DB
@@ -64,25 +65,27 @@ Future<bool> _saveGraphToDB(Store<AppState> store, int id_group, GraphBuild grap
   return true;
 }
 
-Future<bool> _saveGraphCommentToDB(Store<AppState> store, GraphTile graph, String comment) async {
+Future<CommentEntity> _saveGraphCommentToDB(
+    Store<AppState> store, GraphTile graph, int id, String comment) async {
   Util(StackTrace.current).out('saveToDB graph comment');
 
   //Save to DB
-  var entity = CommentEntity(null, graph.id_group, graph.id, ID_USER_ME, comment, BaseEntity.fromBoolean(true));
+  var entity = CommentEntity(id, graph.id_group, graph.id, ID_USER_ME, comment,
+      BaseEntity.fromBoolean(true));
   entity = await GraphDB().saveGraphComment(entity);
 
-  //Add back to store
-  var e1 = store.state.findGroupTile(graph.id_group);
-  if (e1 == null) return false;
-  var e2 = e1.findGraphTile(graph.id);
-  e2.comments.add(CommentTile.entity(entity));
+  //Add back to store ToDo move to reducer
+//  var e1 = store.state.findGroupTile(graph.id_group);
+//  if (e1 == null) return false;
+//  var e2 = e1.findGraphTile(graph.id);
+//  e2.comments.add(CommentTile.entity(entity));
+//
+//  store.state.groups = store.state.groups.map((e) {
+//    if (e.id == graph.id_group) return e1;
+//    return e;
+//  }).toList();
 
-  store.state.groups = store.state.groups.map((e) {
-    if (e.id == graph.id_group) return e1;
-    return e;
-  }).toList();
-
-  return true;
+  return entity;
 }
 
 void _removeGroupFromDB(GroupTile group) async {
@@ -108,7 +111,8 @@ Future<bool> _removeGraphFromDB(Store<AppState> store, GraphTile graph) async {
   return true;
 }
 
-Future<bool> _removeGraphCommentFromDB(Store<AppState> store, CommentTile comment) async {
+Future<bool> _removeGraphCommentFromDB(
+    Store<AppState> store, CommentTile comment) async {
   Util(StackTrace.current).out('_removeGraphCommentFromDB');
 
   await GraphDB().removeGraphComment(comment.id);
@@ -129,7 +133,6 @@ Future<bool> _removeGraphCommentFromDB(Store<AppState> store, CommentTile commen
 
 void groupStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
-
   if (next != null) next(action);
 
   Util(StackTrace.current)
@@ -151,14 +154,18 @@ void groupStateMiddleware(
 
     case AddGraphAction:
       _saveGraphToDB(store, action.id_group, action.graph).catchError((e) {
-        action.error(FocusError(message: 'Cant add graph', error : e));
+        action.error(FocusError(message: 'Cant add graph', error: e));
       });
       break;
 
     case AddGraphCommentAction:
-      _saveGraphCommentToDB(store, action.graph, action.comment).catchError((e) {
-        action.error(FocusError(message: 'Cant add graph comment', error : e));
+      _saveGraphCommentToDB(
+              store, action.graph, action.id_comment, action.comment)
+          .then((entity) => _storeGraphComment(store, action.graph, entity))
+          .catchError((e) {
+        action.error(FocusError(message: 'Cant add graph comment', error: e));
       });
+      action.graph.editClear();
       break;
 
     case RemoveGraphCommentAction:
@@ -167,8 +174,35 @@ void groupStateMiddleware(
 
     case DeleteGraphAction:
       _removeGraphFromDB(store, action.graph).catchError((e) {
-        action.error(FocusError(message: 'Cant delete graph', error : e));
+        action.error(FocusError(message: 'Cant delete graph', error: e));
       });
       break;
   }
+}
+
+void _storeGraphComment(
+    Store<AppState> store, GraphTile graph, CommentEntity entity) {
+  Util(StackTrace.current).out('store graph comment');
+
+  var e1 = store.state.findGroupTile(graph.id_group);
+  if (e1 == null) return;
+
+  bool found = false;
+
+  for (int i = 0; i < graph.comments.length; i++) {
+    CommentTile c = graph.comments[i];
+    if (c.id == entity.id) {
+      found = true;
+      graph.comments[i] = CommentTile.entity(entity);
+      break;
+    }
+  }
+  if (!found) {
+    graph.comments.add(CommentTile.entity(entity));
+  }
+
+  store.state.groups = store.state.groups.map((e) {
+    if (e.id == graph.id_group) return e1;
+    return e;
+  }).toList();
 }

@@ -27,9 +27,10 @@ class GraphItem extends StatelessWidget {
         builder: (BuildContext context, _ViewModel model) {
           GraphTile _graph = model.getGraph();
           var _key = 'graph' + _graph.id.toString();
+
           List<Widget> comments = [Graph(_graph.graph, _lang)];
-          comments.addAll(_graph.comments.map((c) => CommentWidget(c, model)).toList());
-          comments.add(AddCommentWidget(model));
+          comments.addAll(_graph.comments.map((c) => CommentWidget(_graph, c, model)).toList());
+          comments.add(AddCommentWidget(_graph.getEditComment(), model));
 
           Util(StackTrace.current).out('_GraphItemState Comment key=' +
               _key +
@@ -94,9 +95,10 @@ class Graph extends StatelessWidget {
 }
 
 class CommentWidget extends StatelessWidget {
+  final GraphTile _graph;
   final CommentTile _comment;
   final _ViewModel model;
-  CommentWidget(this._comment, this.model);
+  CommentWidget(this._graph, this._comment, this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +114,9 @@ class CommentWidget extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: () => {},
+                onPressed: () => _graph.editComment(_comment.id),
               ),
-              Text(_comment.comment),
+              Expanded(child: Text(_comment.comment)),
             ],
           ),
         ),
@@ -126,7 +128,8 @@ class CommentWidget extends StatelessWidget {
 
 class AddCommentWidget extends StatefulWidget {
   final _ViewModel model;
-  AddCommentWidget(this.model);
+  final CommentTile commentTile;
+  AddCommentWidget(this.commentTile, this.model);
   @override
   _AddCommentState createState() => _AddCommentState();
 }
@@ -136,15 +139,24 @@ class _AddCommentState extends State<AddCommentWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    Util(StackTrace.current).out('Comment Widget widget.commentTile=' + (widget.commentTile!=null?'ok':'null'));
+
+    controller.text = widget.commentTile != null? widget.commentTile.comment : null;
+
     return TextField(
       key: PageStorageKey('mytextfield'),
       controller: controller,
       decoration: InputDecoration(
         hintText: widget.model.label('AddComment'),
+        suffixIcon: widget.commentTile == null? null : IconButton(
+          onPressed: () => widget.commentTile.editCancel(),
+          icon: Icon(Icons.clear),
+        ),
       ),
-      onSubmitted: (String s) {
+      onSubmitted: (String comment) {
         controller.clear();
-        widget.model.onAddComment(s);
+        widget.model.onAddComment(widget.commentTile == null? null : widget.commentTile.id, comment);
       },
     );
   }
@@ -153,7 +165,7 @@ class _AddCommentState extends State<AddCommentWidget> {
 class _ViewModel extends BaseViewModel {
   GraphTile graph;
   final Function() getGraph;
-  final Function(String) onAddComment;
+  final Function(int, String) onAddComment;
   final Function(CommentTile) onRemoveComment;
 
   _ViewModel({
@@ -172,9 +184,13 @@ class _ViewModel extends BaseViewModel {
       return graph;
     }
 
-    _onAddComment(String comment) {
+    _onEditComment() {
+      store.dispatch(AddGraphCommentAction(graph, id_comment, comment));
+    }
+
+    _onAddComment(int id_comment, String comment) {
       Util(StackTrace.current).out('_onAddComment');
-      store.dispatch(AddGraphCommentAction(graph, comment));
+      store.dispatch(AddGraphCommentAction(graph, id_comment, comment));
     }
 
     _onRemoveComment(CommentTile comment) {

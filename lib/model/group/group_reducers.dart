@@ -21,34 +21,8 @@ List<GroupTile> groupReducer(AppState state, action) {
         ..addAll(state.groups)
         ..add(g);
 
-    case AddGraphCommentAction:
-      Util(StackTrace.current).out('AddGraphCommentAction');
-      break;
-
-//    case AddGraphAction:
-//      Util(StackTrace.current)
-//          .out('groupReducer AddGraphsAction, constains=' + action.group.containsGraphs().toString());
-//      break;
   }
-
-
-
-
-
-//  if (action is RemoveGroupAction) {
-//    return List.unmodifiable(List.from(state)..remove(action.group));
-//  }
-//
-//  if (action is RemoveGroupsAction) {
-//    return List.unmodifiable(<GroupTile>[]);
-//  }
-//
-//
-//
-//  if (action is AddGraphAction || action is DeleteGraphAction) {
-//    Util(StackTrace.current)
-//        .out('groupReducer xxxxGraphAction, type=' + action.runtimeType.toString());
-//  }
 
   return state.groups;
 }
+

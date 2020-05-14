@@ -38,4 +38,24 @@ class GraphTile {
     List<CommentEntity> list = comments.map((t) => t.toEntity()).toList();
     return GraphEntity(id, id_group, graph, list);
   }
+
+  CommentTile getEditComment(){
+    for (CommentTile c in comments){
+      if (c.isEdit) return c;
+    }
+    return null;
+  }
+
+  void editComment (int id_comment){
+    for (CommentTile c in comments){
+      c.edit(c.id == id_comment);
+    }
+  }
+
+  void editClear(){
+    for (CommentTile c in comments){
+      c.editCancel();
+    }
+  }
+
 }

@@ -9,6 +9,7 @@ class CommentTile extends BaseEntity{
   final int id_user;
   final String comment;
   bool comment_read;
+  bool _edit = false; //true == user is editing this comment
 
   CommentTile({
     @required this.id,
@@ -30,4 +31,14 @@ class CommentTile extends BaseEntity{
   CommentEntity toEntity() {
     return CommentEntity(id, id_group, id_graph, id_user, comment, fromBool(comment_read));
   }
+
+  void edit(bool v) {
+    _edit = v;
+  }
+  void editCancel () {
+    _edit = false;
+  }
+
+  bool get isEdit => _edit;
+
 }
