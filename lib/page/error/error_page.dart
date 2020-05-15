@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/session/session.dart';
 import 'package:focus/service/error.dart';
 import 'package:focus/service/language.dart';

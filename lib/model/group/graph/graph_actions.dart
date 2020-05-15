@@ -6,10 +6,10 @@ import 'package:focus/service/util.dart';
 
 // Actions that can mutate the state
 
-class AddGraphAction {
+class SaveGraphAction {
   final int id_group;
   final GraphBuild graph;
-  AddGraphAction(this.id_group, this.graph){
+  SaveGraphAction(this.id_group, this.graph){
     Util(StackTrace.current).out('AddGraphAction constructor');
   }
 }
@@ -28,6 +28,14 @@ class AddGraphCommentAction {
   final String comment;
   AddGraphCommentAction(this.graph, this.id_comment, this.comment){
     Util(StackTrace.current).out('AddGraphCommentAction constructor');
+  }
+}
+
+class EditGraphCommentAction {
+  final GraphTile graph;
+  final int id_comment;
+  EditGraphCommentAction(this.graph, this.id_comment){
+    Util(StackTrace.current).out('EditGraphCommentAction constructor');
   }
 }
 

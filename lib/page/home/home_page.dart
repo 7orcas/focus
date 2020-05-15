@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/session/session.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/model/group/group_actions.dart';
@@ -115,30 +116,30 @@ class GroupListWidget extends StatelessWidget {
 class _ViewModel extends BaseViewModel {
   final Function(String) onAddGroup;
   final Function(GroupTile) onRemoveGroup;
-  final Function() onRemoveGroups;
   final Function(String) onChangeLanguage;
 
   _ViewModel({
     store,
     this.onAddGroup,
     this.onRemoveGroup,
-    this.onRemoveGroups,
     this.onChangeLanguage,
   }) : super(store);
 
   factory _ViewModel.create(Store<AppState> store) {
-    Util(StackTrace.current).out('creat viewmodel');
+    Util(StackTrace.current).out('create viewmodel');
 
+    ///Here for testing only
     _onAddGroup(String name) {
-      store.dispatch(AddGroupAction(name));
+      store.dispatch(AddGroupAction(GroupTile(
+          id: null,
+          name: name,
+          publicKey: null,
+          privateKey: null,
+          graphs: List<GraphTile>())));
     }
 
     _onRemoveGroup(GroupTile group) {
       store.dispatch(RemoveGroupAction(group));
-    }
-
-    _onRemoveGroups() {
-      store.dispatch(RemoveGroupsAction());
     }
 
     _onChangeLanguage(String lang) {
@@ -149,7 +150,6 @@ class _ViewModel extends BaseViewModel {
       store: store,
       onAddGroup: _onAddGroup,
       onRemoveGroup: _onRemoveGroup,
-      onRemoveGroups: _onRemoveGroups,
       onChangeLanguage: _onChangeLanguage,
     );
   }

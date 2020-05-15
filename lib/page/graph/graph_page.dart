@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/service/error.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
@@ -139,7 +139,7 @@ class _ViewModel {
 
     _onAddGraph(int id_group, GraphBuild graph) {
       Util(StackTrace.current).out('_onAddGraph');
-      store.dispatch(AddGraphAction(id_group, graph));
+      store.dispatch(SaveGraphAction(id_group, graph));
       GroupTile gt = store.state.findGroupTile(id_group);
       Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: gt);
     }

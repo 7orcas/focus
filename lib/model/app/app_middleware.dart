@@ -1,4 +1,4 @@
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/model/app/app_actions.dart';
 import 'package:focus/model/session/session_actions.dart';
@@ -15,7 +15,7 @@ void appMiddleware(
   Util(StackTrace.current).out('appMiddleware action=' + action.runtimeType.toString());
 
   if (action is LoadAppAction) {
-    groupStateMiddleware(store, GetGroupsAction(), null);
+    groupStateMiddleware(store, LoadGroupsAction(), null);
     sessionStateMiddleware(store, GetLanguageAction(), null);
     return;
   }

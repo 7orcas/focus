@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/service/error.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_middleware.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
@@ -28,7 +28,7 @@ class GroupPage extends StatelessWidget {
         converter: (Store<AppState> store) => _ViewModel.create(context, store),
         builder: (BuildContext context, _ViewModel viewModel) {
           return FutureBuilder<GroupTile>(
-              future: getGroupConversation(viewModel.store, _group.id),
+              future: loadGroupConversation(viewModel.store, _group.id),
               builder:
                   (BuildContext context, AsyncSnapshot<GroupTile> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

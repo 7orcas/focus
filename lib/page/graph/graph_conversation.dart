@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/service/util.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
@@ -29,7 +29,9 @@ class GraphItem extends StatelessWidget {
           var _key = 'graph' + _graph.id.toString();
 
           List<Widget> comments = [Graph(_graph.graph, _lang)];
-          comments.addAll(_graph.comments.map((c) => CommentWidget(_graph, c, model)).toList());
+          comments.addAll(_graph.comments
+              .map((c) => CommentWidget(_graph, c, model))
+              .toList());
           comments.add(AddCommentWidget(_graph.getEditComment(), model));
 
           Util(StackTrace.current).out('_GraphItemState Comment key=' +
@@ -48,7 +50,9 @@ class GraphItem extends StatelessWidget {
                 width: 100,
                 child: Row(
                   children: <Widget>[
-                    Text(_graph.graph.substring(0, 7)), //ToDo delete
+                    Text(_graph.graph == null || _graph.graph.length < 7
+                        ? '?'
+                        : _graph.graph.substring(0, 7)), //ToDo delete
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () => _onDeleteGraph(_graph),
@@ -97,8 +101,8 @@ class Graph extends StatelessWidget {
 class CommentWidget extends StatelessWidget {
   final GraphTile _graph;
   final CommentTile _comment;
-  final _ViewModel model;
-  CommentWidget(this._graph, this._comment, this.model);
+  final _ViewModel _model;
+  CommentWidget(this._graph, this._comment, this._model);
 
   @override
   Widget build(BuildContext context) {
@@ -110,17 +114,16 @@ class CommentWidget extends StatelessWidget {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () => model.onRemoveComment(_comment),
+                onPressed: () => _model.onRemoveComment(_comment),
               ),
               IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: () => _graph.editComment(_comment.id),
+                onPressed: () => _model.onEditComment(_comment.id),
               ),
               Expanded(child: Text(_comment.comment)),
             ],
           ),
         ),
-
       ],
     );
   }
@@ -139,24 +142,28 @@ class _AddCommentState extends State<AddCommentWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Util(StackTrace.current).out('Comment Widget widget.commentTile=' +
+        (widget.commentTile != null ? 'ok' : 'null'));
 
-    Util(StackTrace.current).out('Comment Widget widget.commentTile=' + (widget.commentTile!=null?'ok':'null'));
-
-    controller.text = widget.commentTile != null? widget.commentTile.comment : null;
+    controller.text =
+        widget.commentTile != null ? widget.commentTile.comment : null;
 
     return TextField(
       key: PageStorageKey('mytextfield'),
       controller: controller,
       decoration: InputDecoration(
         hintText: widget.model.label('AddComment'),
-        suffixIcon: widget.commentTile == null? null : IconButton(
-          onPressed: () => widget.commentTile.editCancel(),
-          icon: Icon(Icons.clear),
-        ),
+        suffixIcon: widget.commentTile == null
+            ? null
+            : IconButton(
+                onPressed: () => widget.commentTile.editCancel(),
+                icon: Icon(Icons.clear),
+              ),
       ),
       onSubmitted: (String comment) {
         controller.clear();
-        widget.model.onAddComment(widget.commentTile == null? null : widget.commentTile.id, comment);
+        widget.model.onAddComment(
+            widget.commentTile == null ? null : widget.commentTile.id, comment);
       },
     );
   }
@@ -166,6 +173,7 @@ class _ViewModel extends BaseViewModel {
   GraphTile graph;
   final Function() getGraph;
   final Function(int, String) onAddComment;
+  final Function(int) onEditComment;
   final Function(CommentTile) onRemoveComment;
 
   _ViewModel({
@@ -173,6 +181,7 @@ class _ViewModel extends BaseViewModel {
     this.graph,
     this.getGraph,
     this.onAddComment,
+    this.onEditComment,
     this.onRemoveComment,
   }) : super(store);
 
@@ -184,8 +193,8 @@ class _ViewModel extends BaseViewModel {
       return graph;
     }
 
-    _onEditComment() {
-      store.dispatch(AddGraphCommentAction(graph, id_comment, comment));
+    _onEditComment(int id_comment) {
+      store.dispatch(EditGraphCommentAction(graph, id_comment));
     }
 
     _onAddComment(int id_comment, String comment) {
@@ -203,6 +212,7 @@ class _ViewModel extends BaseViewModel {
       graph: graph,
       getGraph: _getGraph,
       onAddComment: _onAddComment,
+      onEditComment: _onEditComment,
       onRemoveComment: _onRemoveComment,
     );
   }

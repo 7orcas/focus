@@ -1,24 +1,73 @@
-import 'package:focus/model/app/app.dart';
+import 'package:redux/redux.dart';
+import 'package:focus/service/error.dart';
+import 'package:focus/service/util.dart';
+import 'package:focus/database/db_group.dart';
+import 'package:focus/database/db_graph.dart';
+import 'package:focus/model/session/session.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/base_entity.dart';
 import 'package:focus/model/group/comment/comment_entity.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
-import 'package:focus/model/session/session.dart';
-import 'file:///C:/Projects/focus/lib/page/graph/graph_conversation.dart';
-import 'package:focus/route.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_entity.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/group_entity.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/group_actions.dart';
-import 'package:focus/database/db_group.dart';
-import 'package:focus/database/db_graph.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
-import 'package:focus/service/error.dart';
-import 'package:focus/service/util.dart';
-import 'package:redux/redux.dart';
 
-Future<GroupTile> getGroupConversation(Store<AppState> store, int id) async {
+///Database actions
+
+void groupStateMiddleware(
+    Store<AppState> store, action, NextDispatcher next) async {
+
+  switch (action.runtimeType) {
+    case LoadGroupsAction:
+      await _loadGroupsFromDB()
+          .then((result) => store.dispatch(LoadGroupsStoreAction(result)));
+      break;
+
+    case AddGroupAction:
+      await _saveGroupToDB(action.group)
+          .then((result) => store.dispatch(AddGroupStoreAction(GroupTile.entity(result))));
+      break;
+
+    case RemoveGroupAction:
+      await _removeGroupFromDB(action.group)
+          .then((result) => store.dispatch(LoadGroupsAction()));
+      break;
+
+    case SaveGraphAction:
+      _saveGraphToDB(store, action.id_group, action.graph).catchError((e) {
+        action.error(FocusError(message: 'Cant add graph', error: e));
+      });
+      break;
+
+    case AddGraphCommentAction:
+      _saveGraphCommentToDB(
+              store, action.graph, action.id_comment, action.comment)
+          .then((entity) => _storeGraphComment(store, action.graph, entity))
+          .catchError((e) {
+        action.error(FocusError(message: 'Cant add graph comment', error: e));
+      });
+      action.graph.editClear();
+      break;
+
+    case RemoveGraphCommentAction:
+      _removeGraphCommentFromDB(store, action.comment);
+      break;
+
+    case DeleteGraphAction:
+      _removeGraphFromDB(store, action.graph).catchError((e) {
+        action.error(FocusError(message: 'Cant delete graph', error: e));
+      });
+      break;
+  }
+
+  if (next != null) next(action);
+}
+
+Future<GroupTile> loadGroupConversation(Store<AppState> store, int id) async {
   GroupTile g = store.state.findGroupTile(id);
 
   //Already loaded
@@ -27,20 +76,20 @@ Future<GroupTile> getGroupConversation(Store<AppState> store, int id) async {
   }
   //Get from DB
   g = await GroupDB().loadGroupConversation(id);
-  store.state.setGroupTile(g);
+  store.state.addGroupTile(g);
 
   return g;
 }
 
-Future<List<GroupTile>> _loadFromDB() async {
-  Util(StackTrace.current).out('groupMiddleware loadFromDB');
+///Load all groups from the database
+Future<List<GroupTile>> _loadGroupsFromDB() async {
   List<GroupEntity> list = await GroupDB().loadGroups();
   return list.map((g) => GroupTile.entity(g)).toList();
 }
 
-void _saveGroupToDB(GroupTile group) async {
+Future<GroupEntity> _saveGroupToDB(GroupTile group) async {
   Util(StackTrace.current).out('groupMiddleware saveToDB');
-  GroupDB().saveGroup(group.toEntity());
+  return GroupDB().saveGroup(group.toEntity());
 }
 
 Future<bool> _saveGraphToDB(
@@ -88,9 +137,10 @@ Future<CommentEntity> _saveGraphCommentToDB(
   return entity;
 }
 
-void _removeGroupFromDB(GroupTile group) async {
+Future<bool> _removeGroupFromDB(GroupTile group) async {
   Util(StackTrace.current).out('removeGroupFromDB');
   GroupDB().removeGroup(group.toEntity());
+  return true;
 }
 
 Future<bool> _removeGraphFromDB(Store<AppState> store, GraphTile graph) async {
@@ -129,55 +179,6 @@ Future<bool> _removeGraphCommentFromDB(
   }).toList();
 
   return true;
-}
-
-void groupStateMiddleware(
-    Store<AppState> store, action, NextDispatcher next) async {
-  if (next != null) next(action);
-
-  Util(StackTrace.current)
-      .out('groupMiddleware action=' + action.runtimeType.toString());
-
-  switch (action.runtimeType) {
-    case GetGroupsAction:
-      await _loadFromDB()
-          .then((state) => store.dispatch(LoadGroupsAction(state)));
-      break;
-
-    case AddGroupAction:
-      _saveGroupToDB(action.group);
-      break;
-
-    case RemoveGroupAction:
-      _removeGroupFromDB(action.group);
-      break;
-
-    case AddGraphAction:
-      _saveGraphToDB(store, action.id_group, action.graph).catchError((e) {
-        action.error(FocusError(message: 'Cant add graph', error: e));
-      });
-      break;
-
-    case AddGraphCommentAction:
-      _saveGraphCommentToDB(
-              store, action.graph, action.id_comment, action.comment)
-          .then((entity) => _storeGraphComment(store, action.graph, entity))
-          .catchError((e) {
-        action.error(FocusError(message: 'Cant add graph comment', error: e));
-      });
-      action.graph.editClear();
-      break;
-
-    case RemoveGraphCommentAction:
-      _removeGraphCommentFromDB(store, action.comment);
-      break;
-
-    case DeleteGraphAction:
-      _removeGraphFromDB(store, action.graph).catchError((e) {
-        action.error(FocusError(message: 'Cant delete graph', error: e));
-      });
-      break;
-  }
 }
 
 void _storeGraphComment(

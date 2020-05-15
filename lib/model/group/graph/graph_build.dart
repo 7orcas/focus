@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:redux/redux.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/service/util.dart';
 import 'package:charts_flutter/flutter.dart';
 

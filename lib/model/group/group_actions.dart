@@ -3,37 +3,45 @@ import 'package:focus/service/util.dart';
 
 // Actions that can mutate the state
 
-class AddGroupAction {
-  final String name;
-  GroupTile group;
-  AddGroupAction(this.name){
-    Util(StackTrace.current).out('AddGroupAction constructor');
+
+/// Load all groups from the database
+class LoadGroupsAction {
+  LoadGroupsAction(){
+    Util(StackTrace.current).out('GetGroupsAction constructor');
   }
 }
+/// Callback from [LoadGroupsAction] to mutate the store
+class LoadGroupsStoreAction {
+  final List<GroupTile> groups;
+  LoadGroupsStoreAction(this.groups){}
+}
 
+///Add a new group
+/// ToDO Refactor - this is here just for testing
+class AddGroupAction {
+  final GroupTile group;
+  AddGroupAction(this.group){}
+}
+class AddGroupStoreAction {
+  final GroupTile group;
+  AddGroupStoreAction(this.group){}
+}
+
+///Remove a group
+/// ToDO Refactor - this is here just for testing
 class RemoveGroupAction {
   final GroupTile group;
   RemoveGroupAction(this.group);
 }
 
-class RemoveGroupsAction {}
 
-class GroupAdminAction {
-  final GroupTile group;
-  GroupAdminAction(this.group);
-}
+//class GroupAdminAction {
+//  final GroupTile group;
+//  GroupAdminAction(this.group);
+//}
 
-class GetGroupsAction {
-  GetGroupsAction(){
-    Util(StackTrace.current).out('GetGroupsAction constructor');
-  }
-}
-
-class LoadGroupsAction {
-  final List<GroupTile> groups;
-  bool loaded = false;
-  LoadGroupsAction(this.groups){
-    Util(StackTrace.current).out('LoadGroupsAction constructor size=' + this.groups.length.toString());
-  }
-
-}
+//
+//class LoadGroupConversationAction {
+//  final GroupTile group;
+//  LoadGroupConversationAction(this.group){}
+//}

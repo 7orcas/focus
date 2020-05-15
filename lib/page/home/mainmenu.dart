@@ -1,10 +1,11 @@
+import 'package:focus/model/group/group_actions.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:focus/route.dart';
 import 'package:focus/service/language.dart';
 import 'package:focus/service/menu.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/database/_mock_data.dart';
 
 enum MainMenuAction { ABOUT, ACCOUNT, SETTINGS, RELOAD, en, mi, de, EXIT }
@@ -50,7 +51,7 @@ class MainMenu {
     } else if (MainMenuAction.RELOAD == item) {
       //ToDo Mock, delete
       DatabaseMockData().reload().then((value) {
-        _store.dispatch(AppState.getLoadAppAction());
+        _store.dispatch(LoadGroupsAction());
       });
     } else if (MainMenuAction.ABOUT == item) {
       Navigator.pushNamed(_context, ROUTE_ABOUT_PAGE);

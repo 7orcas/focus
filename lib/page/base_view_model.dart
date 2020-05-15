@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/session/session.dart';
 import 'package:focus/service/language.dart';

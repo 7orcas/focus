@@ -12,8 +12,8 @@ import 'package:focus/model/app/app_actions.dart';
 class AppState {
   Session session;
   List<GroupTile> groups;
-  GraphBuild _graph;
-  Map<String, bool> expansionKeys = {};
+  GraphBuild _graphBuild;
+  Map<String, bool> _expansionKeys = {};
 
   AppState._({
     @required this.session,
@@ -25,8 +25,8 @@ class AppState {
       session: session ?? this.session,
       groups: groups ?? this.groups,
     );
-    app._graph = this._graph;
-    app.expansionKeys = this.expansionKeys;
+    app._graphBuild = this._graphBuild;
+    app._expansionKeys = this._expansionKeys;
     return app;
   }
 
@@ -36,19 +36,15 @@ class AppState {
     groups = List.unmodifiable(<GroupTile>[]);
   }
 
-  GraphBuild get graph => this._graph;
+  GraphBuild get graph => this._graphBuild;
   bool isGraphBlocRunning () {
-    return this._graph != null && this._graph.isActive;
+    return this._graphBuild != null && this._graphBuild.isActive;
   }
 
   set graph (GraphBuild b){
-    this._graph = b;
+    this._graphBuild = b;
   }
 
-
-  static LoadAppAction getLoadAppAction() {
-    return LoadAppAction();
-  }
 
   @override
   String toString(){
@@ -62,16 +58,16 @@ class AppState {
     return null;
   }
 
-  void setGroupTile(GroupTile tile){
+  void addGroupTile(GroupTile tile){
     groups = groups.map((e) => e).where((t) => t.id != tile.id).toList();
     groups.add(tile);
   }
 
   void setExpansionKey(String k, bool v) {
-    expansionKeys[k] = v;
+    _expansionKeys[k] = v;
   }
   bool isExpansionKey(String k) {
-    return expansionKeys.containsKey(k)? expansionKeys[k] : false;
+    return _expansionKeys.containsKey(k)? _expansionKeys[k] : false;
   }
 
 

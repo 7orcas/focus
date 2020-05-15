@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus/model/session/session.dart';
@@ -29,7 +29,6 @@ Future<Session> _loadFromPrefs() async {
 void sessionStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
 
-  if (next != null) next(action);
 
   Util(StackTrace.current).out('sessionStateMiddleware action=' + action.runtimeType.toString());
 
@@ -42,4 +41,5 @@ void sessionStateMiddleware(
         .then((state) => store.dispatch(LoadLanguageAction(state.langCode)));
   }
 
+  if (next != null) next(action);
 }

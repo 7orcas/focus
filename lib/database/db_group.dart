@@ -24,6 +24,11 @@ class GroupDB extends FocusDB {
   }
 
   Future<GroupTile> loadGroupConversation(int id) async {
+
+//    final stopwatch = Stopwatch()..start();
+    Util(StackTrace.current).out('loadGroupConversation start SLEEP(3)');
+
+
     await connectDatabase();
 
     //Load comments
@@ -95,10 +100,11 @@ class GroupDB extends FocusDB {
 
     sleep(Duration(seconds: 3));
 
+
     return groups[0];
   }
 
-  void saveGroup(GroupEntity group) async {
+  Future<GroupEntity> saveGroup(GroupEntity group) async {
     Util(StackTrace.current).out('saveGroup name=' + group.name);
     await connectDatabase();
 
@@ -112,6 +118,7 @@ class GroupDB extends FocusDB {
 
     Util(StackTrace.current)
         .out('saveGroup name=' + group.name + ' id=' + id.toString());
+    return GroupEntity(id, group.name);
   }
 
   void removeGroup(GroupEntity group) async {

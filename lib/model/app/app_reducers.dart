@@ -1,4 +1,4 @@
-import 'package:focus/model/app/app.dart';
+import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_reducers.dart';
 import 'package:focus/model/session/session_reducers.dart';
 
