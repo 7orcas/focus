@@ -79,14 +79,14 @@ class _AddGroupState extends State<AddGroupWidget> {
 }
 
 class GroupListWidget extends StatelessWidget {
-  final Store<AppState> store;
-  final _ViewModel model;
-  GroupListWidget(this.model, this.store);
+  final Store<AppState> _store;
+  final _ViewModel _model;
+  GroupListWidget(this._model, this._store);
 
   @override
   Widget build(BuildContext context) {
 
-    var list = List.from(model.groups);
+    var list = List.from(_model.groups);
     list.sort((a, b) {
       if (a.id == ID_USER_ME) return -1;
       if (b.id == ID_USER_ME) return 1;
@@ -95,19 +95,21 @@ class GroupListWidget extends StatelessWidget {
 
     return ListView(
       children: list
-          .map((group) => ListTile(
-                title: Text(group.name),
-                leading: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => model.onRemoveGroup(group),
+          .map((group) => GridTile(
+            child: ListTile(
+                  title: InkWell(child: Text(group.name)),
+                  leading: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => _model.onRemoveGroup(group),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () => Navigator.pushNamed(
+                        context, ROUTE_GROUP_PAGE,
+                        arguments: group),
+                  ),
                 ),
-                trailing: IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () => Navigator.pushNamed(
-                      context, ROUTE_GROUP_PAGE,
-                      arguments: group),
-                ),
-              ))
+          ))
           .toList(),
     );
   }

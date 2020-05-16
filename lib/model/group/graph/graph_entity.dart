@@ -22,4 +22,11 @@ class GraphEntity {
   GraphEntity copyWith(int id) {
     return GraphEntity(id ?? this.id, id_group, graph, comments);
   }
+
+  String _graphCompress(){
+    if (graph == null) return '';
+
+  }
+
+
 }

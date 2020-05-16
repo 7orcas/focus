@@ -92,7 +92,7 @@ Future<GroupEntity> _saveGroupToDB(GroupTile group) async {
 
 Future<GraphEntity> _saveGraphToDB(
     Store<AppState> store, int id_group, GraphBuild graph) async {
-  var entity = GraphEntity.build(id_group, graph.toList());
+  var entity = GraphEntity.build(id_group, graph.toEncodedList());
   return await GraphDB().saveGraph(entity);
 }
 

@@ -87,18 +87,19 @@ class GraphBuild {
     return _getChartDataX(_points);
   }
 
-  String toList(){
+  String toEncodedList(){
     StringBuffer b = StringBuffer();
     for (int i=0;i<numbers.length;i++){
-      b.write((i>0?',':'') + numbers[i].toString());
+      b.write((i>0?',':'') + (numbers[i]*1000).round().toString());
     }
     return b.toString();
   }
 
+  /// Decode the [toEncodedList] string
   static List<double> fromList(String list){
     List<double> numbers = [];
     list.split(',').forEach((s) {
-      numbers.add(double.parse(s));
+      numbers.add(double.parse(s)/1000);
     });
     return numbers;
   }

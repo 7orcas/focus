@@ -32,6 +32,7 @@ List<GroupTile> groupReducer(AppState state, action) {
       }).toList();
 
     case SaveGraphStoreAction:
+      state.clearGraphExpansionKey();
       state.setGraphExpansionKey(action.graph.id, true);
       GroupTile gt = state.findGroupTile(action.graph.id_group);
       gt.graphs.add(action.graph);

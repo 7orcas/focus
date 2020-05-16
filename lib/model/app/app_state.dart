@@ -63,6 +63,9 @@ class AppState {
     groups.add(tile);
   }
 
+  void clearGraphExpansionKey() {
+    _graphExpansionKeys = {};
+  }
   void setGraphExpansionKey(int id, bool v) {
     _graphExpansionKeys[id] = v;
   }
