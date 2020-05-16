@@ -14,20 +14,29 @@ import 'package:focus/service/util.dart';
 // ToDo refactor
 
 class GroupDB extends FocusDB {
-  Future<List<GroupEntity>> loadGroups() async {
+  Future<List<GroupTile>> loadGroups() async {
     await connectDatabase();
-    final List<Map<String, dynamic>> list = await database.query(DB_GROUP);
-    final List<GroupEntity> listX = List.generate(list.length, (i) {
-      return GroupEntity(list[i]['id'], list[i]['name']);
+
+    //Load comments
+    String sql = 'SELECT g.id, g.name, g.public_key, g.privateKey FROM ' +
+        DB_GROUP;
+
+    var result = await database.rawQuery(sql);
+    List<Map<String, dynamic>> list = result.toList();
+    final List<GroupTile> listX = List.generate(list.length, (i) {
+      return GroupTile(
+          id: list[i]['id'],
+          name: list[i]['name'],
+          publicKey: list[i]['public_key'],
+          privateKey: list[i]['private_key'],
+          graphs: null);
     });
     return listX;
   }
 
   Future<GroupTile> loadGroupConversation(int id) async {
-
 //    final stopwatch = Stopwatch()..start();
     Util(StackTrace.current).out('loadGroupConversation start SLEEP(3)');
-
 
     await connectDatabase();
 
@@ -41,9 +50,13 @@ class GroupDB extends FocusDB {
     var result = await database.rawQuery(sql);
     List<Map<String, dynamic>> list = result.toList();
     List<CommentEntity> comments = List.generate(list.length, (i) {
-      return CommentEntity(list[i]['id'], list[i][DBK_GROUP],
-          list[i][DBK_GRAPH], list[i][DBK_USER],
-          list[i]['comment'], list[i]['comment_read']);
+      return CommentEntity(
+          list[i]['id'],
+          list[i][DBK_GROUP],
+          list[i][DBK_GRAPH],
+          list[i][DBK_USER],
+          list[i]['comment'],
+          list[i]['comment_read']);
     });
 
     Util(StackTrace.current).out('loadGroupConversation ' +
@@ -72,15 +85,6 @@ class GroupDB extends FocusDB {
           id_graph, list[i][DBK_GROUP], list[i]['graph'], commentsT);
     });
 
-    Util(StackTrace.current).out('loadGroupConversation ' +
-        (graphs.length == 0
-            ? ' count=0'
-            : sql +
-                ' count=' +
-                graphs.length.toString() +
-                ' 0 comm=' +
-                graphs[0].comments.length.toString()));
-
     //Load group
     sql = 'SELECT id, name, public_key, private_key FROM ' +
         DB_GROUP +
@@ -99,7 +103,6 @@ class GroupDB extends FocusDB {
     Util(StackTrace.current).out('loadGroupConversation ' + sql);
 
     sleep(Duration(seconds: 3));
-
 
     return groups[0];
   }

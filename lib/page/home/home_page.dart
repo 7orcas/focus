@@ -97,17 +97,21 @@ class GroupListWidget extends StatelessWidget {
       children: list
           .map((group) => GridTile(
             child: ListTile(
-                  title: InkWell(child: Text(group.name)),
-                  leading: IconButton(
+                  title: InkWell(
+                    child: GestureDetector(
+                        child: Text(group.name),
+                        onTap: () => Navigator.pushNamed(
+                            context, ROUTE_GROUP_PAGE,
+                            arguments: group),
+                    ),
+                  ),
+                  leading: group.id == ID_USER_ME?
+                  SizedBox(width: 50) :
+                  IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () => _model.onRemoveGroup(group),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () => Navigator.pushNamed(
-                        context, ROUTE_GROUP_PAGE,
-                        arguments: group),
-                  ),
+
                 ),
           ))
           .toList(),

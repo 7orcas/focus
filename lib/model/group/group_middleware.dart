@@ -81,8 +81,7 @@ void groupStateMiddleware(
 
 ///Load all groups from the database
 Future<List<GroupTile>> _loadGroupsFromDB() async {
-  List<GroupEntity> list = await GroupDB().loadGroups();
-  return list.map((g) => GroupTile.entity(g)).toList();
+  return await GroupDB().loadGroups();
 }
 
 Future<GroupEntity> _saveGroupToDB(GroupTile group) async {

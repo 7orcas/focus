@@ -9,6 +9,8 @@ class GroupTile {
   List<GraphTile> graphs;
   final String publicKey;
   final String privateKey;
+  DateTime lastGraph;
+  int unreadComments;
 
   GroupTile({
     @required this.id,
@@ -16,6 +18,8 @@ class GroupTile {
     @required this.publicKey,
     @required this.privateKey,
     @required this.graphs,
+    this.lastGraph,
+    this.unreadComments,
   });
 
   GroupTile.entity(GroupEntity e)
