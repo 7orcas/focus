@@ -29,19 +29,7 @@ class AddGroupStoreAction {
 
 ///Remove a group
 /// ToDO Refactor - this is here just for testing
-class RemoveGroupAction {
+class DeleteGroupAction {
   final GroupTile group;
-  RemoveGroupAction(this.group);
+  DeleteGroupAction(this.group);
 }
-
-
-//class GroupAdminAction {
-//  final GroupTile group;
-//  GroupAdminAction(this.group);
-//}
-
-//
-//class LoadGroupConversationAction {
-//  final GroupTile group;
-//  LoadGroupConversationAction(this.group){}
-//}

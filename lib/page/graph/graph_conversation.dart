@@ -26,7 +26,6 @@ class GraphItem extends StatelessWidget {
             _ViewModel.create(store, _id_graph, _id_group),
         builder: (BuildContext context, _ViewModel model) {
           GraphTile _graph = model.getGraph();
-          var _key = 'graph' + _graph.id.toString();
 
           List<Widget> comments = [Graph(_graph.graph, _lang)];
           comments.addAll(_graph.comments
@@ -34,16 +33,11 @@ class GraphItem extends StatelessWidget {
               .toList());
           comments.add(AddCommentWidget(_graph.getEditComment(), model));
 
-          Util(StackTrace.current).out('_GraphItemState Comment key=' +
-              _key +
-              ' value=' +
-              model.store.state.isExpansionKey(_key).toString());
-
           return ExpansionTile(
-            key: PageStorageKey<String>(_key),
-            initiallyExpanded: model.store.state.isExpansionKey(_key),
+            key: PageStorageKey<int>(_graph.id),
+            initiallyExpanded: model.store.state.isGraphExpansionKey(_graph.id),
             onExpansionChanged: (v) =>
-                model.store.state.setExpansionKey(_key, v),
+                model.store.state.setGraphExpansionKey(_graph.id, v),
             title: Padding(
               padding: const EdgeInsets.all(20.0),
               child: SizedBox(
@@ -199,12 +193,12 @@ class _ViewModel extends BaseViewModel {
 
     _onAddComment(int id_comment, String comment) {
       Util(StackTrace.current).out('_onAddComment');
-      store.dispatch(AddGraphCommentAction(graph, id_comment, comment));
+      store.dispatch(SaveGraphCommentAction(graph, id_comment, comment));
     }
 
     _onRemoveComment(CommentTile comment) {
       Util(StackTrace.current).out('_onRemoveComment');
-      store.dispatch(RemoveGraphCommentAction(comment));
+      store.dispatch(DeleteGraphCommentAction(comment));
     }
 
     return _ViewModel(

@@ -139,7 +139,7 @@ class _ViewModel extends BaseViewModel {
     }
 
     _onRemoveGroup(GroupTile group) {
-      store.dispatch(RemoveGroupAction(group));
+      store.dispatch(DeleteGroupAction(group));
     }
 
     _onChangeLanguage(String lang) {

@@ -13,7 +13,7 @@ class AppState {
   Session session;
   List<GroupTile> groups;
   GraphBuild _graphBuild;
-  Map<String, bool> _expansionKeys = {};
+  Map<int, bool> _graphExpansionKeys = {};
 
   AppState._({
     @required this.session,
@@ -26,7 +26,7 @@ class AppState {
       groups: groups ?? this.groups,
     );
     app._graphBuild = this._graphBuild;
-    app._expansionKeys = this._expansionKeys;
+    app._graphExpansionKeys = this._graphExpansionKeys;
     return app;
   }
 
@@ -63,11 +63,11 @@ class AppState {
     groups.add(tile);
   }
 
-  void setExpansionKey(String k, bool v) {
-    _expansionKeys[k] = v;
+  void setGraphExpansionKey(int id, bool v) {
+    _graphExpansionKeys[id] = v;
   }
-  bool isExpansionKey(String k) {
-    return _expansionKeys.containsKey(k)? _expansionKeys[k] : false;
+  bool isGraphExpansionKey(int id) {
+    return _graphExpansionKeys.containsKey(id)? _graphExpansionKeys[id] : false;
   }
 
 

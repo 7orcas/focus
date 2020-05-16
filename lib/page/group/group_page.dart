@@ -5,7 +5,7 @@ import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/service/error.dart';
 import 'package:focus/model/app/app_state.dart';
-import 'package:focus/model/group/group_middleware.dart';
+import 'package:focus/model/group/group_data_access.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';

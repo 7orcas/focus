@@ -39,6 +39,13 @@ class GraphTile {
     return GraphEntity(id, id_group, graph, list);
   }
 
+  CommentTile findCommentTile(int id){
+    for (CommentTile c in comments){
+      if (c.id == id) return c;
+    }
+    return null;
+  }
+
   CommentTile getEditComment(){
     for (CommentTile c in comments){
       if (c.isEdit) return c;
