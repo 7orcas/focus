@@ -41,6 +41,8 @@ class GraphBuild {
     status = RunStatus.STOPPED;
     _timer.status = RunStatus.STOPPED;
     _controller.sink.add(this);
+    _controller.sink.close();
+    _controller.close();
   }
 
   bool get isActive =>

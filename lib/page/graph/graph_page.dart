@@ -98,6 +98,7 @@ class _ControlButtonsWidget extends StatelessWidget {
       actions.add(IconButton(
         icon: Icon(Icons.stop),
         onPressed: () {
+          _viewModel.store.state.graph = null;
           _graphBuild.stop();
         },
       ));
@@ -119,7 +120,7 @@ class _ControlButtonsWidget extends StatelessWidget {
 class _ViewModel {
   final Store<AppState> store;
   final List<GroupTile> groups;
-  final Function(int id_group, GraphBuild graph) onAddGraph;
+  final Function(int, GraphBuild) onAddGraph;
   final Function(GraphTile graph) onDeleteGraph;
 
   _ViewModel({
@@ -140,8 +141,9 @@ class _ViewModel {
     _onAddGraph(int id_group, GraphBuild graph) {
       Util(StackTrace.current).out('_onAddGraph');
       store.dispatch(SaveGraphAction(id_group, graph));
-      GroupTile gt = store.state.findGroupTile(id_group);
-      Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: gt);
+      Navigator.pop(context);
+//      GroupTile gt = store.state.findGroupTile(id_group);
+//      Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: gt);
     }
 
     _onDeleteGraph(GraphTile graph) {
