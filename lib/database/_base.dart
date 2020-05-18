@@ -73,7 +73,7 @@ class FocusDB {
   }
 
   DateTime dateTime(int ms) {
-    return DateTime.fromMicrosecondsSinceEpoch(ms);
+    return DateTime.fromMillisecondsSinceEpoch(ms);
   }
 
 

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:focus/model/base_entity.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/group_entity.dart';
@@ -55,6 +56,11 @@ class GroupTile extends BaseTile {
 
   GroupEntity toEntity() {
     return GroupEntity(id, createdMS(), name);
+  }
+
+  String lastGraphFormat(){
+    if(lastGraph == null) return '';
+    return DateFormat('dd MMM yy  hh:mm').format(lastGraph);
   }
 
 

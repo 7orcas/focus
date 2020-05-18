@@ -99,7 +99,15 @@ class GroupListWidget extends StatelessWidget {
             child: ListTile(
                   title: InkWell(
                     child: GestureDetector(
-                        child: Text(group.name),
+                        child: Row(
+                          children: <Widget>[
+                            Text(group.name),
+                            SizedBox(width: 20),
+                            Text(group.lastGraphFormat()),
+                            SizedBox(width: 20),
+                            Text('count=' + group.unreadComments.toString()),
+                          ],
+                        ),
                         onTap: () => Navigator.pushNamed(
                             context, ROUTE_GROUP_PAGE,
                             arguments: group),

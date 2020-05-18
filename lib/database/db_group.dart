@@ -31,59 +31,40 @@ class GroupDB extends FocusDB {
           name: list[i]['name'],
           publicKey: list[i]['public_key'],
           privateKey: list[i]['private_key'],
-          graphs: null);
+          graphs: null,
+          unreadComments: 0);
     });
 
     //Load last graph
-    sql = 'SELECT t.' + DBK_GROUP + ', t.created ' +
+    sql = 'SELECT t.' + DBK_GROUP + ' AS id, t.created_ms AS created ' +
         'FROM ' + DB_GRAPH + ' t ' +
         'INNER JOIN (' +
-            'SELECT ' + DBK_GROUP + ', MAX(created) AS max_date ' +
+            'SELECT ' + DBK_GROUP + ', MAX(created_ms) AS max_date ' +
             'FROM ' + DB_GRAPH + ' ' +
             'GROUP BY ' + DBK_GROUP + ' ' +
         ') tm on t.' + DBK_GROUP + ' = tm.' + DBK_GROUP + ' ' +
-        'AND t.created = tm.max_date';
+        'AND t.created_ms = tm.max_date';
 
-//    result = await database.rawQuery(sql);
-//    //list = result.toList();
-//    result.forEach((row) {
-//
-//      print ('id_group=' + row['id_group'].toString());
-//      print ('id_group=' + row['id_group'].runtimeType.toString());
-//
-//      for (GroupTile g in groups){
-//        if (g.id == row['id_group'])
-//          g.lastGraph = row['created'];
-//      }
-//    });
-//    // {_id: 1, name: Bob, age: 23}
-//    // {_id: 2, name: Mary, age: 32}
-//    // {_id: 3, name: Susan, age: 12}
-////
-////    for (int i=0; i<list.length; i++){
-////      int id_group = list[i]['id'];
-////      DateTime latest = list[i]['created'];
-////
-////      for (GroupTile g in groups){
-////        if (g.id == id_group) g.lastGraph = latest;
-////      }
-////    }
-//
-//    //Load comments
-//    sql = 'SELECT c.' + DBK_GROUP + ' AS id_group, COUNT(c.id) AS count FROM ' +
-//        DB_COMMENT + ' c WHERE comment_read = 0 ' +
-//        'GROUP BY c.' + DBK_GROUP;
-//
-//    result = await database.rawQuery(sql);
-//    list = result.toList();
-//    for (int i=0; i<list.length; i++){
-//      int id_group = list[i]['id'];
-//      int count = list[i]['count'];
-//
-//      for (GroupTile g in groups){
-//        if (g.id == id_group) g.unreadComments = count;
-//      }
-//    }
+    result = await database.rawQuery(sql);
+    list = result.toList();
+    list.forEach((row) {
+      for (GroupTile g in groups){
+        if (g.id == row['id']) g.lastGraph = dateTime(row['created']);
+      }
+    });
+
+    //Load comments
+    sql = 'SELECT c.' + DBK_GROUP + ' AS id, COUNT(c.id) AS count FROM ' +
+        DB_COMMENT + ' c WHERE comment_read = 1 ' +
+        'GROUP BY c.' + DBK_GROUP;
+
+    result = await database.rawQuery(sql);
+    list = result.toList();
+    list.forEach((row) {
+      for (GroupTile g in groups){
+        if (g.id == row['id']) g.unreadComments = row['count'] ?? 0;
+      }
+    });
 
     return groups;
   }
