@@ -72,6 +72,9 @@ class FocusDB {
     _database.execute("PRAGMA foreign_keys=ON");
   }
 
+  DateTime dateTime(int ms) {
+    return DateTime.fromMicrosecondsSinceEpoch(ms);
+  }
 
 
 }

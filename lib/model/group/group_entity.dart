@@ -1,12 +1,12 @@
+import 'package:focus/model/base_entity.dart';
 
-class GroupEntity {
-  final int id;
+class GroupEntity extends BaseEntity {
   final String name;
 
-  GroupEntity(this.id, this.name);
+  GroupEntity(id, created, this.name) : super(id, created);
 
-  Map<String, dynamic> toMap() => {
-    'id' : id,
-    'name' : name,
-  };
+  Map<String, dynamic> toMap() => super.toMap()
+    ..addAll({
+      'name': name,
+    });
 }

@@ -32,7 +32,7 @@ const List<String> _instructions = [
   '''
   CREATE TABLE IF NOT EXISTS DB_SYSTEM (
     id INTEGER NOT NULL PRIMARY KEY,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_ms INTEGER,
     version INTEGER DEFAULT 1,
     public_key TEXT,
     lang TEXT DEFAULT 'en'
@@ -41,7 +41,7 @@ const List<String> _instructions = [
   '''
   CREATE TABLE IF NOT EXISTS DB_USER (
     id INTEGER NOT NULL PRIMARY KEY,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_ms INTEGER,
     encoded TEXT,
     number INTEGER,
     email TEXT,
@@ -52,7 +52,7 @@ const List<String> _instructions = [
   '''
   CREATE TABLE IF NOT EXISTS DB_GROUP (
     id INTEGER PRIMARY KEY,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_ms INTEGER,
     encoded TEXT,
     name TEXT,
     public_key TEXT,
@@ -62,7 +62,7 @@ const List<String> _instructions = [
   '''
   CREATE TABLE IF NOT EXISTS DBJ_USER_GROUP (
     id INTEGER PRIMARY KEY,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_ms INTEGER,
     encoded TEXT,
     DBK_USER INTEGER,
     DBK_GROUP INTEGER,
@@ -81,7 +81,7 @@ const List<String> _instructions = [
   '''
   CREATE TABLE IF NOT EXISTS DB_GRAPH (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_ms INTEGER,
     encoded TEXT,
     DBK_GROUP INTEGER,
     graph TEXT, 
@@ -94,7 +94,7 @@ const List<String> _instructions = [
   '''
   CREATE TABLE IF NOT EXISTS DB_COMMENT (
     id INTEGER PRIMARY KEY,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_ms INTEGER,
     encoded TEXT,
     DBK_GROUP INTEGER,
     DBK_GRAPH INTEGER,

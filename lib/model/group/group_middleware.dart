@@ -98,8 +98,8 @@ Future<GraphEntity> _saveGraphToDB(
 /// Save graph comment to database and return new entity
 Future<CommentEntity> _saveGraphCommentToDB(
     Store<AppState> store, GraphTile graph, int id, String comment) async {
-  var entity = CommentEntity(id, graph.id_group, graph.id, ID_USER_ME, comment,
-      BaseEntity.fromBoolean(true));
+  var entity = CommentEntity(id, null, graph.id_group, graph.id, ID_USER_ME, comment,
+      BaseEntity.fromBoolean(true))..setCreated();
   return await GraphDB().saveGraphComment(entity);
 }
 

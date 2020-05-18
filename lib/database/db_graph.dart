@@ -15,6 +15,7 @@ class GraphDB extends FocusDB {
 
     // The `conflictAlgorithm` in case the same entity is inserted twice.
     // In this case, replace any previous data.
+    graph.setCreated();
     int id = await database.insert(
       DB_GRAPH,
       graph.toMap(),
@@ -22,7 +23,7 @@ class GraphDB extends FocusDB {
     );
 
     Util(StackTrace.current).out('saveGraph saved id=' + id.toString());
-    return graph.copyWith(id);
+    return graph.copyWith(id, graph.created);
   }
 
   Future<CommentEntity> saveGraphComment(CommentEntity comment) async {
@@ -31,6 +32,7 @@ class GraphDB extends FocusDB {
 
     // The `conflictAlgorithm` in case the same entity is inserted twice.
     // In this case, replace any previous data.
+    comment.setCreated();
     int id = await database.insert(
       DB_COMMENT,
       comment.toMap(),
@@ -38,7 +40,7 @@ class GraphDB extends FocusDB {
     );
 
     Util(StackTrace.current).out('saveGraphComment saved id=' + id.toString());
-    return comment.copyWith(id);
+    return comment.copyWith(id, comment.created);
   }
 
   void removeGraph(int id_graph) async {

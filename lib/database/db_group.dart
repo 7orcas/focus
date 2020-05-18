@@ -14,24 +14,78 @@ import 'package:focus/service/util.dart';
 // ToDo refactor
 
 class GroupDB extends FocusDB {
+
   Future<List<GroupTile>> loadGroups() async {
     await connectDatabase();
 
-    //Load comments
-    String sql = 'SELECT g.id, g.name, g.public_key, g.privateKey FROM ' +
-        DB_GROUP;
+    //Load groups
+    String sql = 'SELECT g.id, g.created_ms, g.name, g.public_key, g.private_key FROM ' +
+        DB_GROUP + ' g';
 
     var result = await database.rawQuery(sql);
     List<Map<String, dynamic>> list = result.toList();
-    final List<GroupTile> listX = List.generate(list.length, (i) {
+    final List<GroupTile> groups = List.generate(list.length, (i) {
       return GroupTile(
           id: list[i]['id'],
+          created: dateTime(list[i]['created_ms']),
           name: list[i]['name'],
           publicKey: list[i]['public_key'],
           privateKey: list[i]['private_key'],
           graphs: null);
     });
-    return listX;
+
+    //Load last graph
+    sql = 'SELECT t.' + DBK_GROUP + ', t.created ' +
+        'FROM ' + DB_GRAPH + ' t ' +
+        'INNER JOIN (' +
+            'SELECT ' + DBK_GROUP + ', MAX(created) AS max_date ' +
+            'FROM ' + DB_GRAPH + ' ' +
+            'GROUP BY ' + DBK_GROUP + ' ' +
+        ') tm on t.' + DBK_GROUP + ' = tm.' + DBK_GROUP + ' ' +
+        'AND t.created = tm.max_date';
+
+//    result = await database.rawQuery(sql);
+//    //list = result.toList();
+//    result.forEach((row) {
+//
+//      print ('id_group=' + row['id_group'].toString());
+//      print ('id_group=' + row['id_group'].runtimeType.toString());
+//
+//      for (GroupTile g in groups){
+//        if (g.id == row['id_group'])
+//          g.lastGraph = row['created'];
+//      }
+//    });
+//    // {_id: 1, name: Bob, age: 23}
+//    // {_id: 2, name: Mary, age: 32}
+//    // {_id: 3, name: Susan, age: 12}
+////
+////    for (int i=0; i<list.length; i++){
+////      int id_group = list[i]['id'];
+////      DateTime latest = list[i]['created'];
+////
+////      for (GroupTile g in groups){
+////        if (g.id == id_group) g.lastGraph = latest;
+////      }
+////    }
+//
+//    //Load comments
+//    sql = 'SELECT c.' + DBK_GROUP + ' AS id_group, COUNT(c.id) AS count FROM ' +
+//        DB_COMMENT + ' c WHERE comment_read = 0 ' +
+//        'GROUP BY c.' + DBK_GROUP;
+//
+//    result = await database.rawQuery(sql);
+//    list = result.toList();
+//    for (int i=0; i<list.length; i++){
+//      int id_group = list[i]['id'];
+//      int count = list[i]['count'];
+//
+//      for (GroupTile g in groups){
+//        if (g.id == id_group) g.unreadComments = count;
+//      }
+//    }
+
+    return groups;
   }
 
   Future<GroupTile> loadGroupConversation(int id) async {
@@ -52,6 +106,7 @@ class GroupDB extends FocusDB {
     List<CommentEntity> comments = List.generate(list.length, (i) {
       return CommentEntity(
           list[i]['id'],
+          dateTime(list[i]['created_ms']),
           list[i][DBK_GROUP],
           list[i][DBK_GRAPH],
           list[i][DBK_USER],
@@ -82,7 +137,7 @@ class GroupDB extends FocusDB {
           commentsE.map((e) => CommentTile.entity(e)).toList();
 
       return GraphTile(
-          id_graph, list[i][DBK_GROUP], list[i]['graph'], commentsT);
+          id_graph, dateTime(list[i]['created_ms']), list[i][DBK_GROUP], list[i]['graph'], commentsT);
     });
 
     //Load group
@@ -113,6 +168,7 @@ class GroupDB extends FocusDB {
 
     // The `conflictAlgorithm` in case the same entity is inserted twice.
     // In this case, replace any previous data.
+    group.setCreated();
     int id = await database.insert(
       DB_GROUP,
       group.toMap(),
@@ -121,7 +177,7 @@ class GroupDB extends FocusDB {
 
     Util(StackTrace.current)
         .out('saveGroup name=' + group.name + ' id=' + id.toString());
-    return GroupEntity(id, group.name);
+    return GroupEntity(id, group.created, group.name);
   }
 
   void removeGroup(GroupEntity group) async {

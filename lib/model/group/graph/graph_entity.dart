@@ -1,32 +1,31 @@
 import 'package:focus/database/_scheme.dart';
+import 'package:focus/model/base_entity.dart';
 import 'package:focus/model/group/comment/comment_entity.dart';
 
-class GraphEntity {
-  final int id;
+class GraphEntity extends BaseEntity {
   final int id_group;
   final String graph;
   final List<CommentEntity> comments;
 
-  GraphEntity(this.id, this.id_group, this.graph, this.comments);
+  GraphEntity(id, createdMS, this.id_group, this.graph, this.comments)
+      : super(id, createdMS);
 
   GraphEntity.build(this.id_group, this.graph)
-      : id = null,
-        comments = List<CommentEntity>();
+      : comments = List<CommentEntity>(),
+        super(null, null);
 
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        DBK_GROUP: id_group,
-        'graph': graph,
-      };
+  Map<String, dynamic> toMap() => super.toMap()
+    ..addAll({
+      DBK_GROUP: id_group,
+      'graph': graph,
+    });
 
-  GraphEntity copyWith(int id) {
-    return GraphEntity(id ?? this.id, id_group, graph, comments);
+  GraphEntity copyWith(int id, DateTime created) {
+    return GraphEntity(
+        id ?? this.id,
+        created ?? this.created,
+        id_group,
+        graph,
+        comments);
   }
-
-  String _graphCompress(){
-    if (graph == null) return '';
-
-  }
-
-
 }

@@ -2,8 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:focus/model/base_entity.dart';
 import 'package:focus/model/group/comment/comment_entity.dart';
 
-class CommentTile extends BaseEntity{
-  final int id;
+class CommentTile extends BaseTile {
   final int id_group; //here for convenience
   final int id_graph;
   final int id_user;
@@ -12,33 +11,35 @@ class CommentTile extends BaseEntity{
   bool _edit = false; //true == user is editing this comment
 
   CommentTile({
-    @required this.id,
+    @required id,
+    @required created,
     @required this.id_group,
     @required this.id_graph,
     @required this.id_user,
     @required this.comment,
     @required this.comment_read,
-  });
+  }) : super(id, created);
 
   CommentTile.entity(CommentEntity e)
-      : id = e.id,
-        id_group = e.id_group,
+      : id_group = e.id_group,
         id_graph = e.id_graph,
         id_user = e.id_user,
         comment = e.comment,
-        comment_read = BaseEntity.toBoolean(e.comment_read);
+        comment_read = BaseEntity.toBoolean(e.comment_read),
+        super(e.id, e.created);
 
   CommentEntity toEntity() {
-    return CommentEntity(id, id_group, id_graph, id_user, comment, fromBool(comment_read));
+    return CommentEntity(id, createdMS(), id_group, id_graph, id_user, comment,
+        fromBool(comment_read));
   }
 
   void edit(bool v) {
     _edit = v;
   }
-  void editCancel () {
+
+  void editCancel() {
     _edit = false;
   }
 
   bool get isEdit => _edit;
-
 }
