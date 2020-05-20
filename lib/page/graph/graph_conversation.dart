@@ -27,7 +27,7 @@ class GraphItem extends StatelessWidget {
         builder: (BuildContext context, _ViewModel model) {
           GraphTile _graph = model.getGraph();
 
-          List<Widget> list = comments (_graph, model);
+          List<Widget> list = comments(_graph, model);
 
           return ExpansionTile(
             key: PageStorageKey<int>(_graph.id),
@@ -40,12 +40,13 @@ class GraphItem extends StatelessWidget {
                 width: 100,
                 child: Row(
                   children: <Widget>[
-                    Text(_graph.createdFormat()), //ToDo delete
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _onDeleteGraph(_graph),
-                    ),
-
+                    Text(_graph.createdFormat()),
+                    SizedBox(width: 10),
+                    Container(
+                        width: 170,
+                        child: Text(_graph.firstCommentFormat(),
+                            style: TextStyle(fontSize: 15, color: Colors.grey),
+                            overflow: TextOverflow.fade, softWrap: false)),
                   ],
                 ),
               ),
@@ -60,21 +61,40 @@ class GraphItem extends StatelessWidget {
     return _buildTiles();
   }
 
-  List<Widget> comments (GraphTile _graph, _ViewModel model){
-    List<Widget> comments = [Graph(_graph.graph, _lang)];
-    comments.addAll(_graph.comments
-        .map((c) => CommentWidget(_graph, c, model))
-        .toList());
-    comments.add(AddCommentWidget(_graph.getEditComment(), model));
+  // List of objects within graph
+  List<Widget> comments(GraphTile _graph, _ViewModel model) {
+
+    //Add graph
+    List<Widget> comments = [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          GraphWidget(_graph.graph, _lang),
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.grey, size: 20),
+            onPressed: () => _onDeleteGraph(_graph),
+          )
+        ]),
+      )
+    ];
+
+    //Add comments
+    comments.addAll(
+        _graph.comments.map((c) => CommentWidget(_graph, c, model)).toList());
+
+    //Add form entry
+    comments.add(Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: AddCommentWidget(_graph.getEditComment(), model),
+    ));
 
     return comments;
   }
-
 }
 
-
-class Graph extends StatelessWidget {
-  Graph(this._graph, this._lang);
+class GraphWidget extends StatelessWidget {
+  GraphWidget(this._graph, this._lang);
 
   final String _graph;
   final Function _lang;
@@ -88,7 +108,7 @@ class Graph extends StatelessWidget {
     } on Exception catch (e) {
       chart = Text(_lang('InvalidGraph'));
     }
-    return SizedBox(width: 200.0, height: 200.0, child: chart);
+    return SizedBox(width: 300.0, height: 200.0, child: chart);
   }
 }
 
@@ -103,20 +123,49 @@ class CommentWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
+          padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+          child: Column(
             children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () => _model.onRemoveComment(_comment),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Container(
+                      padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+                      child: Text(_comment.comment,
+                          style: TextStyle(color: Colors.black)),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey,
+                        boxShadow: [
+                          BoxShadow(color: Colors.blueAccent, spreadRadius: 3),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
               ),
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () => _model.onEditComment(_comment.id),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                          child: Row(children: <Widget>[
+                        Text(_comment.createdFormat(),
+                            style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.grey, size: 15),
+                          onPressed: () => _model.onEditComment(_comment.id),
+                        ),
+                      ])),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.grey, size: 20),
+                        onPressed: () => _model.onRemoveComment(_comment),
+                      ),
+                    ]),
               ),
-              Expanded(child: Text(_comment.comment)),
-              SizedBox(width: 10),
-              Text(_comment.createdFormat()),
             ],
           ),
         ),
@@ -146,6 +195,9 @@ class _AddCommentState extends State<AddCommentWidget> {
 
     return TextField(
       key: PageStorageKey('mytextfield'),
+      keyboardType: TextInputType.multiline,
+      maxLines: 4      ,
+      textInputAction: TextInputAction.done,
       controller: controller,
       decoration: InputDecoration(
         hintText: widget.model.label('AddComment'),

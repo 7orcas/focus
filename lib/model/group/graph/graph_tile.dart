@@ -70,7 +70,12 @@ class GraphTile extends BaseTile {
   @override
   String createdFormat(){
     if(created == null) return '';
-    return DateFormat('hh:mm  dd MMM yy').format(created);
+    return DateFormat('hh:mm dd.MMM.yy').format(created);
+  }
+
+  String firstCommentFormat(){
+    if(comments == null || comments.length == 0) return '';
+    return comments[0].comment;
   }
 
 }
