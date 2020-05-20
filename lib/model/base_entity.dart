@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class BaseEntity {
   final int id;
   DateTime created;
@@ -50,6 +52,11 @@ class BaseTile {
 
   static DateTime toDateTime(int ms) {
     return DateTime.fromMicrosecondsSinceEpoch(ms);
+  }
+
+  String createdFormat(){
+    if(created == null) return '';
+    return DateFormat('dd MMM yy  hh:mm').format(created);
   }
 
   int fromBool(bool v) {

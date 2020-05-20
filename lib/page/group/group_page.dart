@@ -16,24 +16,21 @@ import 'package:focus/page/graph/graph_conversation.dart';
 class GroupPage extends StatelessWidget {
   final GroupTile _group;
 
-  GroupPage(this._group) {
-    Util(StackTrace.current).out(
-        'GroupPage constructor graphs build constains ' +
-            _group.containsGraphs().toString());
-  }
+  GroupPage(this._group) {}
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(context, store),
-        builder: (BuildContext context, _ViewModel viewModel) {
+        builder: (BuildContext context, _ViewModel model) {
           return FutureBuilder<GroupTile>(
-              future: loadGroupConversation(viewModel.store, _group.id),
+              future: loadGroupConversation(model.store, _group.id),
               builder:
                   (BuildContext context, AsyncSnapshot<GroupTile> snapshot) {
+
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                      child: Text(viewModel.label('Loading'))); //ToDo graphic
+                      child: Text(model.label('Loading'))); //ToDo graphic
                 }
 
                 if (snapshot.hasError)
@@ -45,20 +42,20 @@ class GroupPage extends StatelessWidget {
                 return MaterialApp(
                   home: Scaffold(
                     appBar: new AppBar(
-                      title: new Text(viewModel.label('Group')),
+                      title: new Text(model.label('Group')),
                     ),
                     body: ListView.builder(
                       itemBuilder: (BuildContext context, int index) =>
                           GraphItem(
                               c.graphs[index].id,
                               c.graphs[index].id_group,
-                              viewModel.onDeleteGraph,
-                              viewModel.label),
+                              model.onDeleteGraph,
+                              model.label),
                       itemCount: c.graphs.length,
                     ),
                     floatingActionButton: new FloatingActionButton(
                       onPressed: () {
-                        viewModel.onAddGraph(_group);
+                        model.onAddGraph(_group);
                       },
                       child: new Icon(Icons.add),
                     ),

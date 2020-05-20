@@ -27,11 +27,7 @@ class GraphItem extends StatelessWidget {
         builder: (BuildContext context, _ViewModel model) {
           GraphTile _graph = model.getGraph();
 
-          List<Widget> comments = [Graph(_graph.graph, _lang)];
-          comments.addAll(_graph.comments
-              .map((c) => CommentWidget(_graph, c, model))
-              .toList());
-          comments.add(AddCommentWidget(_graph.getEditComment(), model));
+          List<Widget> list = comments (_graph, model);
 
           return ExpansionTile(
             key: PageStorageKey<int>(_graph.id),
@@ -39,28 +35,22 @@ class GraphItem extends StatelessWidget {
             onExpansionChanged: (v) =>
                 model.store.state.setGraphExpansionKey(_graph.id, v),
             title: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(10.0),
               child: SizedBox(
                 width: 100,
                 child: Row(
                   children: <Widget>[
-                    Text(_graph.graph == null || _graph.graph.length < 7
-                        ? '?'
-                        : _graph.graph.substring(0, 7)), //ToDo delete
+                    Text(_graph.createdFormat()), //ToDo delete
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () => _onDeleteGraph(_graph),
                     ),
-                    Spacer(),
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () => print('ZZZZZZ'),
-                    ),
+
                   ],
                 ),
               ),
             ),
-            children: comments,
+            children: list,
           );
         });
   }
@@ -69,9 +59,19 @@ class GraphItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return _buildTiles();
   }
+
+  List<Widget> comments (GraphTile _graph, _ViewModel model){
+    List<Widget> comments = [Graph(_graph.graph, _lang)];
+    comments.addAll(_graph.comments
+        .map((c) => CommentWidget(_graph, c, model))
+        .toList());
+    comments.add(AddCommentWidget(_graph.getEditComment(), model));
+
+    return comments;
+  }
+
 }
 
-//abstract class Item extends StatelessWidget {}
 
 class Graph extends StatelessWidget {
   Graph(this._graph, this._lang);
@@ -115,6 +115,8 @@ class CommentWidget extends StatelessWidget {
                 onPressed: () => _model.onEditComment(_comment.id),
               ),
               Expanded(child: Text(_comment.comment)),
+              SizedBox(width: 10),
+              Text(_comment.createdFormat()),
             ],
           ),
         ),

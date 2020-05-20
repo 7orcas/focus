@@ -19,8 +19,10 @@ class GroupDB extends FocusDB {
     await connectDatabase();
 
     //Load groups
-    String sql = 'SELECT g.id, g.created_ms, g.name, g.public_key, g.private_key FROM ' +
-        DB_GROUP + ' g';
+    String sql =
+        'SELECT g.id, g.created_ms, g.name, g.public_key, g.private_key FROM ' +
+            DB_GROUP +
+            ' g';
 
     var result = await database.rawQuery(sql);
     List<Map<String, dynamic>> list = result.toList();
@@ -36,33 +38,80 @@ class GroupDB extends FocusDB {
     });
 
     //Load last graph
-    sql = 'SELECT t.' + DBK_GROUP + ' AS id, t.created_ms AS created ' +
-        'FROM ' + DB_GRAPH + ' t ' +
+    sql = 'SELECT t.' +
+        DBK_GROUP +
+        ' AS id, t.created_ms AS created ' +
+        'FROM ' +
+        DB_GRAPH +
+        ' t ' +
         'INNER JOIN (' +
-            'SELECT ' + DBK_GROUP + ', MAX(created_ms) AS max_date ' +
-            'FROM ' + DB_GRAPH + ' ' +
-            'GROUP BY ' + DBK_GROUP + ' ' +
-        ') tm on t.' + DBK_GROUP + ' = tm.' + DBK_GROUP + ' ' +
+        'SELECT ' +
+        DBK_GROUP +
+        ', MAX(created_ms) AS max_date ' +
+        'FROM ' +
+        DB_GRAPH +
+        ' ' +
+        'GROUP BY ' +
+        DBK_GROUP +
+        ' ' +
+        ') tm on t.' +
+        DBK_GROUP +
+        ' = tm.' +
+        DBK_GROUP +
+        ' ' +
         'AND t.created_ms = tm.max_date';
 
     result = await database.rawQuery(sql);
-    list = result.toList();
-    list.forEach((row) {
-      for (GroupTile g in groups){
+    result.toList().forEach((row) {
+      for (GroupTile g in groups) {
         if (g.id == row['id']) g.lastGraph = dateTime(row['created']);
       }
     });
 
-    //Load comments
-    sql = 'SELECT c.' + DBK_GROUP + ' AS id, COUNT(c.id) AS count FROM ' +
-        DB_COMMENT + ' c WHERE comment_read = 1 ' +
-        'GROUP BY c.' + DBK_GROUP;
+    //Load unread comments
+    sql = 'SELECT c.' +
+        DBK_GROUP +
+        ' AS id, COUNT(c.id) AS count FROM ' +
+        DB_COMMENT +
+        ' c WHERE comment_read = 1 ' +
+        'GROUP BY c.' +
+        DBK_GROUP;
 
     result = await database.rawQuery(sql);
-    list = result.toList();
-    list.forEach((row) {
-      for (GroupTile g in groups){
+    result.toList().forEach((row) {
+      for (GroupTile g in groups) {
         if (g.id == row['id']) g.unreadComments = row['count'] ?? 0;
+      }
+    });
+
+    //Load last comment
+    sql = 'SELECT t.' +
+        DBK_GROUP +
+        ' AS id, t.comment ' +
+        'FROM ' +
+        DB_COMMENT +
+        ' t ' +
+        'INNER JOIN (' +
+        'SELECT ' +
+        DBK_GROUP +
+        ', MAX(created_ms) AS max_date ' +
+        'FROM ' +
+        DB_COMMENT +
+        ' ' +
+        'GROUP BY ' +
+        DBK_GROUP +
+        ' ' +
+        ') tm on t.' +
+        DBK_GROUP +
+        ' = tm.' +
+        DBK_GROUP +
+        ' ' +
+        'AND t.created_ms = tm.max_date';
+
+    result = await database.rawQuery(sql);
+    result.toList().forEach((row) {
+      for (GroupTile g in groups) {
+        if (g.id == row['id']) g.lastComment = row['comment'] ?? 0;
       }
     });
 
@@ -117,8 +166,8 @@ class GroupDB extends FocusDB {
       List<CommentTile> commentsT =
           commentsE.map((e) => CommentTile.entity(e)).toList();
 
-      return GraphTile(
-          id_graph, dateTime(list[i]['created_ms']), list[i][DBK_GROUP], list[i]['graph'], commentsT);
+      return GraphTile(id_graph, dateTime(list[i]['created_ms']),
+          list[i][DBK_GROUP], list[i]['graph'], commentsT);
     });
 
     //Load group

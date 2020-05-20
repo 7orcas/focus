@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:focus/model/base_entity.dart';
 import 'package:focus/model/group/comment/comment_entity.dart';
 import 'package:focus/model/group/graph/graph_entity.dart';
@@ -65,4 +66,11 @@ class GraphTile extends BaseTile {
       c.editCancel();
     }
   }
+
+  @override
+  String createdFormat(){
+    if(created == null) return '';
+    return DateFormat('hh:mm  dd MMM yy').format(created);
+  }
+
 }

@@ -7,11 +7,12 @@ import 'package:focus/service/util.dart';
 
 class GroupTile extends BaseTile {
   final String name;
-  List<GraphTile> graphs;
   final String publicKey;
   final String privateKey;
-  DateTime lastGraph = null;
-  int unreadComments = 0;
+  List<GraphTile> _graphs;
+  DateTime _lastGraph = null;
+  int _unreadComments = 0;
+  String _lastComment = null;
 
   GroupTile({
     @required id,
@@ -19,17 +20,22 @@ class GroupTile extends BaseTile {
     @required this.name,
     @required this.publicKey,
     @required this.privateKey,
-    @required this.graphs,
-    this.lastGraph,
-    this.unreadComments,
-  }) : super (id, created);
+    @required graphs,
+    lastGraph,
+    unreadComments,
+    lastComment,
+  })  : _graphs = graphs,
+        _lastGraph = lastGraph,
+        _unreadComments = unreadComments,
+        _lastComment = lastComment,
+        super(id, created);
 
   GroupTile.entity(GroupEntity e)
       : name = e.name,
         publicKey = null,
         privateKey = null,
-        graphs = null,
-  super (e.id, e.created);
+        _graphs = null,
+        super(e.id, e.created);
 
 //  GroupTile copyWith({int id}) {
 //    return GroupTile(
@@ -41,28 +47,43 @@ class GroupTile extends BaseTile {
 //    );
 //  }
 
-  GraphTile findGraphTile(int id){
-    if (!containsGraphs ()) return null;
-    for (GraphTile t in graphs){
+  void addGraph (GraphTile graph){
+    if (_graphs == null) _graphs = List<GraphTile>();
+    _graphs.add(graph);
+  }
+
+  void removeGraph (int id){
+    if (_graphs == null) return;
+    _graphs.removeWhere((g) => g.id == id);
+  }
+
+  List<GraphTile> get graphs => _graphs;
+  int get unreadComments => _unreadComments ?? 0;
+  String get lastComment => _lastComment ?? 'x';
+  void set lastGraph (DateTime d) => _lastGraph = d;
+  void set unreadComments (int x) => _unreadComments = x;
+  void set lastComment (String c) => _lastComment = c;
+
+  GraphTile findGraphTile(int id) {
+    if (!containsGraphs()) return null;
+    for (GraphTile t in _graphs) {
       if (t.id == id) return t;
     }
     return null;
   }
 
-  bool containsGraphs () {
-    Util(StackTrace.current).out('containsGraphs :' + (graphs != null).toString());
-    return graphs != null;
+  bool containsGraphs() {
+    return _graphs != null;
   }
 
   GroupEntity toEntity() {
     return GroupEntity(id, createdMS(), name);
   }
 
-  String lastGraphFormat(){
-    if(lastGraph == null) return '';
-    return DateFormat('dd MMM yy  hh:mm').format(lastGraph);
+  String lastGraphFormat() {
+    if (_lastGraph == null) return '';
+    return DateFormat('dd MMM yy  hh:mm').format(_lastGraph);
   }
-
 
 //  TODO refactor
 //  void decrypt() {

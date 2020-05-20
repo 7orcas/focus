@@ -35,7 +35,7 @@ List<GroupTile> groupReducer(AppState state, action) {
       state.clearGraphExpansionKey();
       state.setGraphExpansionKey(action.graph.id, true);
       GroupTile gt = state.findGroupTile(action.graph.id_group);
-      gt.graphs.add(action.graph);
+      gt.addGraph(action.graph);
       return state.groups.map((e) {
         if (e.id == gt.id) return gt;
         return e;
@@ -43,7 +43,7 @@ List<GroupTile> groupReducer(AppState state, action) {
 
     case DeleteGraphStoreAction:
       GroupTile gt = state.findGroupTile(action.graph.id_group);
-      gt.graphs.removeWhere((g) => g.id == action.graph.id);
+      gt.removeGraph(action.graph.id);
        return state.groups.map((e) {
         if (e.id == action.graph.id_group) return gt;
         return e;
