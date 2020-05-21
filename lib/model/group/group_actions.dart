@@ -33,3 +33,10 @@ class DeleteGroupAction {
   final GroupTile group;
   DeleteGroupAction(this.group);
 }
+
+/// Show / Hide Add Graph button
+class ToggleAddGraphButtonAction {
+  ToggleAddGraphButtonAction(){
+    Util(StackTrace.current).out('ToggleAddGraphButtonAction constructor');
+  }
+}

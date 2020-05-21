@@ -27,7 +27,6 @@ class GroupPage extends StatelessWidget {
               future: loadGroupConversation(model.store, _group.id),
               builder:
                   (BuildContext context, AsyncSnapshot<GroupTile> snapshot) {
-
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                       child: Text(model.label('Loading'))); //ToDo graphic
@@ -41,25 +40,25 @@ class GroupPage extends StatelessWidget {
 
                 return MaterialApp(
                   home: Scaffold(
-                    appBar: new AppBar(
-                      title: new Text(model.label('Group')),
-                    ),
-                    body: ListView.builder(
-                      itemBuilder: (BuildContext context, int index) =>
-                          GraphItem(
-                              c.graphs[index].id,
-                              c.graphs[index].id_group,
-                              model.onDeleteGraph,
-                              model.label),
-                      itemCount: c.graphs.length,
-                    ),
-                    floatingActionButton: new FloatingActionButton(
-                      onPressed: () {
-                        model.onAddGraph(_group);
-                      },
-                      child: new Icon(Icons.add),
-                    ),
-                  ),
+                      appBar: new AppBar(
+                        title: new Text(model.label('Group')),
+                      ),
+                      body: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) =>
+                            GraphItem(
+                                c.graphs[index].id,
+                                c.graphs[index].id_group,
+                                model.onDeleteGraph,
+                                model.label),
+                        itemCount: c.graphs.length,
+                      ),
+                      floatingActionButton: Visibility(
+                          visible: model.store.state.isShowAddGraph,
+                          child: new FloatingActionButton(
+                              onPressed: () {
+                                model.onAddGraph(_group);
+                              },
+                              child: new Icon(Icons.add)))),
                 );
               });
         });

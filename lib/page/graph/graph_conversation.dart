@@ -4,10 +4,11 @@ import 'package:redux/redux.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
+import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
-import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
+import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/graph/graph_chart.dart';
 
@@ -46,7 +47,8 @@ class GraphItem extends StatelessWidget {
                         width: 170,
                         child: Text(_graph.firstCommentFormat(),
                             style: TextStyle(fontSize: 15, color: Colors.grey),
-                            overflow: TextOverflow.fade, softWrap: false)),
+                            overflow: TextOverflow.fade,
+                            softWrap: false)),
                   ],
                 ),
               ),
@@ -63,7 +65,6 @@ class GraphItem extends StatelessWidget {
 
   // List of objects within graph
   List<Widget> comments(GraphTile _graph, _ViewModel model) {
-
     //Add graph
     List<Widget> comments = [
       Padding(
@@ -177,6 +178,7 @@ class CommentWidget extends StatelessWidget {
 class AddCommentWidget extends StatefulWidget {
   final _ViewModel model;
   final CommentTile commentTile;
+
   AddCommentWidget(this.commentTile, this.model);
   @override
   _AddCommentState createState() => _AddCommentState();
@@ -193,26 +195,80 @@ class _AddCommentState extends State<AddCommentWidget> {
     controller.text =
         widget.commentTile != null ? widget.commentTile.comment : null;
 
-    return TextField(
-      key: PageStorageKey('mytextfield'),
-      keyboardType: TextInputType.multiline,
-      maxLines: 4      ,
-      textInputAction: TextInputAction.done,
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: widget.model.label('AddComment'),
-        suffixIcon: widget.commentTile == null
-            ? null
-            : IconButton(
-                onPressed: () => widget.commentTile.editCancel(),
-                icon: Icon(Icons.clear),
-              ),
-      ),
-      onSubmitted: (String comment) {
-        controller.clear();
-        widget.model.onAddComment(
-            widget.commentTile == null ? null : widget.commentTile.id, comment);
-      },
+    FocusNode _focus = new FocusNode();
+    void _onFocusChange() {
+      if (widget.model.store.state.isCommentFieldActive) return;
+      debugPrint('*****Focus: ' + _focus.hasFocus.toString());
+      widget.model.store.state.setCommentFieldActive();
+      widget.model.store.dispatch(ToggleAddGraphButtonAction());
+    }
+
+    _focus.addListener(_onFocusChange);
+
+
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Visibility(
+            visible: widget.model.store.state.isCommentFieldActive,
+            child: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                widget.model.store.state.clearCommentFieldActive();
+                widget.model.onAddComment(
+                    widget.commentTile == null ? null : widget.commentTile.id,
+                    controller.text);
+                controller.clear();
+              },
+            ),
+          ),
+        ),
+        Expanded(
+          child: Visibility(
+            visible: widget.model.store.state.isCommentFieldActive,
+            child: IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                widget.model.store.state.clearCommentFieldActive();
+                controller.clear();
+                widget.model.store.dispatch(ToggleAddGraphButtonAction());
+              },
+            ),
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            autofocus: widget.model.store.state.isCommentFieldActive,
+            key: PageStorageKey('mytextfield'),
+            keyboardType: TextInputType.multiline,
+            onEditingComplete: () {
+              print('***** onEditingComplete');
+            },
+            focusNode: _focus,
+            maxLines: 4,
+            textInputAction: TextInputAction.done,
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: widget.model.label('AddComment'),
+              border: OutlineInputBorder(),
+              suffixIcon: widget.commentTile == null
+                  ? null
+                  : IconButton(
+                      onPressed: () => widget.commentTile.editCancel(),
+                      icon: Icon(Icons.clear),
+                    ),
+            ),
+//            onSubmitted: (String comment) {
+//              controller.clear();
+//              print('***** onSubmitted');
+//              widget.model.store.state.clearCommentFieldActive();
+//              widget.model.onAddComment(
+//                  widget.commentTile == null ? null : widget.commentTile.id,
+//                  comment);
+//            },
+          ),
+        ),
+      ],
     );
   }
 }

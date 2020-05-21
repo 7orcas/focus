@@ -14,6 +14,8 @@ class AppState {
   List<GroupTile> groups;
   GraphBuild _graphBuild;
   Map<int, bool> _graphExpansionKeys = {};
+  bool _showAddGraph = true;
+  bool _commentFieldActive = false;
 
   AppState._({
     @required this.session,
@@ -27,6 +29,8 @@ class AppState {
     );
     app._graphBuild = this._graphBuild;
     app._graphExpansionKeys = this._graphExpansionKeys;
+    app._showAddGraph = this._showAddGraph;
+    app._commentFieldActive = this._commentFieldActive;
     return app;
   }
 
@@ -73,5 +77,15 @@ class AppState {
     return _graphExpansionKeys.containsKey(id)? _graphExpansionKeys[id] : false;
   }
 
+  void setCommentFieldActive (){
+    _showAddGraph = false;
+    _commentFieldActive = true;
+  }
+  void clearCommentFieldActive (){
+    _showAddGraph = true;
+    _commentFieldActive = false;
+  }
 
+  bool get isShowAddGraph => _showAddGraph;
+  bool get isCommentFieldActive => _commentFieldActive;
 }

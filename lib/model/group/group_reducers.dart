@@ -82,6 +82,9 @@ List<GroupTile> groupReducer(AppState state, action) {
         return e;
       }).toList();
 
+    case ToggleAddGraphButtonAction:
+      return state.groups;
+
   }
 
   return state.groups;
