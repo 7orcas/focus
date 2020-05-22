@@ -8,9 +8,13 @@ class CommentEntity extends BaseEntity {
   final int comment_read;
   String comment;
 
-  CommentEntity(id, created, this.id_group, this.id_graph, this.id_user,
-      this.comment, this.comment_read)
-      : super(id, created);
+  CommentEntity(id, created, encoded, this.id_group, this.id_graph,
+      this.id_user, this.comment, this.comment_read)
+      : super(id, created, encoded);
+
+  CommentEntity.add(id, this.id_group, this.id_graph, this.id_user,
+      this.comment_read, this.comment)
+      : super(id, null, null);
 
   Map<String, dynamic> toMap() => super.toMap()
     ..addAll({
@@ -22,7 +26,7 @@ class CommentEntity extends BaseEntity {
     });
 
   CommentEntity copyWith(int id, DateTime created) {
-    return CommentEntity(id ?? this.id, created ?? this.created, id_group,
-        id_graph, id_user, comment, comment_read);
+    return CommentEntity(id ?? this.id, created ?? this.created, encoded,
+        id_group, id_graph, id_user, comment, comment_read);
   }
 }

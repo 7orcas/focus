@@ -55,7 +55,7 @@ class GraphPage extends StatelessWidget {
                     return Column(
                       children: <Widget>[
                         _ControlButtonsWidget(viewModel, _id_group, graphBuild),
-                        Text(graphBuild.timer()),
+                        Text(graphBuild.timerAsString()),
                         Expanded(child: FocusChart(graphBuild.chartData()))
                       ],
                     );
@@ -142,8 +142,6 @@ class _ViewModel {
       Util(StackTrace.current).out('_onAddGraph');
       store.dispatch(SaveGraphAction(id_group, graph));
       Navigator.pop(context);
-//      GroupTile gt = store.state.findGroupTile(id_group);
-//      Navigator.pushNamed(context, ROUTE_GROUP_PAGE, arguments: gt);
     }
 
     _onDeleteGraph(GraphTile graph) {

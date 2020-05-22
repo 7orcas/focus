@@ -70,6 +70,8 @@ List<LangLabel> _en = [
   LangLabel('DelGroups', 'Delete Groups'),
   LangLabel('Loading', 'Please wait its loading...'),
   LangLabel('InvalidGraph', 'Invalid Graph!'),
+  LangLabel('TimeSec', 'Time (seconds)'),
+  LangLabel('Count', 'Number of Readings'),
 
   //Unit test code
   LangLabel('UTCode1', 'Unit Test Code 1'),

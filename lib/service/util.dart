@@ -41,4 +41,15 @@ class Util {
   }
 
 
+  static String timeFormat(int seconds) {
+    if (seconds == null) return '';
+    int h = seconds ~/ 3600;
+    int r = seconds % 3600;
+    int m = r ~/ 60;
+    int s = r % 60;
+    return (h != 0 ? h.toString() + ':' : '') +
+        (m != 0 || h > 0 ? (m < 10 ? '0' : '') + m.toString() + ':' : '') +
+        (s < 10 && seconds > s ? '0' : '') +
+        s.toString();
+  }
 }

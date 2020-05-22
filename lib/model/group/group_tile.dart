@@ -32,10 +32,15 @@ class GroupTile extends BaseTile {
 
   GroupTile.entity(GroupEntity e)
       : name = e.name,
-        publicKey = null,
-        privateKey = null,
+        publicKey = e.publicKey,
+        privateKey = e.privateKey,
         _graphs = null,
-        super(e.id, e.created);
+        super(e.id, e.created){
+
+    if (e.graphs != null){
+      _graphs = e.graphs.map((e) => GraphTile.entity(e)).toList();
+    }
+  }
 
 //  GroupTile copyWith({int id}) {
 //    return GroupTile(
@@ -77,7 +82,7 @@ class GroupTile extends BaseTile {
   }
 
   GroupEntity toEntity() {
-    return GroupEntity(id, createdMS(), name);
+    return GroupEntity.add(name);
   }
 
   String lastGraphFormat() {

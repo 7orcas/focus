@@ -52,7 +52,10 @@ class GraphBuild {
   bool get isStopped => status == RunStatus.STOPPED;
   bool get isWaiting => status == RunStatus.WAIT;
 
-  String timer() {
+  int get timer => _timer.time();
+  int get count => _count;
+
+  String timerAsString() {
     return _timer.timeAsString();
   }
 
@@ -168,21 +171,16 @@ class ClockTimer {
     new Future.delayed(const Duration(seconds: 1), () {}).then(_startTimer);
   }
 
+  int time(){
+    return _seconds;
+  }
+
   String timeAsString() {
     return timeFormat(_seconds);
   }
 
   String timeFormat(int seconds) {
-    int h = seconds ~/ 3600;
-    int r = seconds % 3600;
-    int m = r ~/ 60;
-    int s = r % 60;
-    return (h != 0 ? h.toString() + ':' : '') +
-        (m != 0 || h > 0 ? (m < 10 ? '0' : '') + m.toString() + ':' : '') +
-        (s < 10 && seconds > s ? '0' : '') +
-        s.toString();
+    return Util.timeFormat(seconds);
   }
 
-//  final _timerController = StreamController<ClockTimer>();
-//  Stream<ClockTimer> get stream => _timerController.stream;
 }

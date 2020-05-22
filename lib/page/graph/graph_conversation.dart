@@ -66,7 +66,20 @@ class GraphItem extends StatelessWidget {
   // List of objects within graph
   List<Widget> comments(GraphTile _graph, _ViewModel model) {
     //Add graph
-    List<Widget> comments = [
+    List<Widget> comments = [];
+
+    //Add details
+    comments.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(model.label('TimeSec') + ':' + Util.timeFormat(_graph.time)),
+        SizedBox(width: 20),
+        Text(model.label('Count') + ':' + _graph.count.toString()),
+      ],
+    ));
+
+    //Add graph
+    comments.add(
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child:
@@ -78,7 +91,7 @@ class GraphItem extends StatelessWidget {
           )
         ]),
       )
-    ];
+    );
 
     //Add comments
     comments.addAll(

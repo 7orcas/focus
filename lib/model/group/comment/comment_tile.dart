@@ -29,8 +29,8 @@ class CommentTile extends BaseTile {
         super(e.id, e.created);
 
   CommentEntity toEntity() {
-    return CommentEntity(id, createdMS(), id_group, id_graph, id_user, comment,
-        fromBool(comment_read));
+    return CommentEntity(id, createdMS(), null, id_group, id_graph, id_user,
+        comment, fromBool(comment_read));
   }
 
   void edit(bool v) {

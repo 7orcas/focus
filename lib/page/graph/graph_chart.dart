@@ -15,9 +15,9 @@ class FocusChart extends LineChart {
 class TickProviderSpec implements NumericTickProviderSpec {
   final bool zeroBound = true;
   final bool dataIsInWholeNumbers = false;
-  final int desiredTickCount = 4;
-  final int desiredMinTickCount = 4;
-  final int desiredMaxTickCount = 4;
+  final int desiredTickCount = 6;
+  final int desiredMinTickCount = 6;
+  final int desiredMaxTickCount = 6;
 
   @override
   NumericTickProvider createTickProvider(ChartContext context) {

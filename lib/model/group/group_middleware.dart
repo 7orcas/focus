@@ -20,9 +20,7 @@ import 'package:focus/model/group/graph/graph_actions.dart';
 
 void groupStateMiddleware(
     Store<AppState> store, action, NextDispatcher next) async {
-
   switch (action.runtimeType) {
-
     case LoadGroupsAction:
       await _loadGroupsFromDB()
           .then((result) => store.dispatch(LoadGroupsStoreAction(result)));
@@ -91,15 +89,18 @@ Future<GroupEntity> _saveGroupToDB(GroupTile group) async {
 
 Future<GraphEntity> _saveGraphToDB(
     Store<AppState> store, int id_group, GraphBuild graph) async {
-  var entity = GraphEntity.build(id_group, graph.toEncodedList());
+  var entity = GraphEntity.build(id_group, graph.toEncodedList())
+    ..addEncoded(PARAM_KEY_TIME, graph.timer)
+    ..addEncoded(PARAM_KEY_COUNT, graph.count);
   return await GraphDB().saveGraph(entity);
 }
 
 /// Save graph comment to database and return new entity
 Future<CommentEntity> _saveGraphCommentToDB(
     Store<AppState> store, GraphTile graph, int id, String comment) async {
-  var entity = CommentEntity(id, null, graph.id_group, graph.id, ID_USER_ME, comment,
-      BaseEntity.fromBoolean(true))..setCreated();
+  var entity = CommentEntity.add(id, graph.id_group, graph.id, ID_USER_ME,
+      BaseEntity.fromBoolean(true), comment)
+    ..setCreated();
   return await GraphDB().saveGraphComment(entity);
 }
 

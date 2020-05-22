@@ -9,6 +9,8 @@ class GraphTile extends BaseTile {
   final int id_group;
   final String graph;
   List<CommentTile> comments;
+  final int time;
+  final int count;
 
   GraphTile(
     id,
@@ -16,13 +18,21 @@ class GraphTile extends BaseTile {
     this.id_group,
     this.graph,
     this.comments,
+    this.time,
+    this.count,
   ) : super(id, created);
 
   GraphTile.entity(GraphEntity e)
       : id_group = e.id_group,
         graph = e.graph,
         comments = List<CommentTile>(),
-        super(e.id, e.created);
+        time = e.getEncoded(PARAM_KEY_TIME, 0),
+        count = e.getEncoded(PARAM_KEY_COUNT, 0),
+        super(e.id, e.created){
+    if (e.comments != null){
+      comments = e.comments.map((e) => CommentTile.entity(e)).toList();
+    }
+  }
 
   CommentTile addComment(String comment, int id_user) {
     CommentTile t = CommentTile(
@@ -38,7 +48,8 @@ class GraphTile extends BaseTile {
 
   GraphEntity toEntity() {
     List<CommentEntity> list = comments.map((t) => t.toEntity()).toList();
-    return GraphEntity(id, createdMS(), id_group, graph, list);
+    return GraphEntity(id, createdMS(), addEncoded('', PARAM_KEY_TIME, time),
+        id_group, graph, list);
   }
 
   CommentTile findCommentTile(int id) {
@@ -68,14 +79,13 @@ class GraphTile extends BaseTile {
   }
 
   @override
-  String createdFormat(){
-    if(created == null) return '';
+  String createdFormat() {
+    if (created == null) return '';
     return DateFormat('hh:mm dd.MMM.yy').format(created);
   }
 
-  String firstCommentFormat(){
-    if(comments == null || comments.length == 0) return '';
+  String firstCommentFormat() {
+    if (comments == null || comments.length == 0) return '';
     return comments[0].comment;
   }
-
 }

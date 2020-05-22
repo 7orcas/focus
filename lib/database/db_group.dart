@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:focus/model/group/graph/graph_entity.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:sqflite/sqflite.dart';
@@ -118,7 +119,7 @@ class GroupDB extends FocusDB {
     return groups;
   }
 
-  Future<GroupTile> loadGroupConversation(int id) async {
+  Future<GroupEntity> loadGroupConversation(int id) async {
 //    final stopwatch = Stopwatch()..start();
     Util(StackTrace.current).out('loadGroupConversation start SLEEP(3)');
 
@@ -137,17 +138,13 @@ class GroupDB extends FocusDB {
       return CommentEntity(
           list[i]['id'],
           dateTime(list[i]['created_ms']),
+          list[i]['encoded'],
           list[i][DBK_GROUP],
           list[i][DBK_GRAPH],
           list[i][DBK_USER],
           list[i]['comment'],
           list[i]['comment_read']);
     });
-
-    Util(StackTrace.current).out('loadGroupConversation ' +
-        sql +
-        ' count=' +
-        comments.length.toString());
 
     //Load graphs
     sql = 'SELECT * FROM ' +
@@ -159,15 +156,13 @@ class GroupDB extends FocusDB {
     result = await database.rawQuery(sql);
     list = result.toList();
 
-    List<GraphTile> graphs = List.generate(list.length, (i) {
+    List<GraphEntity> graphs = List.generate(list.length, (i) {
       int id_graph = list[i]['id'];
       List<CommentEntity> commentsE =
           comments.where((c) => c.id_graph == id_graph).toList();
-      List<CommentTile> commentsT =
-          commentsE.map((e) => CommentTile.entity(e)).toList();
 
-      return GraphTile(id_graph, dateTime(list[i]['created_ms']),
-          list[i][DBK_GROUP], list[i]['graph'], commentsT);
+      return GraphEntity(id_graph, dateTime(list[i]['created_ms']) , list[i]['encoded'],
+          list[i][DBK_GROUP], list[i]['graph'], commentsE);
     });
 
     //Load group
@@ -177,13 +172,15 @@ class GroupDB extends FocusDB {
         id.toString();
     result = await database.rawQuery(sql);
     list = result.toList();
-    List<GroupTile> groups = List.generate(list.length, (i) {
-      return GroupTile(
-          id: list[i]['id'],
-          name: list[i]['name'],
-          publicKey: list[i]['public_key'],
-          privateKey: list[i]['private_key'],
-          graphs: graphs);
+    List<GroupEntity> groups = List.generate(list.length, (i) {
+      return GroupEntity(
+          list[i]['id'],
+          dateTime(list[i]['created_ms']),
+          list[i]['encoded'],
+          list[i]['name'],
+          list[i]['public_key'],
+          list[i]['private_key'],
+          graphs);
     });
     Util(StackTrace.current).out('loadGroupConversation ' + sql);
 
@@ -207,7 +204,7 @@ class GroupDB extends FocusDB {
 
     Util(StackTrace.current)
         .out('saveGroup name=' + group.name + ' id=' + id.toString());
-    return GroupEntity(id, group.created, group.name);
+    return group.copyWith(id, group.created);
   }
 
   void removeGroup(GroupEntity group) async {
