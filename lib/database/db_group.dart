@@ -17,6 +17,8 @@ import 'package:focus/service/util.dart';
 class GroupDB extends FocusDB {
 
   Future<List<GroupTile>> loadGroups() async {
+    final stopwatch = Stopwatch()..start();
+
     await connectDatabase();
 
     //Load groups
@@ -116,12 +118,13 @@ class GroupDB extends FocusDB {
       }
     });
 
+    Util(StackTrace.current).outTime('loadGroups ', stopwatch);
+
     return groups;
   }
 
   Future<GroupEntity> loadGroupConversation(int id) async {
-//    final stopwatch = Stopwatch()..start();
-    Util(StackTrace.current).out('loadGroupConversation start SLEEP(3)');
+    final stopwatch = Stopwatch()..start();
 
     await connectDatabase();
 
@@ -182,9 +185,10 @@ class GroupDB extends FocusDB {
           list[i]['private_key'],
           graphs);
     });
-    Util(StackTrace.current).out('loadGroupConversation ' + sql);
 
-    sleep(Duration(seconds: 3));
+    Util(StackTrace.current).outTime('loadGroupConversation', stopwatch);
+
+//    sleep(Duration(seconds: 10));
 
     return groups[0];
   }

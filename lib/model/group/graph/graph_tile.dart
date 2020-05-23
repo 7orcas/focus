@@ -84,6 +84,11 @@ class GraphTile extends BaseTile {
     return DateFormat('hh:mm dd.MMM.yy').format(created);
   }
 
+  String createdFormatShort() {
+    if (created == null) return '';
+    return DateFormat('dd.MMM.yy').format(created);
+  }
+
   String firstCommentFormat() {
     if (comments == null || comments.length == 0) return '';
     return comments[0].comment;

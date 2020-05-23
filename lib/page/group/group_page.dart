@@ -12,6 +12,7 @@ import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/graph/graph_conversation.dart';
+import 'package:focus/page/util/loading_image.dart';
 
 class GroupPage extends StatelessWidget {
   final GroupTile _group;
@@ -27,21 +28,22 @@ class GroupPage extends StatelessWidget {
               future: loadGroupConversation(model.store, _group.id),
               builder:
                   (BuildContext context, AsyncSnapshot<GroupTile> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                      child: Text(model.label('Loading'))); //ToDo graphic
-                }
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return LoadingImage();
 
                 if (snapshot.hasError)
                   return Center(
                       child: Text('Error: ${snapshot.error}')); //ToDo route
 
                 GroupTile c = snapshot.data;
+                String title = c.isUserMe
+                    ? model.label('Focus')
+                    : model.label('Group') + ': ' + c.name;
 
                 return MaterialApp(
                   home: Scaffold(
                       appBar: new AppBar(
-                        title: new Text(model.label('Group')),
+                        title: new Text(title),
                       ),
                       body: ListView.builder(
                         itemBuilder: (BuildContext context, int index) =>

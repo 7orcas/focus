@@ -2,14 +2,15 @@ import 'package:redux/redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:focus/route.dart';
+import 'package:focus/model/session/session.dart';
 import 'package:focus/model/app/app_actions.dart';
 import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/app/app_reducers.dart';
 import 'package:focus/model/app/app_middleware.dart';
 import 'package:focus/model/group/group_data_access.dart';
-import 'package:focus/model/session/session.dart';
 import 'package:focus/page/group/group_page.dart';
 import 'package:focus/page/home/groups_page.dart';
+import 'package:focus/page/util/loading_image.dart';
 
 //import 'package:redux_dev_tools/redux_dev_tools.dart';  //TODO delete dev tool
 //import 'package:flutter_redux_dev_tools/flutter_redux_dev_tools.dart'; //TODO delete dev tool
@@ -45,9 +46,8 @@ class FocusApp extends StatelessWidget {
                   builder:
                       (BuildContext context, AsyncSnapshot<bool> snapshot) {
 
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: Text('Loading')); //ToDo graphic
-                    }
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      return LoadingImage();
 
                     return GroupPage(store.state.findGroupTile(ID_USER_ME));
                     //return GroupsPage();

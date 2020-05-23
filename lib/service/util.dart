@@ -5,7 +5,7 @@ const List<String> _filter  = [
 //  'graph',
 //  'main.dart'
 //    'database'
-     'groups'
+     'load'
 ];
 
 
@@ -14,6 +14,12 @@ class Util {
   final StackTrace _trace;
 
   Util(this._trace);
+
+  void outTime(String message, Stopwatch stopwatch){
+    stopwatch.stop();
+    out(message + ' ' + (stopwatch.elapsedMilliseconds / 1000).toString());
+  }
+
 
   void out(String message) {
 
@@ -50,6 +56,12 @@ class Util {
     return (h != 0 ? h.toString() + ':' : '') +
         (m != 0 || h > 0 ? (m < 10 ? '0' : '') + m.toString() + ':' : '') +
         (s < 10 && seconds > s ? '0' : '') +
-        s.toString();
+        s.toString() + _timeFormat(s, m, h);
+  }
+
+  static String _timeFormat(int s, int minutes, int hours) {
+    if (hours>0) return '';
+    if (minutes>0) return ' min';
+    return ' sec';
   }
 }

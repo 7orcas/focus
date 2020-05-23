@@ -62,6 +62,7 @@ class LangLabel {
 }
 
 List<LangLabel> _en = [
+  LangLabel('Focus', 'Focus Intention'),
   LangLabel('Lang', 'Language'),
   LangLabel('Error', 'Error, damn'),
   LangLabel('Group', 'Group', mi:'Group Maori', de:'Gruppe'),
@@ -70,7 +71,7 @@ List<LangLabel> _en = [
   LangLabel('DelGroups', 'Delete Groups'),
   LangLabel('Loading', 'Please wait its loading...'),
   LangLabel('InvalidGraph', 'Invalid Graph!'),
-  LangLabel('TimeSec', 'Time (seconds)'),
+  LangLabel('Time', 'Time'),
   LangLabel('Count', 'Number of Readings'),
 
   //Unit test code

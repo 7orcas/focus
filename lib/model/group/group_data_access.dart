@@ -1,6 +1,7 @@
 import 'package:focus/model/group/group_entity.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/database/db_group.dart';
+import 'package:focus/model/session/session.dart';
 import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/service/util.dart';
@@ -34,5 +35,6 @@ Future<bool> initialiseGroups(Store<AppState> store) async {
   Util(StackTrace.current).out('loading groups');
   LOAD = true;
   store.state.groups = await GroupDB().loadGroups();
+  await loadGroupConversation(store, ID_USER_ME);
   return Future<bool>.value(true);
 }

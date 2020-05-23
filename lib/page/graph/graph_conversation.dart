@@ -35,21 +35,34 @@ class GraphItem extends StatelessWidget {
             initiallyExpanded: model.store.state.isGraphExpansionKey(_graph.id),
             onExpansionChanged: (v) =>
                 model.store.state.setGraphExpansionKey(_graph.id, v),
-            title: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                width: 100,
-                child: Row(
-                  children: <Widget>[
-                    Text(_graph.createdFormat()),
-                    SizedBox(width: 10),
-                    Container(
-                        width: 170,
-                        child: Text(_graph.firstCommentFormat(),
-                            style: TextStyle(fontSize: 15, color: Colors.grey),
-                            overflow: TextOverflow.fade,
-                            softWrap: false)),
-                  ],
+            title: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.red, Colors.blue],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.5, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: SizedBox(
+                  width: 100,
+                  child: Row(
+                    children: <Widget>[
+                      Text(_graph.createdFormatShort(),
+                          style:
+                              TextStyle(fontSize: 15, color: Colors.grey[800])),
+                      SizedBox(width: 10),
+                      Container(
+                          width: 170,
+                          child: Text(_graph.firstCommentFormat(),
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.grey),
+                              overflow: TextOverflow.fade,
+                              softWrap: false)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -72,26 +85,23 @@ class GraphItem extends StatelessWidget {
     comments.add(Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(model.label('TimeSec') + ':' + Util.timeFormat(_graph.time)),
+        Text(model.label('Time') + ':' + Util.timeFormat(_graph.time)),
         SizedBox(width: 20),
         Text(model.label('Count') + ':' + _graph.count.toString()),
       ],
     ));
 
     //Add graph
-    comments.add(
-      Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          GraphWidget(_graph.graph, _lang),
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.grey, size: 20),
-            onPressed: () => _onDeleteGraph(_graph),
-          )
-        ]),
-      )
-    );
+    comments.add(Padding(
+      padding: const EdgeInsets.fromLTRB(40, 0, 20, 0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        GraphWidget(_graph.graph, _lang),
+        IconButton(
+          icon: Icon(Icons.delete, color: Colors.grey, size: 20),
+          onPressed: () => _onDeleteGraph(_graph),
+        )
+      ]),
+    ));
 
     //Add comments
     comments.addAll(
@@ -122,7 +132,16 @@ class GraphWidget extends StatelessWidget {
     } on Exception catch (e) {
       chart = Text(_lang('InvalidGraph'));
     }
-    return SizedBox(width: 300.0, height: 200.0, child: chart);
+    return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.blue, Colors.blue[100]],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 0.5),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp),
+        ),
+        child: SizedBox(width: 300.0, height: 200.0, child: chart));
   }
 }
 
@@ -217,7 +236,6 @@ class _AddCommentState extends State<AddCommentWidget> {
     }
 
     _focus.addListener(_onFocusChange);
-
 
     return Row(
       children: <Widget>[
