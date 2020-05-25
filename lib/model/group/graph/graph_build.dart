@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'dart:math';
 import 'package:redux/redux.dart';
 import 'package:focus/model/app/app_state.dart';
@@ -22,6 +23,50 @@ class GraphBuild {
     _timer = ClockTimer(() {_controller.sink.add(this);});
     _timer.start();
     _controller.sink.add(this);
+  }
+
+  GraphBuild.isolate(SendPort sendPort) {
+    _timer = ClockTimer(() {_controller.sink.add(this);});
+    _timer.start();
+    _controller.sink.add(this);
+
+    ourReceivePort = ReceivePort();
+    sendPort.send(ourReceivePort.sendPort);
+  }
+
+  // listen for text messages that are sent to us,
+  // and respond to them with this algorithm
+  var ourReceivePort;
+  SendPort replyToPort;
+  void listenXXX () async {
+    await for (var msg in ourReceivePort) {
+      var data = msg[0]; // the 1st element we receive should be their message
+      print('echo received "$data"');
+
+      if (data == 'start'){
+        start();
+      }
+      if (data == 'stop'){
+        stop();
+      }
+      if (data == 'pause'){
+        pause();
+      }
+
+      replyToPort = msg[1]; // the 2nd element should be their port
+//
+//      // add a little delay to simulate some work being done
+//      Future.delayed(const Duration(milliseconds: 100), () {
+//        // send a message back to the caller on their port,
+//        // like calling them back after they left us a message
+//        // (or if you prefer, they sent us a text message, and
+//        // now we’re texting them a reply)
+//        replyToPort.send('echo said: ' + data);
+//      });
+
+      // you can close the ReceivePort if you want
+      //if (data == "bye") ourReceivePort.close();
+    }
   }
 
   void start() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:isolate';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,10 @@ class NewGraphPage extends StatelessWidget {
             return MaterialApp(home: Container());
           }
 
+          Runner runner = Runner();
+
+
+
           return MaterialApp(
             home: Scaffold(
               appBar: new AppBar(
@@ -43,7 +49,9 @@ class NewGraphPage extends StatelessWidget {
                   stream: graph.stream,
 //                  initialData: graph.numbers,
                   builder: (context, snapshot) {
-                    GraphBuild graphBuild = snapshot.data;
+//                    GraphBuild graphBuild = snapshot.data;
+                    GraphBuild graphBuild = runner.graphXXX;
+                    runner.start();
 
                     if (!snapshot.hasData)
                       return Center(child: Text('Loading')); //ToDo graphic
@@ -64,7 +72,84 @@ class NewGraphPage extends StatelessWidget {
           );
         });
   }
+
+
+//  void start() async{
+//    await Isolate.spawn<Runner>(entryPoint, runner.ourFirstReceivePortXXX.sendPort);
+//    runner.echoPort = await runner.ourFirstReceivePortXXX.first;
+//    runner.echoPort.send(['start', runner.ourSecondReceivePort.sendPort]);
+//    var msg = await runner.ourSecondReceivePort.first;
+//
+//  }
+//
+//  void entryPoint(Runner runner){
+//
+//  }
+
+
 }
+
+class Runner {
+  var ourFirstReceivePortXXX;
+  var ourSecondReceivePort;
+  var echoPort;
+  GraphBuild graphXXX;
+
+  Runner(){
+    ourFirstReceivePortXXX = ReceivePort();
+    ourSecondReceivePort = ReceivePort();
+    graphXXX = GraphBuild.isolate(ourFirstReceivePortXXX);
+  }
+
+  void start() async{
+    await Isolate.spawn<Runner>(entryPoint, ourFirstReceivePortXXX.sendPort);
+    echoPort = await ourFirstReceivePortXXX.first;
+    echoPort.send(['start', ourSecondReceivePort.sendPort]);
+    var msg = await ourSecondReceivePort.first;
+
+  }
+
+  void entryPoint(Runner runner){
+
+  }
+
+
+  void runXXX (SendPort sendPort) async{
+    // open our receive port. this is like turning on
+    // our cellphone.
+    var ourReceivePort = ReceivePort();
+
+    // tell whoever created us what port they can reach us on
+    // (like giving them our phone number)
+    sendPort.send(ourReceivePort.sendPort);
+
+    // listen for text messages that are sent to us,
+    // and respond to them with this algorithm
+    await for (var msg in ourReceivePort) {
+      var data = msg[0];                // the 1st element we receive should be their message
+      print('echo received "$data"');
+      SendPort replyToPort = msg[1];    // the 2nd element should be their port
+
+      // add a little delay to simulate some work being done
+      Future.delayed(const Duration(milliseconds: 100), () {
+        // send a message back to the caller on their port,
+        // like calling them back after they left us a message
+        // (or if you prefer, they sent us a text message, and
+        // now we’re texting them a reply)
+        replyToPort.send('echo said: ' + data);
+      });
+
+      // you can close the ReceivePort if you want
+      //if (data == "bye") ourReceivePort.close();
+    }
+
+
+  }
+
+
+}
+
+
 
 class _ControlButtonsWidget extends StatelessWidget {
   final int _id_group;
