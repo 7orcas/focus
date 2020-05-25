@@ -11,7 +11,8 @@ import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/base_view_model.dart';
-import 'package:focus/page/graph/graph_conversation.dart';
+import 'package:focus/page/group/graph_tile_widget.dart';
+import 'package:focus/page/graph/graph_conversation_DELETE.dart';
 import 'package:focus/page/util/loading_image.dart';
 
 class GroupPage extends StatelessWidget {
@@ -40,28 +41,32 @@ class GroupPage extends StatelessWidget {
                     ? model.label('Focus')
                     : model.label('Group') + ': ' + c.name;
 
-                return MaterialApp(
-                  home: Scaffold(
-                      appBar: new AppBar(
-                        title: new Text(title),
+                return Scaffold(
+                    appBar: new AppBar(
+                      title: new Text(title),
+                    ),
+                    body: ListView.builder(
+                      itemBuilder: (BuildContext context, int index) => InkWell(
+                        child: GestureDetector(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GraphTileWidget(c.graphs[index],
+                                model.onDeleteGraph, model.label),
+                          ),
+                          onTap: () => Navigator.pushNamed(
+                              context, ROUTE_GRAPH_PAGE,
+                              arguments: c.graphs[index]),
+                        ),
                       ),
-                      body: ListView.builder(
-                        itemBuilder: (BuildContext context, int index) =>
-                            GraphItem(
-                                c.graphs[index].id,
-                                c.graphs[index].id_group,
-                                model.onDeleteGraph,
-                                model.label),
-                        itemCount: c.graphs.length,
-                      ),
-                      floatingActionButton: Visibility(
-                          visible: model.store.state.isShowAddGraph,
-                          child: new FloatingActionButton(
-                              onPressed: () {
-                                model.onAddGraph(_group);
-                              },
-                              child: new Icon(Icons.add)))),
-                );
+                      itemCount: c.graphs.length,
+                    ),
+                    floatingActionButton: Visibility(
+                        visible: model.store.state.isShowAddGraph,
+                        child: new FloatingActionButton(
+                            onPressed: () {
+                              model.onAddGraph(_group);
+                            },
+                            child: new Icon(Icons.add))));
               });
         });
   }

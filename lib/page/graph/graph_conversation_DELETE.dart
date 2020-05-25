@@ -38,7 +38,7 @@ class GraphItem extends StatelessWidget {
             title: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [Colors.red, Colors.blue],
+                    colors: [Colors.blue[300], Colors.blue[100]],
                     begin: const FractionalOffset(0.0, 0.0),
                     end: const FractionalOffset(0.5, 0.0),
                     stops: [0.0, 1.0],
@@ -135,7 +135,7 @@ class GraphWidget extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [Colors.blue, Colors.blue[100]],
+              colors: [Colors.blue[300], Colors.blue[100]],
               begin: const FractionalOffset(0.0, 0.0),
               end: const FractionalOffset(0.0, 0.5),
               stops: [0.0, 1.0],

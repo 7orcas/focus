@@ -1,159 +1,318 @@
-import 'package:redux/redux.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:focus/route.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:focus/service/util.dart';
-import 'package:focus/service/error.dart';
 import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/group_tile.dart';
+import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
+import 'package:focus/model/group/comment/comment_tile.dart';
+import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/graph/graph_chart.dart';
 
 class GraphPage extends StatelessWidget {
-  final int _id_group;
-  GraphPage(this._id_group) {
-    Util(StackTrace.current).out('GraphPage constructor graphs _id_group=' +
-        (_id_group == null ? 'null' : _id_group.toString()));
-  }
+  const GraphPage(this._graph);
 
-  @override
-  Widget build(BuildContext context) {
+  final GraphTile _graph;
+
+  Widget _buildTiles() {
     return StoreConnector<AppState, _ViewModel>(
-        converter: (Store<AppState> store) => _ViewModel.create(context, store),
-        builder: (BuildContext context, _ViewModel viewModel) {
-          GraphBuild graph = viewModel.store.state.graph;
+        converter: (Store<AppState> store) =>
+            _ViewModel.create(store, _graph.id, _graph.id_group),
+        builder: (BuildContext context, _ViewModel model) {
+          GraphTile _graph = model.getGraph();
 
-          Util(StackTrace.current)
-              .out('graph=' + (graph != null ? 'OK' : 'Null'));
-          Util(StackTrace.current).out('graph is running=' +
-              viewModel.store.state.isGraphBlocRunning().toString());
+          List<Widget> list = comments(_graph, model);
 
-          if (graph == null) {
-            return MaterialApp(home: Container());
-          }
-
-          return MaterialApp(
-            home: Scaffold(
-              appBar: new AppBar(
-                title: Text("NewGraph"),
-              ),
-              body: StreamBuilder<GraphBuild>(
-                  stream: graph.stream,
-//                  initialData: graph.numbers,
-                  builder: (context, snapshot) {
-                    GraphBuild graphBuild = snapshot.data;
-
-                    if (!snapshot.hasData)
-                      return Center(child: Text('Loading')); //ToDo graphic
-
-                    if (snapshot.hasError)
-                      return Center(
-                          child: Text('Error: ${snapshot.error}')); //ToDo route
-
-                    return Column(
-                      children: <Widget>[
-                        _ControlButtonsWidget(viewModel, _id_group, graphBuild),
-                        Text(graphBuild.timerAsString()),
-                        Expanded(child: FocusChart(graphBuild.chartData()))
-                      ],
-                    );
-                  }),
+          return Scaffold(
+            appBar: new AppBar(
+              title: new Text(_graph.createdFormat()),
+            ),
+            resizeToAvoidBottomPadding: true,
+            body: ListView(
+              children: list,
             ),
           );
         });
   }
-}
-
-class _ControlButtonsWidget extends StatelessWidget {
-  final int _id_group;
-  final GraphBuild _graphBuild;
-  final _ViewModel _viewModel;
-  _ControlButtonsWidget(this._viewModel, this._id_group, this._graphBuild);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> actions = [];
+    return _buildTiles();
+  }
 
-    if (_graphBuild.isWaiting || _graphBuild.isPaused) {
-      actions.add(IconButton(
-        icon: Icon(Icons.play_circle_filled),
-        onPressed: () {
-          _graphBuild.start();
-        },
-      ));
-    }
+  // List of objects within graph
+  List<Widget> comments(GraphTile _graph, _ViewModel model) {
+    //Add graph
+    List<Widget> comments = [];
 
-    if (_graphBuild.isRunning) {
-      actions.add(IconButton(
-        icon: Icon(Icons.pause_circle_filled),
-        onPressed: () {
-          _graphBuild.pause();
-        },
-      ));
-    }
+    //Add details
+    comments.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(model.label('Time') + ':' + Util.timeFormat(_graph.time)),
+        SizedBox(width: 20),
+        Text(model.label('Count') + ':' + _graph.count.toString()),
+      ],
+    ));
 
-    if (!_graphBuild.isStopped) {
-      actions.add(IconButton(
-        icon: Icon(Icons.stop),
-        onPressed: () {
-          _viewModel.store.state.graph = null;
-          _graphBuild.stop();
-        },
-      ));
-    }
+    //Add graph
+    comments.add(Padding(
+      padding: const EdgeInsets.fromLTRB(40, 0, 20, 0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        GraphWidget(_graph.graph, model.label),
+        IconButton(
+          icon: Icon(Icons.delete, color: Colors.grey, size: 20),
+//          onPressed: () => _onDeleteGraph(_graph),
+        )
+      ]),
+    ));
 
-    if (_graphBuild.isStopped) {
-      actions.add(IconButton(
-        icon: Icon(Icons.save),
-        onPressed: () {
-          _viewModel.onAddGraph(_id_group, _graphBuild);
-        },
-      ));
-    }
+    //Add comments
+    comments.addAll(
+        _graph.comments.map((c) => CommentWidget(_graph, c, model)).toList());
 
-    return Row(children: actions);
+    //Add form entry
+    comments.add(Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: AddCommentWidget(_graph.getEditComment(), model),
+    ));
+
+    return comments;
   }
 }
 
-class _ViewModel {
-  final Store<AppState> store;
-  final List<GroupTile> groups;
-  final Function(int, GraphBuild) onAddGraph;
-  final Function(GraphTile graph) onDeleteGraph;
+class GraphWidget extends StatelessWidget {
+  GraphWidget(this._graph, this._lang);
+
+  final String _graph;
+  final Function _lang;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget chart;
+    try {
+      List<double> l = GraphBuild.fromList(_graph);
+      chart = FocusChart(GraphBuild.getChartData(l));
+    } on Exception catch (e) {
+      chart = Text(_lang('InvalidGraph'));
+    }
+    return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.blue[300], Colors.blue[100]],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 0.5),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp),
+        ),
+        child: SizedBox(width: 300.0, height: 200.0, child: chart));
+  }
+}
+
+class CommentWidget extends StatelessWidget {
+  final GraphTile _graph;
+  final CommentTile _comment;
+  final _ViewModel _model;
+  CommentWidget(this._graph, this._comment, this._model);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Container(
+                      padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+                      child: Text(_comment.comment,
+                          style: TextStyle(color: Colors.black)),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey,
+                        boxShadow: [
+                          BoxShadow(color: Colors.blueAccent, spreadRadius: 3),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                          child: Row(children: <Widget>[
+                        Text(_comment.createdFormat(),
+                            style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.grey, size: 15),
+                          onPressed: () => _model.onEditComment(_comment.id),
+                        ),
+                      ])),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.grey, size: 20),
+                        onPressed: () => _model.onRemoveComment(_comment),
+                      ),
+                    ]),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AddCommentWidget extends StatefulWidget {
+  final _ViewModel model;
+  final CommentTile commentTile;
+
+  AddCommentWidget(this.commentTile, this.model);
+  @override
+  _AddCommentState createState() => _AddCommentState();
+}
+
+class _AddCommentState extends State<AddCommentWidget> {
+  final TextEditingController controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    Util(StackTrace.current).out('Comment Widget widget.commentTile=' +
+        (widget.commentTile != null ? 'ok' : 'null'));
+
+    controller.text =
+        widget.commentTile != null ? widget.commentTile.comment : null;
+
+    FocusNode _focus = new FocusNode();
+    void _onFocusChange() {
+      if (widget.model.store.state.isCommentFieldActive) return;
+//      debugPrint('*****Focus: ' + _focus.hasFocus.toString());
+      widget.model.store.state.setCommentFieldActive();
+      widget.model.store.dispatch(ToggleAddGraphButtonAction());
+    }
+
+    _focus.addListener(_onFocusChange);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+      child: Row(
+        children: <Widget>[
+          Flexible(
+            flex: 6,
+            child: TextField(
+              autofocus: widget.model.store.state.isCommentFieldActive,
+              key: PageStorageKey('mytextfield'),
+              keyboardType: TextInputType.multiline,
+              onEditingComplete: () {
+//                print('***** onEditingComplete');
+              },
+              focusNode: _focus,
+              maxLines: 4,
+              textInputAction: TextInputAction.newline,
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: widget.model.label('AddComment'),
+                border: OutlineInputBorder(),
+                suffixIcon: widget.commentTile == null
+                    ? null
+                    : IconButton(
+                        onPressed: () => widget.commentTile.editCancel(),
+                        icon: Icon(Icons.clear),
+                      ),
+              ),
+            ),
+          ),
+          Flexible(
+            child: Visibility(
+              visible: widget.model.store.state.isCommentFieldActive,
+              child: Column(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      widget.model.store.state.clearCommentFieldActive();
+                      widget.model.onAddComment(
+                          widget.commentTile == null ? null : widget.commentTile.id,
+                          controller.text);
+                      controller.clear();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      widget.model.store.state.clearCommentFieldActive();
+                      controller.clear();
+                      FocusScope.of(context).unfocus();
+                      widget.model.store.dispatch(ToggleAddGraphButtonAction());
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+
+class _ViewModel extends BaseViewModel {
+  GraphTile graph;
+  final Function() getGraph;
+  final Function(int, String) onAddComment;
+  final Function(int) onEditComment;
+  final Function(CommentTile) onRemoveComment;
 
   _ViewModel({
-    this.store,
-    this.groups,
-    this.onAddGraph,
-    this.onDeleteGraph,
-  });
+    store,
+    this.graph,
+    this.getGraph,
+    this.onAddComment,
+    this.onEditComment,
+    this.onRemoveComment,
+  }) : super(store);
 
-  factory _ViewModel.create(BuildContext context, Store<AppState> store) {
-    Util(StackTrace.current).out('graph view create, store.state.graph=' +
-        (store.state.graph != null ? 'OK' : 'Null'));
+  factory _ViewModel.create(Store<AppState> store, int id_graph, int id_group) {
+    GroupTile _group = store.state.findGroupTile(id_group);
+    GraphTile graph = _group.findGraphTile(id_graph);
 
-    _onError(FocusError e) {
-      Navigator.pushNamed(context, ROUTE_ERROR_PAGE, arguments: e);
+    _getGraph() {
+      return graph;
     }
 
-    _onAddGraph(int id_group, GraphBuild graph) {
-      Util(StackTrace.current).out('_onAddGraph');
-      store.dispatch(SaveGraphAction(id_group, graph));
-      Navigator.pop(context);
+    _onEditComment(int id_comment) {
+      store.dispatch(EditGraphCommentAction(graph, id_comment));
     }
 
-    _onDeleteGraph(GraphTile graph) {
-      Util(StackTrace.current).out('_onDeleteGraph');
-      store.dispatch(DeleteGraphAction(graph, _onError));
+    _onAddComment(int id_comment, String comment) {
+      Util(StackTrace.current).out('_onAddComment');
+      store.dispatch(SaveGraphCommentAction(graph, id_comment, comment));
+    }
+
+    _onRemoveComment(CommentTile comment) {
+      Util(StackTrace.current).out('_onRemoveComment');
+      store.dispatch(DeleteGraphCommentAction(comment));
     }
 
     return _ViewModel(
       store: store,
-      groups: store.state.groups,
-      onAddGraph: _onAddGraph,
-      onDeleteGraph: _onDeleteGraph,
+      graph: graph,
+      getGraph: _getGraph,
+      onAddComment: _onAddComment,
+      onEditComment: _onEditComment,
+      onRemoveComment: _onRemoveComment,
     );
   }
 }

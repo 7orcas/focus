@@ -34,9 +34,13 @@ class FocusApp extends StatelessWidget {
         store: store,
         child: MaterialApp(
             title: 'Focus',
-            theme: ThemeData(
-              primarySwatch: Colors.purple,
-            ),
+            theme:
+            ThemeData(primarySwatch: Colors.purple, brightness: Brightness.light),
+            themeMode: ThemeMode.light,
+            darkTheme: ThemeData(brightness: Brightness.dark),
+//            theme: ThemeData(
+//              primarySwatch: Colors.purple,
+//            ),
             onGenerateRoute: handleRoute,
             home: StoreBuilder<AppState>(
 //            onInit: (store) => store.dispatch(LoadAppAction()), //ToDo delete
