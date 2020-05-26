@@ -13,7 +13,7 @@ class GraphTileWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [Colors.purple[300], Colors.purple[100]],
+            colors: [Colors.purple, Colors.purple[100]],
             begin: const FractionalOffset(0.0, 0.0),
             end: const FractionalOffset(0.5, 0.0),
             stops: [0.0, 1.0],
@@ -26,17 +26,17 @@ class GraphTileWidget extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Text(_graph.createdFormatShort(),
-                  style: TextStyle(fontSize: 15, color: Colors.grey[800])),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
               SizedBox(width: 10),
               Container(
                   width: 280,
                   child: Text(_graph.firstCommentFormat(),
-                      style: TextStyle(fontSize: 15, foreground: Paint()..shader =
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, foreground: Paint()..shader =
                       LinearGradient(
-                        colors: <Color>[Color(0xffDA44bb), Color(0xff8921aa)],
-                      ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))
+                        colors: <Color>[Colors.white, Colors.deepPurple],
+                      ).createShader(Rect.fromLTWH(0.0, 0.0, 600.0, 100.0))
                       ),
-                      overflow: TextOverflow.fade,
+                      overflow: TextOverflow.ellipsis,
                       softWrap: false)),
             ],
           ),

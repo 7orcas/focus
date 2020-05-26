@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:isolate';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +9,7 @@ import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
+import 'package:focus/model/group/graph/graph_runner.dart';
 import 'package:focus/page/graph/graph_chart.dart';
 
 class NewGraphPage extends StatelessWidget {
@@ -36,22 +35,19 @@ class NewGraphPage extends StatelessWidget {
             return MaterialApp(home: Container());
           }
 
-          Runner runner = Runner();
-
-
+          Runner runner = Runner(graph);
+          runner.run();
 
           return MaterialApp(
             home: Scaffold(
               appBar: new AppBar(
                 title: Text("NewGraph"),
               ),
-              body: StreamBuilder<GraphBuild>(
-                  stream: graph.stream,
+              body: StreamBuilder<Runner>(
+                  stream: runner.stream,
 //                  initialData: graph.numbers,
                   builder: (context, snapshot) {
 //                    GraphBuild graphBuild = snapshot.data;
-                    GraphBuild graphBuild = runner.graphXXX;
-                    runner.start();
 
                     if (!snapshot.hasData)
                       return Center(child: Text('Loading')); //ToDo graphic
@@ -60,9 +56,11 @@ class NewGraphPage extends StatelessWidget {
                       return Center(
                           child: Text('Error: ${snapshot.error}')); //ToDo route
 
+                    GraphBuild graphBuild = runner.graph;
+
                     return Column(
                       children: <Widget>[
-                        _ControlButtonsWidget(viewModel, _id_group, graphBuild),
+                        _ControlButtonsWidget(viewModel, _id_group, runner),
                         Text(graphBuild.timerAsString()),
                         Expanded(child: FocusChart(graphBuild.chartData()))
                       ],
@@ -72,128 +70,55 @@ class NewGraphPage extends StatelessWidget {
           );
         });
   }
-
-
-//  void start() async{
-//    await Isolate.spawn<Runner>(entryPoint, runner.ourFirstReceivePortXXX.sendPort);
-//    runner.echoPort = await runner.ourFirstReceivePortXXX.first;
-//    runner.echoPort.send(['start', runner.ourSecondReceivePort.sendPort]);
-//    var msg = await runner.ourSecondReceivePort.first;
-//
-//  }
-//
-//  void entryPoint(Runner runner){
-//
-//  }
-
-
 }
 
-class Runner {
-  var ourFirstReceivePortXXX;
-  var ourSecondReceivePort;
-  var echoPort;
-  GraphBuild graphXXX;
 
-  Runner(){
-    ourFirstReceivePortXXX = ReceivePort();
-    ourSecondReceivePort = ReceivePort();
-    graphXXX = GraphBuild.isolate(ourFirstReceivePortXXX);
-  }
-
-  void start() async{
-    await Isolate.spawn<Runner>(entryPoint, ourFirstReceivePortXXX.sendPort);
-    echoPort = await ourFirstReceivePortXXX.first;
-    echoPort.send(['start', ourSecondReceivePort.sendPort]);
-    var msg = await ourSecondReceivePort.first;
-
-  }
-
-  void entryPoint(Runner runner){
-
-  }
-
-
-  void runXXX (SendPort sendPort) async{
-    // open our receive port. this is like turning on
-    // our cellphone.
-    var ourReceivePort = ReceivePort();
-
-    // tell whoever created us what port they can reach us on
-    // (like giving them our phone number)
-    sendPort.send(ourReceivePort.sendPort);
-
-    // listen for text messages that are sent to us,
-    // and respond to them with this algorithm
-    await for (var msg in ourReceivePort) {
-      var data = msg[0];                // the 1st element we receive should be their message
-      print('echo received "$data"');
-      SendPort replyToPort = msg[1];    // the 2nd element should be their port
-
-      // add a little delay to simulate some work being done
-      Future.delayed(const Duration(milliseconds: 100), () {
-        // send a message back to the caller on their port,
-        // like calling them back after they left us a message
-        // (or if you prefer, they sent us a text message, and
-        // now we’re texting them a reply)
-        replyToPort.send('echo said: ' + data);
-      });
-
-      // you can close the ReceivePort if you want
-      //if (data == "bye") ourReceivePort.close();
-    }
-
-
-  }
-
-
-}
 
 
 
 class _ControlButtonsWidget extends StatelessWidget {
   final int _id_group;
-  final GraphBuild _graphBuild;
+  final Runner _runner;
   final _ViewModel _viewModel;
-  _ControlButtonsWidget(this._viewModel, this._id_group, this._graphBuild);
+  _ControlButtonsWidget(this._viewModel, this._id_group, this._runner);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> actions = [];
 
-    if (_graphBuild.isWaiting || _graphBuild.isPaused) {
+    if (_runner.isWaiting || _runner.isPaused) {
       actions.add(IconButton(
         icon: Icon(Icons.play_circle_filled),
         onPressed: () {
-          _graphBuild.start();
+          _runner.start();
         },
       ));
     }
 
-    if (_graphBuild.isRunning) {
+    if (_runner.isRunning) {
       actions.add(IconButton(
         icon: Icon(Icons.pause_circle_filled),
         onPressed: () {
-          _graphBuild.pause();
+          _runner.pause();
         },
       ));
     }
 
-    if (!_graphBuild.isStopped) {
+    if (!_runner.isStopped) {
       actions.add(IconButton(
         icon: Icon(Icons.stop),
         onPressed: () {
           _viewModel.store.state.graph = null;
-          _graphBuild.stop();
+          _runner.stop();
         },
       ));
     }
 
-    if (_graphBuild.isStopped) {
+    if (_runner.isStopped) {
       actions.add(IconButton(
         icon: Icon(Icons.save),
         onPressed: () {
-          _viewModel.onAddGraph(_id_group, _graphBuild);
+          _viewModel.onAddGraph(_id_group, _runner.graph);
         },
       ));
     }
