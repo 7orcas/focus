@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:isolate';
-import 'package:flutter/material.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 
-
 class Runner {
-  var _receiver;
-  var _receive2;
+  Isolate _isolate;
+  var _initialPort;
+  var _receivePort;
   var _echoPort;
   GraphBuild _graph;
   RunStatus _status = RunStatus.WAIT;
@@ -17,42 +16,54 @@ class Runner {
   final _controller = StreamController<Runner>();
   Stream<Runner> get stream => _controller.stream;
 
-  Runner(GraphBuild g){
+  Runner(GraphBuild g) {
     _graph = g;
-    _receiver = ReceivePort();
-    _receive2 = ReceivePort();
+    _initialPort = ReceivePort();
+    _receivePort = ReceivePort();
     _controller.sink.add(this);
   }
 
-  void run() async{
+  void run() async {
     _status = RunStatus.WAIT;
     Util(StackTrace.current).out('isolate runner start');
-    await Isolate.spawn<SendPort>(_entryPoint, _receiver.sendPort);
-    _echoPort = await _receiver.first;
-    _echoPort.send(_CrossIsolatesMessage<String>(sender: _receive2.sendPort, message: 'setup'));
+    _isolate = await Isolate.spawn<SendPort>(_isolatePoint, _initialPort.sendPort);
+    _echoPort = await _initialPort.first;
+    _echoPort.send(
+        _CrossIsolatesMessage(sender: _receivePort.sendPort, message: 'setup'));
 
-    await for (_CrossIsolatesMessage msg in _receive2) {
-      Util(StackTrace.current).out('isolate 2 runner msg=' + msg.message.toString());
-      _graph.test(msg.message);
+    await for (_CrossIsolatesMessage msg in _receivePort) {
+      Util(StackTrace.current)
+          .out('from isolate msg=' + msg.message.toString());
+
+      if (msg.numbers != null){
+        _graph.setNumbers(msg.numbers);
+      }
+      else{
+        _graph.setNumber(msg.lastNumber, msg.lastRngPoint);
+      }
       _graph.timer = msg.seconds;
       _controller.sink.add(this);
+
+      if (_status == RunStatus.STOPPED){
+        _isolate.kill();
+      }
     }
   }
 
   void start() {
     if (_status == RunStatus.STOPPED) return;
     _status = RunStatus.RUNNING;
-    _echoPort.send(_CrossIsolatesMessage<String>(sender: null, message: 'start'));
+    _echoPort.send(_CrossIsolatesMessage(message: 'start'));
   }
 
   void pause() {
     _status = RunStatus.PAUSED;
-    _echoPort.send(_CrossIsolatesMessage<String>(sender: null, message: 'pause'));
+    _echoPort.send(_CrossIsolatesMessage(message: 'pause'));
   }
 
   void stop() {
     _status = RunStatus.STOPPED;
-    _echoPort.send(_CrossIsolatesMessage<String>(sender: null, message: 'stop'));
+    _echoPort.send(_CrossIsolatesMessage(message: 'stop'));
   }
 
   bool get isActive =>
@@ -63,53 +74,66 @@ class Runner {
   bool get isWaiting => _status == RunStatus.WAIT;
 }
 
-void _entryPoint(SendPort sendPort) async {
+void _isolatePoint(SendPort sendPort) async {
   var isolatePort = ReceivePort();
   sendPort.send(isolatePort.sendPort);
+
   GraphBuild graphIso = GraphBuild();
-  SendPort replyToPort;
   bool initial = false;
+  SendPort replyToPort;
 
   await for (_CrossIsolatesMessage msg in isolatePort) {
     Util(StackTrace.current).out('isolate entry point msg=' + msg.message);
 
-    if (msg.message == 'setup') {
-      replyToPort = msg.sender;
+    switch (msg.message) {
+      case 'setup':
+        replyToPort = msg.sender;
+        break;
+      case 'start':
+        graphIso.start();
+        break;
+      case 'pause':
+        graphIso.pause();
+        break;
+      case 'stop':
+        graphIso.stop();
+        // Resend graph
+        replyToPort.send(_CrossIsolatesMessage(
+            numbers: graphIso.numbers,
+            seconds: graphIso.timer));
+        break;
     }
 
     if (msg.message == 'start' && !initial) {
       initial = true;
-      graphIso.start();
-      graphIso.stream.listen((event) {
-        Util(StackTrace.current).out('isolate listen event=' + event.numbers.toString());
+      graphIso.stream.listen((build) {
+        Util(StackTrace.current)
+            .out('isolate listen graphBuild=' + build.lastNumber.toString());
         var isolatePort1 = ReceivePort();
-        replyToPort.send(_CrossIsolatesMessage(sender: isolatePort1.sendPort, message: event.numbers, seconds: event.timer));
+        replyToPort.send(_CrossIsolatesMessage(
+            sender: isolatePort1.sendPort,
+            lastNumber: build.lastNumber,
+            lastRngPoint: build.lastRngPoint,
+            seconds: build.timer));
       });
     }
-    else if (msg.message == 'start') {
-      graphIso.start();
-    }
-
-    if (msg.message == 'pause') {
-      graphIso.pause();
-    }
-    if (msg.message == 'stop') {
-      graphIso.stop();
-    }
-
   }
-
 }
 
-class _CrossIsolatesMessage<String> {
+class _CrossIsolatesMessage {
   final SendPort sender;
   final String message;
+  final List<double> numbers;
+  final double lastNumber;
+  final RngPoint lastRngPoint;
   final int seconds;
 
   _CrossIsolatesMessage({
     this.sender,
     this.message,
+    this.numbers,
+    this.lastNumber,
+    this.lastRngPoint,
     this.seconds,
   });
 }
-

@@ -78,6 +78,8 @@ List<LangLabel> _en = [
   LangLabel('No', 'No'),
   LangLabel('DelGraph', 'Delete Graph'),
   LangLabel('DelGraphQ', 'Are you sure you want to delete the graph?'),
+  LangLabel('DelComment', 'Delete Comment'),
+  LangLabel('DelCommentQ', 'Are you sure you want to delete the Comment?'),
 
   //Unit test code
   LangLabel('UTCode1', 'Unit Test Code 1'),

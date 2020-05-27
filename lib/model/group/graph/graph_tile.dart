@@ -91,6 +91,6 @@ class GraphTile extends BaseTile {
 
   String firstCommentFormat() {
     if (comments == null || comments.length == 0) return '';
-    return comments[0].comment;
+    return comments[0].comment.replaceAll('\n', ' ');
   }
 }

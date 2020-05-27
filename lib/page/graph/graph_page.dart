@@ -11,19 +11,21 @@ import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/graph/graph_chart.dart';
+import 'package:focus/page/util/utilities.dart';
 
 class GraphPage extends StatelessWidget {
   const GraphPage(this._graph);
 
   final GraphTile _graph;
 
-  Widget _buildTiles() {
+  @override
+  Widget build(BuildContext context) {
+
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) =>
-            _ViewModel.create(store, _graph.id, _graph.id_group),
+            _ViewModel.create(context, store, _graph.id, _graph.id_group),
         builder: (BuildContext context, _ViewModel model) {
           GraphTile _graph = model.getGraph();
-
           List<Widget> list = _widgetList(_graph, model);
 
           return Scaffold(
@@ -31,31 +33,51 @@ class GraphPage extends StatelessWidget {
               title: new Text(_graph.createdFormat()),
             ),
             resizeToAvoidBottomPadding: true,
-            body: ListView(
-              children: list,
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [
+                      Colors.purple,
+                      Colors.indigo,
+                      Colors.blue,
+                      Colors.green,
+                      Colors.yellow,
+                      Colors.orange,
+                      Colors.red,
+                    ],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                    tileMode: TileMode.clamp)),
+              child: ListView(
+                children: list,
+              ),
             ),
           );
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return _buildTiles();
-  }
-
   // List of objects within graph
   List<Widget> _widgetList(GraphTile _graph, _ViewModel model) {
+    //Widgets
+    var infoStyle = TextStyle(
+        fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey[800]);
+
     //Add graph
     List<Widget> comments = [];
 
     //Add details
-    comments.add(Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(model.label('Time') + ':' + Util.timeFormat(_graph.time)),
-        SizedBox(width: 20),
-        Text(model.label('Count') + ':' + _graph.count.toString()),
-      ],
+    comments.add(Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(model.label('Time') + ':' + Util.timeFormat(_graph.time),
+              style: infoStyle),
+          SizedBox(width: 20),
+          Text(model.label('Count') + ':' + _graph.count.toString(),
+              style: infoStyle),
+        ],
+      ),
     ));
 
     //Add graph
@@ -72,7 +94,7 @@ class GraphPage extends StatelessWidget {
 
     //Add form entry
     comments.add(Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 0, 2, 0),
       child: AddCommentWidget(_graph.getEditComment(), model),
     ));
 
@@ -97,8 +119,20 @@ class GraphWidget extends StatelessWidget {
     }
     return Container(
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(3),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(color: Colors.white54, spreadRadius: 1),
+          ],
           gradient: LinearGradient(
-              colors: [Colors.purple[400], Colors.purple[100], Colors.purple[400]],
+              colors: [
+                Colors.purple[400],
+                Colors.purple[100],
+                Colors.purple[400]
+              ],
               begin: const FractionalOffset(0.0, 0.0),
               end: const FractionalOffset(0.0, 1.0),
 //              stops: [0.0, 1.0],
@@ -109,58 +143,66 @@ class GraphWidget extends StatelessWidget {
 }
 
 class CommentWidget extends StatelessWidget {
+  CommentWidget(this._graph, this._comment, this._model);
+
   final GraphTile _graph;
   final CommentTile _comment;
   final _ViewModel _model;
-  CommentWidget(this._graph, this._comment, this._model);
 
   @override
   Widget build(BuildContext context) {
+    Color _grey = Colors.grey;
+
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
           child: Column(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.edit, color: _grey, size: 20),
+                      onPressed: () => _model.onEditComment(_comment.id),
+                    ),
                     Expanded(
-                        child: Container(
-                      padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-                      child: Text(_comment.comment,
-                          style: TextStyle(color: Colors.black)),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey,
-                        boxShadow: [
-                          BoxShadow(color: Colors.blueAccent, spreadRadius: 3),
-                        ],
-                      ),
+                        child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+                          child: SizedBox(
+                            width: 400,
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+                              child: Text(_comment.comment,
+                                  style: TextStyle(color: Colors.black)),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.white54, spreadRadius: 1),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(_comment.createdFormat(),
+                            style: TextStyle(fontSize: 12, color: _grey)),
+                      ],
                     )),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: _grey, size: 20),
+                      onPressed: () => _model.onRemoveComment(_comment),
+                    ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                          child: Row(children: <Widget>[
-                        Text(_comment.createdFormat(),
-                            style: TextStyle(fontSize: 12, color: Colors.grey)),
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Colors.grey, size: 15),
-                          onPressed: () => _model.onEditComment(_comment.id),
-                        ),
-                      ])),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.grey, size: 20),
-                        onPressed: () => _model.onRemoveComment(_comment),
-                      ),
-                    ]),
               ),
             ],
           ),
@@ -171,10 +213,11 @@ class CommentWidget extends StatelessWidget {
 }
 
 class AddCommentWidget extends StatefulWidget {
+  AddCommentWidget(this.commentTile, this.model);
+
   final _ViewModel model;
   final CommentTile commentTile;
 
-  AddCommentWidget(this.commentTile, this.model);
   @override
   _AddCommentState createState() => _AddCommentState();
 }
@@ -193,7 +236,7 @@ class _AddCommentState extends State<AddCommentWidget> {
     FocusNode _focus = new FocusNode();
     void _onFocusChange() {
       if (widget.model.store.state.isCommentFieldActive) return;
-//      debugPrint('*****Focus: ' + _focus.hasFocus.toString());
+      debugPrint('*****Focus: ' + _focus.hasFocus.toString());
       widget.model.store.state.setCommentFieldActive();
       widget.model.store.dispatch(ToggleAddGraphButtonAction());
     }
@@ -201,7 +244,7 @@ class _AddCommentState extends State<AddCommentWidget> {
     _focus.addListener(_onFocusChange);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(32, 10, 0, 0),
       child: Row(
         children: <Widget>[
           Flexible(
@@ -239,7 +282,9 @@ class _AddCommentState extends State<AddCommentWidget> {
                     onPressed: () {
                       widget.model.store.state.clearCommentFieldActive();
                       widget.model.onAddComment(
-                          widget.commentTile == null ? null : widget.commentTile.id,
+                          widget.commentTile == null
+                              ? null
+                              : widget.commentTile.id,
                           controller.text);
                       controller.clear();
                     },
@@ -257,7 +302,6 @@ class _AddCommentState extends State<AddCommentWidget> {
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -280,7 +324,8 @@ class _ViewModel extends BaseViewModel {
     this.onRemoveComment,
   }) : super(store);
 
-  factory _ViewModel.create(Store<AppState> store, int id_graph, int id_group) {
+  factory _ViewModel.create(
+      BuildContext context, Store<AppState> store, int id_graph, int id_group) {
     GroupTile _group = store.state.findGroupTile(id_group);
     GraphTile graph = _group.findGraphTile(id_graph);
 
@@ -293,13 +338,16 @@ class _ViewModel extends BaseViewModel {
     }
 
     _onAddComment(int id_comment, String comment) {
-      Util(StackTrace.current).out('_onAddComment');
       store.dispatch(SaveGraphCommentAction(graph, id_comment, comment));
     }
 
     _onRemoveComment(CommentTile comment) {
-      Util(StackTrace.current).out('_onRemoveComment');
-      store.dispatch(DeleteGraphCommentAction(comment));
+      showConfirmDialog(
+              'DelComment', 'DelCommentQ', store.state.session.label, context)
+          .then((value) {
+        if (value != null && value)
+          store.dispatch(DeleteGraphCommentAction(comment));
+      });
     }
 
     return _ViewModel(

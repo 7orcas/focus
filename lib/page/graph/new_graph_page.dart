@@ -62,7 +62,7 @@ class NewGraphPage extends StatelessWidget {
                       children: <Widget>[
                         _ControlButtonsWidget(viewModel, _id_group, runner),
                         Text(graphBuild.timerAsString()),
-                        Expanded(child: FocusChart(graphBuild.chartData()))
+                        Expanded(child: FocusChart(graphBuild.chartDataForNewBuild()))
                       ],
                     );
                   }),

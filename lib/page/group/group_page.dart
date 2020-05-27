@@ -13,7 +13,7 @@ import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/group/graph_tile_widget.dart';
 import 'package:focus/page/graph/graph_conversation_DELETE.dart';
-import 'package:focus/page/util/dialog_yes_no.dart';
+import 'package:focus/page/util/utilities.dart';
 import 'package:focus/page/util/loading_image.dart';
 
 class GroupPage extends StatelessWidget {
@@ -46,20 +46,36 @@ class GroupPage extends StatelessWidget {
                     appBar: new AppBar(
                       title: new Text(title),
                     ),
-                    body: ListView.builder(
-                      itemBuilder: (BuildContext context, int index) => InkWell(
-                        child: GestureDetector(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GraphTileWidget(c.graphs[index],
-                                model.onDeleteGraph, model.label),
+                    body: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [
+                                Colors.purple,
+                                Colors.indigo,
+                                Colors.blue,
+                                Colors.green,
+                                Colors.yellow,
+                                Colors.orange,
+                                Colors.red,
+                              ],
+                              begin: const FractionalOffset(0.0, 0.0),
+                              end: const FractionalOffset(0.0, 1.0),
+                              tileMode: TileMode.clamp)),
+                      child: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) => InkWell(
+                          child: GestureDetector(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GraphTileWidget(c.graphs[index],
+                                  model.onDeleteGraph, model.label),
+                            ),
+                            onTap: () => Navigator.pushNamed(
+                                context, ROUTE_GRAPH_PAGE,
+                                arguments: c.graphs[index]),
                           ),
-                          onTap: () => Navigator.pushNamed(
-                              context, ROUTE_GRAPH_PAGE,
-                              arguments: c.graphs[index]),
                         ),
+                        itemCount: c.graphs.length,
                       ),
-                      itemCount: c.graphs.length,
                     ),
                     floatingActionButton: Visibility(
                         visible: model.store.state.isShowAddGraph,
