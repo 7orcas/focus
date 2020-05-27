@@ -8,36 +8,43 @@ class GraphTileWidget extends StatelessWidget {
   final Function _onDeleteGraph;
   final Function _lang;
 
-
   Widget _buildTiles() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [Colors.purple, Colors.purple[100]],
+            colors: [Colors.purple[500], Colors.purple[300], Colors.purple],
             begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(0.5, 0.0),
-            stops: [0.0, 1.0],
+            end: const FractionalOffset(1.0, 0.0),
             tileMode: TileMode.clamp),
       ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: SizedBox(
-          width: 100,
+          width: 80,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(_graph.createdFormatShort(),
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
               SizedBox(width: 10),
               Container(
-                  width: 280,
+                  width: 250,
                   child: Text(_graph.firstCommentFormat(),
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, foreground: Paint()..shader =
-                      LinearGradient(
-                        colors: <Color>[Colors.white, Colors.deepPurple],
-                      ).createShader(Rect.fromLTWH(0.0, 0.0, 600.0, 100.0))
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.white),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false)),
+              SizedBox(width: 25),
+              SizedBox(
+                height: 25.0,
+                width: 20.0,
+                child: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.grey[400], size: 20),
+                  onPressed: () => _onDeleteGraph(_graph),
+                ),
+              )
             ],
           ),
         ),

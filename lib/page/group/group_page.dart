@@ -13,6 +13,7 @@ import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/group/graph_tile_widget.dart';
 import 'package:focus/page/graph/graph_conversation_DELETE.dart';
+import 'package:focus/page/util/dialog_yes_no.dart';
 import 'package:focus/page/util/loading_image.dart';
 
 class GroupPage extends StatelessWidget {
@@ -96,8 +97,11 @@ class _ViewModel extends BaseViewModel {
     }
 
     _onDeleteGraph(GraphTile graph) {
-      Util(StackTrace.current).out('_onDeleteGraph');
-      store.dispatch(DeleteGraphAction(graph, _onError));
+      showConfirmDialog(
+              'DelGraph', 'DelGraphQ', store.state.session.label, context)
+          .then((value) {
+        if (value != null && value) store.dispatch(DeleteGraphAction(graph, _onError));
+      });
     }
 
     return _ViewModel(

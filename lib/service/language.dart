@@ -62,7 +62,7 @@ class LangLabel {
 }
 
 List<LangLabel> _en = [
-  LangLabel('Focus', 'Focus Intention'),
+  LangLabel('Focus', 'Focused Intention'),
   LangLabel('Lang', 'Language'),
   LangLabel('Error', 'Error, damn'),
   LangLabel('Group', 'Group', mi:'Group Maori', de:'Gruppe'),
@@ -73,6 +73,11 @@ List<LangLabel> _en = [
   LangLabel('InvalidGraph', 'Invalid Graph!'),
   LangLabel('Time', 'Time'),
   LangLabel('Count', 'Number of Readings'),
+  LangLabel('Confirm', 'Confirm'),
+  LangLabel('Yes', 'Yes'),
+  LangLabel('No', 'No'),
+  LangLabel('DelGraph', 'Delete Graph'),
+  LangLabel('DelGraphQ', 'Are you sure you want to delete the graph?'),
 
   //Unit test code
   LangLabel('UTCode1', 'Unit Test Code 1'),

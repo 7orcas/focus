@@ -130,7 +130,7 @@ void test (List<double> list){
     return [
       new Series<RngPoint, int>(
         id: 'RNG',
-        colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => MaterialPalette.yellow.shadeDefault,
         domainFn: (RngPoint p, _) => p.point,
         measureFn: (RngPoint p, _) => p.value,
         data: points,

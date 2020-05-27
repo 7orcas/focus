@@ -24,7 +24,7 @@ class GraphPage extends StatelessWidget {
         builder: (BuildContext context, _ViewModel model) {
           GraphTile _graph = model.getGraph();
 
-          List<Widget> list = comments(_graph, model);
+          List<Widget> list = _widgetList(_graph, model);
 
           return Scaffold(
             appBar: new AppBar(
@@ -44,7 +44,7 @@ class GraphPage extends StatelessWidget {
   }
 
   // List of objects within graph
-  List<Widget> comments(GraphTile _graph, _ViewModel model) {
+  List<Widget> _widgetList(GraphTile _graph, _ViewModel model) {
     //Add graph
     List<Widget> comments = [];
 
@@ -63,10 +63,6 @@ class GraphPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(40, 0, 20, 0),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         GraphWidget(_graph.graph, model.label),
-        IconButton(
-          icon: Icon(Icons.delete, color: Colors.grey, size: 20),
-//          onPressed: () => _onDeleteGraph(_graph),
-        )
       ]),
     ));
 
@@ -102,13 +98,13 @@ class GraphWidget extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [Colors.blue[300], Colors.blue[100]],
+              colors: [Colors.purple[400], Colors.purple[100], Colors.purple[400]],
               begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(0.0, 0.5),
-              stops: [0.0, 1.0],
+              end: const FractionalOffset(0.0, 1.0),
+//              stops: [0.0, 1.0],
               tileMode: TileMode.clamp),
         ),
-        child: SizedBox(width: 300.0, height: 200.0, child: chart));
+        child: SizedBox(width: 330.0, height: 200.0, child: chart));
   }
 }
 
