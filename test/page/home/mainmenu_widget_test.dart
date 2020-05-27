@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:focus/service/menu.dart';
-import 'package:focus/page/home/mainmenu.dart';
+import 'package:focus/page/home/main_menu_widget.dart';
 import 'package:focus/service/language.dart';
 
 final String _lang = LANG_ENGLISH;

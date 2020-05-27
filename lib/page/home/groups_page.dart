@@ -9,7 +9,7 @@ import 'package:focus/model/group/group_tile.dart';
 import 'package:focus/model/session/session_actions.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
-import 'package:focus/page/home/mainmenu.dart';
+import 'package:focus/page/home/main_menu_widget.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/group/group_page.dart';
 
@@ -131,13 +131,11 @@ class GroupListWidget extends StatelessWidget {
 class _ViewModel extends BaseViewModel {
   final Function(String) onAddGroup;
   final Function(GroupTile) onRemoveGroup;
-  final Function(String) onChangeLanguage;
 
   _ViewModel({
     store,
     this.onAddGroup,
     this.onRemoveGroup,
-    this.onChangeLanguage,
   }) : super(store);
 
   factory _ViewModel.create(Store<AppState> store) {
@@ -157,15 +155,11 @@ class _ViewModel extends BaseViewModel {
       store.dispatch(DeleteGroupAction(group));
     }
 
-    _onChangeLanguage(String lang) {
-      store.dispatch(ChangeLanguageAction(lang));
-    }
 
     return _ViewModel(
       store: store,
       onAddGroup: _onAddGroup,
       onRemoveGroup: _onRemoveGroup,
-      onChangeLanguage: _onChangeLanguage,
     );
   }
 }

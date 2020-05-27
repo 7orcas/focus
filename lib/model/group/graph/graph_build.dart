@@ -110,7 +110,7 @@ class GraphBuild {
   }
 
   List<Series<RngPoint, int>> chartDataForNewBuild() {
-    return _getChartDataX(_points, MaterialPalette.blue.shadeDefault);
+    return _getChartDataX(_points, MaterialPalette.white);
   }
 
   String toEncodedList(){

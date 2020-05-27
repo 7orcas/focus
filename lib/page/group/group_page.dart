@@ -11,8 +11,8 @@ import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/page/base_view_model.dart';
+import 'package:focus/page/home/main_menu_widget.dart';
 import 'package:focus/page/group/graph_tile_widget.dart';
-import 'package:focus/page/graph/graph_conversation_DELETE.dart';
 import 'package:focus/page/util/utilities.dart';
 import 'package:focus/page/util/loading_image.dart';
 
@@ -43,26 +43,17 @@ class GroupPage extends StatelessWidget {
                     : model.label('Group') + ': ' + c.name;
 
                 return Scaffold(
-                    appBar: new AppBar(
-                      title: new Text(title),
+                    appBar: AppBar(
+                      title: Text(title),
+                      actions: MainMenu(context, model.store, model.language,
+                              model.onChangeLanguage)
+                          .menu,
                     ),
                     body: Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [
-                                Colors.purple,
-                                Colors.indigo,
-                                Colors.blue,
-                                Colors.green,
-                                Colors.yellow,
-                                Colors.orange,
-                                Colors.red,
-                              ],
-                              begin: const FractionalOffset(0.0, 0.0),
-                              end: const FractionalOffset(0.0, 1.0),
-                              tileMode: TileMode.clamp)),
+                      decoration: BoxDecoration(gradient: chakraColors),
                       child: ListView.builder(
-                        itemBuilder: (BuildContext context, int index) => InkWell(
+                        itemBuilder: (BuildContext context, int index) =>
+                            InkWell(
                           child: GestureDetector(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -116,7 +107,8 @@ class _ViewModel extends BaseViewModel {
       showConfirmDialog(
               'DelGraph', 'DelGraphQ', store.state.session.label, context)
           .then((value) {
-        if (value != null && value) store.dispatch(DeleteGraphAction(graph, _onError));
+        if (value != null && value)
+          store.dispatch(DeleteGraphAction(graph, _onError));
       });
     }
 

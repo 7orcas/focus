@@ -20,7 +20,6 @@ class GraphPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) =>
             _ViewModel.create(context, store, _graph.id, _graph.id_group),
@@ -34,20 +33,7 @@ class GraphPage extends StatelessWidget {
             ),
             resizeToAvoidBottomPadding: true,
             body: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [
-                      Colors.purple,
-                      Colors.indigo,
-                      Colors.blue,
-                      Colors.green,
-                      Colors.yellow,
-                      Colors.orange,
-                      Colors.red,
-                    ],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(0.0, 1.0),
-                    tileMode: TileMode.clamp)),
+              decoration: BoxDecoration(gradient: chakraColors),
               child: ListView(
                 children: list,
               ),
@@ -59,8 +45,7 @@ class GraphPage extends StatelessWidget {
   // List of objects within graph
   List<Widget> _widgetList(GraphTile _graph, _ViewModel model) {
     //Widgets
-    var infoStyle = TextStyle(
-        fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey[800]);
+    var infoStyle = TextStyle(fontSize: 14, color: Colors.white);
 
     //Add graph
     List<Widget> comments = [];

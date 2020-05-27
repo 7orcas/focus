@@ -1,15 +1,13 @@
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:focus/route.dart';
 import 'package:focus/service/util.dart';
-import 'package:focus/service/error.dart';
 import 'package:focus/model/app/app_state.dart';
-import 'package:focus/model/group/group_tile.dart';
-import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/graph/graph_runner.dart';
+import 'package:focus/page/base_view_model.dart';
+import 'package:focus/page/util/utilities.dart';
 import 'package:focus/page/graph/graph_chart.dart';
 
 class NewGraphPage extends StatelessWidget {
@@ -23,13 +21,13 @@ class NewGraphPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
         converter: (Store<AppState> store) => _ViewModel.create(context, store),
-        builder: (BuildContext context, _ViewModel viewModel) {
-          GraphBuild graph = viewModel.store.state.graph;
+        builder: (BuildContext context, _ViewModel model) {
+          GraphBuild graph = model.store.state.graph;
 
           Util(StackTrace.current)
               .out('graph=' + (graph != null ? 'OK' : 'Null'));
           Util(StackTrace.current).out('graph is running=' +
-              viewModel.store.state.isGraphBlocRunning().toString());
+              model.store.state.isGraphBlocRunning().toString());
 
           if (graph == null) {
             return MaterialApp(home: Container());
@@ -38,10 +36,9 @@ class NewGraphPage extends StatelessWidget {
           Runner runner = Runner(graph);
           runner.run();
 
-          return MaterialApp(
-            home: Scaffold(
+          return Scaffold(
               appBar: new AppBar(
-                title: Text("NewGraph"),
+                title: Text(model.label('NewGraph')),
               ),
               body: StreamBuilder<Runner>(
                   stream: runner.stream,
@@ -58,29 +55,40 @@ class NewGraphPage extends StatelessWidget {
 
                     GraphBuild graphBuild = runner.graph;
 
-                    return Column(
-                      children: <Widget>[
-                        _ControlButtonsWidget(viewModel, _id_group, runner),
-                        Text(graphBuild.timerAsString()),
-                        Expanded(child: FocusChart(graphBuild.chartDataForNewBuild()))
-                      ],
+                    return Container(
+                      decoration: BoxDecoration(gradient: chakraColors),
+                      child: Column(
+                        children: <Widget>[
+                          _ControlButtonsWidget(model, _id_group, runner),
+                          Text(graphBuild.timerAsString()),
+                          Expanded(
+                              child:
+                                  FocusChart(graphBuild.chartDataForNewBuild()))
+                        ],
+                      ),
                     );
                   }),
-            ),
-          );
+            );
         });
   }
 }
 
-
-
-
-
 class _ControlButtonsWidget extends StatelessWidget {
   final int _id_group;
   final Runner _runner;
-  final _ViewModel _viewModel;
-  _ControlButtonsWidget(this._viewModel, this._id_group, this._runner);
+  final _ViewModel model;
+  _ControlButtonsWidget(this.model, this._id_group, this._runner);
+
+  Icon icon(IconData d) => Icon(d, color: Colors.white, size: 60);
+//  RaisedButton button(String t, IconData d, Function f) => RaisedButton.icon(
+//        key: PageStorageKey(t),
+//        icon: Icon(d),
+//        onPressed: f,
+//        label: Text(model.label(t), style: TextStyle(fontSize: 20)),
+//      );
+  void space(List<Widget> actions) {
+    if (actions.length > 0) actions.add(SizedBox(width: 30));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +96,7 @@ class _ControlButtonsWidget extends StatelessWidget {
 
     if (_runner.isWaiting || _runner.isPaused) {
       actions.add(IconButton(
-        icon: Icon(Icons.play_circle_filled),
+        icon: icon(Icons.play_circle_filled),
         onPressed: () {
           _runner.start();
         },
@@ -96,8 +104,9 @@ class _ControlButtonsWidget extends StatelessWidget {
     }
 
     if (_runner.isRunning) {
+      space(actions);
       actions.add(IconButton(
-        icon: Icon(Icons.pause_circle_filled),
+        icon: icon(Icons.pause_circle_filled),
         onPressed: () {
           _runner.pause();
         },
@@ -105,65 +114,109 @@ class _ControlButtonsWidget extends StatelessWidget {
     }
 
     if (!_runner.isStopped) {
+      space(actions);
       actions.add(IconButton(
-        icon: Icon(Icons.stop),
+        icon: icon(Icons.stop),
         onPressed: () {
-          _viewModel.store.state.graph = null;
+          model.store.state.graph = null;
           _runner.stop();
         },
       ));
     }
 
     if (_runner.isStopped) {
+      space(actions);
       actions.add(IconButton(
-        icon: Icon(Icons.save),
+        icon: icon(Icons.save),
         onPressed: () {
-          _viewModel.onAddGraph(_id_group, _runner.graph);
+          model.onAddGraph(_id_group, _runner.graph);
         },
       ));
+//      actions.add(FlatButton(
+//        key: PageStorageKey('Save'),
+//        onPressed: model.onAddGraph(_id_group, _runner.graph),
+//        child: Text(model.label('Save'), style: TextStyle(fontSize: 20)),
+//      ));
     }
+
+
+
+//    if (_runner.isWaiting || _runner.isPaused) {
+//      //actions.add(button('Start', Icons.play_circle_filled, _runner.start));
+//      actions.add(RaisedButton.icon(
+//        key: PageStorageKey('Start'),
+//        icon: Icon(Icons.play_circle_filled),
+//        onPressed: _runner.start,
+//        label: Text(model.label('Start'), style: TextStyle(fontSize: 20)),
+//      ));
+//    }
+//
+//    if (_runner.isRunning) {
+//      space(actions);
+////      actions.add(button('Pause', Icons.pause_circle_filled, _runner.pause));
+//      actions.add(RaisedButton.icon(
+//        key: PageStorageKey('Pause'),
+//        icon: Icon(Icons.pause_circle_filled),
+//        onPressed: _runner.pause,
+//        label: Text(model.label('Pause'), style: TextStyle(fontSize: 20)),
+//      ));
+//    }
+//
+////    if (!_runner.isStopped) {
+////      space(actions);
+////      actions.add(RaisedButton.icon(
+////        key: PageStorageKey('Stop'),
+////        icon: Icon(Icons.stop),
+////        onPressed: _runner.stop,
+////        label: Text(model.label('Stop'), style: TextStyle(fontSize: 20)),
+////      ));
+////    }
+//
+//    if (!_runner.isStopped) {
+//      space(actions);
+//      actions.add(IconButton(
+//        icon: Icon(Icons.stop),
+//        onPressed: () {
+//          model.store.state.graph = null;
+//          _runner.stop();
+//        },
+//      ));
+//    }
+//
+//    if (_runner.isStopped) {
+//      space(actions);
+//      actions.add(button(
+//          'Save', Icons.save, model.onAddGraph(_id_group, _runner.graph)));
+////      actions.add(RaisedButton.icon(
+////        key: PageStorageKey('Save'),
+////        icon: Icon(Icons.save),
+////        onPressed: model.onAddGraph(_id_group, _runner.graph),
+////        label: Text(model.label('Save'), style: TextStyle(fontSize: 20)),
+////      ));
+//    }
 
     return Row(children: actions);
   }
 }
 
-class _ViewModel {
-  final Store<AppState> store;
-  final List<GroupTile> groups;
+class _ViewModel extends BaseViewModel {
   final Function(int, GraphBuild) onAddGraph;
-  final Function(GraphTile graph) onDeleteGraph;
 
   _ViewModel({
-    this.store,
-    this.groups,
+    store,
     this.onAddGraph,
-    this.onDeleteGraph,
-  });
+  }) : super(store);
 
   factory _ViewModel.create(BuildContext context, Store<AppState> store) {
-    Util(StackTrace.current).out('graph view create, store.state.graph=' +
-        (store.state.graph != null ? 'OK' : 'Null'));
-
-    _onError(FocusError e) {
-      Navigator.pushNamed(context, ROUTE_ERROR_PAGE, arguments: e);
-    }
-
     _onAddGraph(int id_group, GraphBuild graph) {
       Util(StackTrace.current).out('_onAddGraph');
       store.dispatch(SaveGraphAction(id_group, graph));
       Navigator.pop(context);
     }
 
-    _onDeleteGraph(GraphTile graph) {
-      Util(StackTrace.current).out('_onDeleteGraph');
-      store.dispatch(DeleteGraphAction(graph, _onError));
-    }
-
     return _ViewModel(
       store: store,
-      groups: store.state.groups,
       onAddGraph: _onAddGraph,
-      onDeleteGraph: _onDeleteGraph,
     );
   }
 }
