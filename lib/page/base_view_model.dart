@@ -19,6 +19,8 @@ class BaseViewModel {
   Language get language => session.language;
   String label(String key) => session.label(key);
 
+  bool get isGroupsEnabled => store.state.isGroupsEnabled;
+
   onChangeLanguage(String lang) {
     store.dispatch(ChangeLanguageAction(lang));
   }

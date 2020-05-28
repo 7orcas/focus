@@ -11,6 +11,7 @@ import 'package:focus/model/group/graph/graph_actions.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/page/base_view_model.dart';
 import 'package:focus/page/graph/graph_chart.dart';
+import 'package:focus/page/graph/add_comment_widget.dart';
 import 'package:focus/page/util/utilities.dart';
 
 class GraphPage extends StatelessWidget {
@@ -20,22 +21,24 @@ class GraphPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, _ViewModel>(
+    return StoreConnector<AppState, GraphViewModel>(
         converter: (Store<AppState> store) =>
-            _ViewModel.create(context, store, _graph.id, _graph.id_group),
-        builder: (BuildContext context, _ViewModel model) {
+            GraphViewModel.create(context, store, _graph.id, _graph.id_group),
+        builder: (BuildContext context, GraphViewModel model) {
           GraphTile _graph = model.getGraph();
           List<Widget> list = _widgetList(_graph, model);
 
-          return Scaffold(
-            appBar: new AppBar(
-              title: new Text(_graph.createdFormat()),
-            ),
-            resizeToAvoidBottomPadding: true,
-            body: Container(
-              decoration: BoxDecoration(gradient: chakraColors),
-              child: ListView(
-                children: list,
+          return SafeArea(
+            child: Scaffold(
+              appBar: new AppBar(
+                title: new Text(_graph.createdFormat()),
+              ),
+              resizeToAvoidBottomPadding: true,
+              body: Container(
+                decoration: BoxDecoration(gradient: chakraColors),
+                child: ListView(
+                  children: list,
+                ),
               ),
             ),
           );
@@ -43,7 +46,7 @@ class GraphPage extends StatelessWidget {
   }
 
   // List of objects within graph
-  List<Widget> _widgetList(GraphTile _graph, _ViewModel model) {
+  List<Widget> _widgetList(GraphTile _graph, GraphViewModel model) {
     //Widgets
     var infoStyle = TextStyle(fontSize: 14, color: Colors.white);
 
@@ -56,7 +59,7 @@ class GraphPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(model.label('Time') + ':' + Util.timeFormat(_graph.time),
+          Text(model.label('Time') + ':' + Util.timeFormat(_graph.seconds),
               style: infoStyle),
           SizedBox(width: 20),
           Text(model.label('Count') + ':' + _graph.count.toString(),
@@ -132,11 +135,11 @@ class CommentWidget extends StatelessWidget {
 
   final GraphTile _graph;
   final CommentTile _comment;
-  final _ViewModel _model;
+  final GraphViewModel _model;
 
   @override
   Widget build(BuildContext context) {
-    Color _grey = Colors.grey;
+    Color _grey = Colors.white;
 
     return Column(
       children: <Widget>[
@@ -179,7 +182,7 @@ class CommentWidget extends StatelessWidget {
                           ),
                         ),
                         Text(_comment.createdFormat(),
-                            style: TextStyle(fontSize: 12, color: _grey)),
+                            style: TextStyle(fontSize: 12, color: Colors.grey[300])),
                       ],
                     )),
                     IconButton(
@@ -197,110 +200,15 @@ class CommentWidget extends StatelessWidget {
   }
 }
 
-class AddCommentWidget extends StatefulWidget {
-  AddCommentWidget(this.commentTile, this.model);
 
-  final _ViewModel model;
-  final CommentTile commentTile;
-
-  @override
-  _AddCommentState createState() => _AddCommentState();
-}
-
-class _AddCommentState extends State<AddCommentWidget> {
-  final TextEditingController controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    Util(StackTrace.current).out('Comment Widget widget.commentTile=' +
-        (widget.commentTile != null ? 'ok' : 'null'));
-
-    controller.text =
-        widget.commentTile != null ? widget.commentTile.comment : null;
-
-    FocusNode _focus = new FocusNode();
-    void _onFocusChange() {
-      if (widget.model.store.state.isCommentFieldActive) return;
-      debugPrint('*****Focus: ' + _focus.hasFocus.toString());
-      widget.model.store.state.setCommentFieldActive();
-      widget.model.store.dispatch(ToggleAddGraphButtonAction());
-    }
-
-    _focus.addListener(_onFocusChange);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(32, 10, 0, 0),
-      child: Row(
-        children: <Widget>[
-          Flexible(
-            flex: 6,
-            child: TextField(
-              autofocus: widget.model.store.state.isCommentFieldActive,
-              key: PageStorageKey('mytextfield'),
-              keyboardType: TextInputType.multiline,
-              onEditingComplete: () {
-//                print('***** onEditingComplete');
-              },
-              focusNode: _focus,
-              maxLines: 4,
-              textInputAction: TextInputAction.newline,
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: widget.model.label('AddComment'),
-                border: OutlineInputBorder(),
-                suffixIcon: widget.commentTile == null
-                    ? null
-                    : IconButton(
-                        onPressed: () => widget.commentTile.editCancel(),
-                        icon: Icon(Icons.clear),
-                      ),
-              ),
-            ),
-          ),
-          Flexible(
-            child: Visibility(
-              visible: widget.model.store.state.isCommentFieldActive,
-              child: Column(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      widget.model.store.state.clearCommentFieldActive();
-                      widget.model.onAddComment(
-                          widget.commentTile == null
-                              ? null
-                              : widget.commentTile.id,
-                          controller.text);
-                      controller.clear();
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.cancel),
-                    onPressed: () {
-                      widget.model.store.state.clearCommentFieldActive();
-                      controller.clear();
-                      FocusScope.of(context).unfocus();
-                      widget.model.store.dispatch(ToggleAddGraphButtonAction());
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ViewModel extends BaseViewModel {
+class GraphViewModel extends BaseViewModel {
   GraphTile graph;
   final Function() getGraph;
   final Function(int, String) onAddComment;
   final Function(int) onEditComment;
   final Function(CommentTile) onRemoveComment;
 
-  _ViewModel({
+  GraphViewModel({
     store,
     this.graph,
     this.getGraph,
@@ -309,7 +217,7 @@ class _ViewModel extends BaseViewModel {
     this.onRemoveComment,
   }) : super(store);
 
-  factory _ViewModel.create(
+  factory GraphViewModel.create(
       BuildContext context, Store<AppState> store, int id_graph, int id_group) {
     GroupTile _group = store.state.findGroupTile(id_group);
     GraphTile graph = _group.findGraphTile(id_graph);
@@ -335,7 +243,7 @@ class _ViewModel extends BaseViewModel {
       });
     }
 
-    return _ViewModel(
+    return GraphViewModel(
       store: store,
       graph: graph,
       getGraph: _getGraph,

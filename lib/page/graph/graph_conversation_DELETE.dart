@@ -85,7 +85,7 @@ class GraphItem extends StatelessWidget {
     comments.add(Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(model.label('Time') + ':' + Util.timeFormat(_graph.time)),
+        Text(model.label('Time') + ':' + Util.timeFormat(_graph.seconds)),
         SizedBox(width: 20),
         Text(model.label('Count') + ':' + _graph.count.toString()),
       ],

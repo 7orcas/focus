@@ -38,14 +38,15 @@ class Runner {
       if (msg.numbers != null){
         _graph.setNumbers(msg.numbers);
       }
-      else{
-        _graph.setNumber(msg.lastNumber, msg.lastRngPoint);
-      }
+//      else{
+//        _graph.setNumber(msg.lastNumber, msg.lastRngPoint);
+//      }
       _graph.timer = msg.seconds;
       _controller.sink.add(this);
 
       if (_status == RunStatus.STOPPED){
         _isolate.kill();
+        _graph.count = _graph.numbers.length;
       }
     }
   }
@@ -112,8 +113,9 @@ void _isolatePoint(SendPort sendPort) async {
         var isolatePort1 = ReceivePort();
         replyToPort.send(_CrossIsolatesMessage(
             sender: isolatePort1.sendPort,
-            lastNumber: build.lastNumber,
-            lastRngPoint: build.lastRngPoint,
+            numbers: build.numbers,
+//            lastNumber: build.lastNumber,
+//            lastRngPoint: build.lastRngPoint,
             seconds: build.timer));
       });
     }
@@ -132,8 +134,8 @@ class _CrossIsolatesMessage {
     this.sender,
     this.message,
     this.numbers,
-    this.lastNumber,
-    this.lastRngPoint,
+    this.lastNumber, //ToDo delete
+    this.lastRngPoint, //ToDo delete
     this.seconds,
   });
 }

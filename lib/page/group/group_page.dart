@@ -38,45 +38,53 @@ class GroupPage extends StatelessWidget {
                       child: Text('Error: ${snapshot.error}')); //ToDo route
 
                 GroupTile c = snapshot.data;
-                String title = c.isUserMe
-                    ? model.label('Focus')
-                    : model.label('Group') + ': ' + c.name;
 
-                return Scaffold(
-                    appBar: AppBar(
-                      title: Text(title),
-                      actions: MainMenu(context, model.store, model.language,
-                              model.onChangeLanguage)
-                          .menu,
-                    ),
-                    body: Container(
-                      decoration: BoxDecoration(gradient: chakraColors),
-                      child: ListView.builder(
-                        itemBuilder: (BuildContext context, int index) =>
-                            InkWell(
-                          child: GestureDetector(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GraphTileWidget(c.graphs[index],
-                                  model.onDeleteGraph, model.label),
+                return SafeArea(
+                  child: Scaffold(
+                      appBar: AppBar(
+                        title: Text(_title(c, model)),
+                        actions: MainMenu(context, model.store, model.language,
+                                model.onChangeLanguage)
+                            .menu,
+                      ),
+                      body: Container(
+                        decoration: BoxDecoration(gradient: chakraColors),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+                          child: ListView.builder(
+                            itemBuilder: (BuildContext context, int index) =>
+                                InkWell(
+                              child: GestureDetector(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GraphTileWidget(c.graphs[index],
+                                      model.onDeleteGraph, model.label),
+                                ),
+                                onTap: () => Navigator.pushNamed(
+                                    context, ROUTE_GRAPH_PAGE,
+                                    arguments: c.graphs[index]),
+                              ),
                             ),
-                            onTap: () => Navigator.pushNamed(
-                                context, ROUTE_GRAPH_PAGE,
-                                arguments: c.graphs[index]),
+                            itemCount: c.graphs.length,
                           ),
                         ),
-                        itemCount: c.graphs.length,
                       ),
-                    ),
-                    floatingActionButton: Visibility(
-                        visible: model.store.state.isShowAddGraph,
-                        child: new FloatingActionButton(
-                            onPressed: () {
-                              model.onAddGraph(_group);
-                            },
-                            child: new Icon(Icons.add))));
+                      floatingActionButton: Visibility(
+                          visible: model.store.state.isShowAddGraph,
+                          child: new FloatingActionButton(
+                              onPressed: () {
+                                model.onAddGraph(_group);
+                              },
+                              child: new Icon(Icons.add)))),
+                );
               });
         });
+  }
+
+  String _title(GroupTile group, _ViewModel model) {
+    return (model.isGroupsEnabled ? group.name : model.label('FocusApp')) +
+        ': ' +
+        model.label('Graphs');
   }
 }
 

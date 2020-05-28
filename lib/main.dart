@@ -30,12 +30,13 @@ class FocusApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return StoreProvider<AppState>(
         store: store,
         child: MaterialApp(
             title: 'Focus',
-            theme:
-            ThemeData(primarySwatch: Colors.purple, brightness: Brightness.light),
+            theme: ThemeData(
+                primarySwatch: Colors.purple, brightness: Brightness.light),
             themeMode: ThemeMode.light,
             darkTheme: ThemeData(brightness: Brightness.dark),
 //            theme: ThemeData(
@@ -53,9 +54,10 @@ class FocusApp extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.waiting)
                       return LoadingImage();
 
+                    if (store.state.isGroupsEnabled) {
+                      return GroupsPage();
+                    }
                     return GroupPage(store.state.findGroupTile(ID_USER_ME));
-                    //return GroupsPage();
-
                   });
             })));
   }

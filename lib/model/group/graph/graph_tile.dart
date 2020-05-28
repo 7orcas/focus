@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:focus/model/group/graph/graph_build.dart';
 import 'package:intl/intl.dart';
+import 'package:focus/service/util.dart';
 import 'package:focus/model/base_entity.dart';
 import 'package:focus/model/group/comment/comment_entity.dart';
 import 'package:focus/model/group/graph/graph_entity.dart';
@@ -9,24 +11,24 @@ class GraphTile extends BaseTile {
   final int id_group;
   final String graph;
   List<CommentTile> comments;
-  final int time;
+  final int seconds;
   final int count;
 
-  GraphTile(
-    id,
-    created,
-    this.id_group,
-    this.graph,
-    this.comments,
-    this.time,
-    this.count,
-  ) : super(id, created);
+//  GraphTile(
+//    id,
+//    created,
+//    this.id_group,
+//    this.graph,
+//    this.comments,
+//    this.seconds,
+//    this.count,
+//  ) : super(id, created);
 
   GraphTile.entity(GraphEntity e)
       : id_group = e.id_group,
         graph = e.graph,
         comments = List<CommentTile>(),
-        time = e.getEncoded(PARAM_KEY_TIME, 0),
+        seconds = e.getEncoded(PARAM_KEY_TIME, 0),
         count = e.getEncoded(PARAM_KEY_COUNT, 0),
         super(e.id, e.created){
     if (e.comments != null){
@@ -46,11 +48,11 @@ class GraphTile extends BaseTile {
     return t;
   }
 
-  GraphEntity toEntity() {
-    List<CommentEntity> list = comments.map((t) => t.toEntity()).toList();
-    return GraphEntity(id, createdMS(), addEncoded('', PARAM_KEY_TIME, time),
-        id_group, graph, list);
-  }
+//  GraphEntity toEntity() {
+//    List<CommentEntity> list = comments.map((t) => t.toEntity()).toList();
+//    return GraphEntity(id, createdMS(), addEncoded('', PARAM_KEY_TIME, seconds),
+//        id_group, graph, list);
+//  }
 
   CommentTile findCommentTile(int id) {
     for (CommentTile c in comments) {
@@ -87,6 +89,11 @@ class GraphTile extends BaseTile {
   String createdFormatShort() {
     if (created == null) return '';
     return DateFormat('dd.MMM.yy').format(created);
+  }
+
+  String timeFormat() {
+    if (seconds == null) return '';
+    return Util.timeFormat(seconds);
   }
 
   String firstCommentFormat() {

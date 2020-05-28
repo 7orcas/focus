@@ -33,16 +33,16 @@ class NewGraphPage extends StatelessWidget {
             return MaterialApp(home: Container());
           }
 
-          Runner runner = Runner(graph);
-          runner.run();
+//          Runner runner = Runner(graph);
+//          runner.run();
 
           return Scaffold(
               appBar: new AppBar(
                 title: Text(model.label('NewGraph')),
               ),
-              body: StreamBuilder<Runner>(
-                  stream: runner.stream,
-//                  initialData: graph.numbers,
+              body: StreamBuilder<GraphBuild>(
+//                  stream: runner.stream,
+                  stream: graph.stream,
                   builder: (context, snapshot) {
 //                    GraphBuild graphBuild = snapshot.data;
 
@@ -53,17 +53,17 @@ class NewGraphPage extends StatelessWidget {
                       return Center(
                           child: Text('Error: ${snapshot.error}')); //ToDo route
 
-                    GraphBuild graphBuild = runner.graph;
+//                    GraphBuild graphBuild = runner.graph;
 
                     return Container(
                       decoration: BoxDecoration(gradient: chakraColors),
                       child: Column(
                         children: <Widget>[
-                          _ControlButtonsWidget(model, _id_group, runner),
-                          Text(graphBuild.timerAsString()),
+                          _ControlButtonsWidget(model, _id_group, graph),
+                          Text(graph.timerAsString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           Expanded(
                               child:
-                                  FocusChart(graphBuild.chartDataForNewBuild()))
+                                  FocusChart(graph.chartDataForNewBuild()))
                         ],
                       ),
                     );
@@ -75,7 +75,7 @@ class NewGraphPage extends StatelessWidget {
 
 class _ControlButtonsWidget extends StatelessWidget {
   final int _id_group;
-  final Runner _runner;
+  final GraphBuild _runner;
   final _ViewModel model;
   _ControlButtonsWidget(this.model, this._id_group, this._runner);
 
@@ -129,7 +129,7 @@ class _ControlButtonsWidget extends StatelessWidget {
       actions.add(IconButton(
         icon: icon(Icons.save),
         onPressed: () {
-          model.onAddGraph(_id_group, _runner.graph);
+          model.onAddGraph(_id_group, _runner);
         },
       ));
 //      actions.add(FlatButton(

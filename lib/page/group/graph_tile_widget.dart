@@ -32,7 +32,7 @@ class GraphTileWidget extends StatelessWidget {
               SizedBox(width: 10),
               Container(
                   width: 250,
-                  child: Text(_graph.firstCommentFormat(),
+                  child: Text(title(),
                       style: TextStyle(fontSize: 13, color: Colors.white),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false)),
@@ -41,7 +41,7 @@ class GraphTileWidget extends StatelessWidget {
                 height: 25.0,
                 width: 20.0,
                 child: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.grey[400], size: 20),
+                  icon: Icon(Icons.delete, color: Colors.white, size: 20),
                   onPressed: () => _onDeleteGraph(_graph),
                 ),
               )
@@ -51,6 +51,13 @@ class GraphTileWidget extends StatelessWidget {
       ),
     );
   }
+
+  String title () {
+    String x = _graph.firstCommentFormat();
+    if (!x.isEmpty) return x;
+    return _lang('Time') + ' ' + _graph.timeFormat();
+  }
+
 
   @override
   Widget build(BuildContext context) {

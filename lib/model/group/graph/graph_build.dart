@@ -10,9 +10,9 @@ enum RunStatus { WAIT, RUNNING, PAUSED, STOPPED }
 
 class GraphBuild {
   List _numbers = List<double>();
-  double _lastNumber;
+  double _lastNumber; //ToDo delete
   List _points = List<RngPoint>();
-  RngPoint _lastRngPoint;
+  RngPoint _lastRngPoint; //ToDo delete
   RunStatus _status = RunStatus.WAIT;
   int _count = 0;
   final _random = new Random();
@@ -60,6 +60,7 @@ class GraphBuild {
   int get timer => _timer.time();
   void set timer (sec) => _timer.seconds = sec;
   int get count => _count;
+  void set count (int x) => _count = x;
   List<double> get numbers => _numbers;
   double get lastNumber => _lastNumber;
   RngPoint get lastRngPoint => _lastRngPoint;

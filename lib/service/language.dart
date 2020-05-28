@@ -62,7 +62,7 @@ class LangLabel {
 }
 
 List<LangLabel> _en = [
-  LangLabel('Focus', 'Focused Intention'),
+  LangLabel('FocusApp', 'Focused Intention'),
   LangLabel('Lang', 'Language'),
   LangLabel('Error', 'Error, damn'),
   LangLabel('Group', 'Group', mi:'Group Maori', de:'Gruppe'),
@@ -80,7 +80,8 @@ List<LangLabel> _en = [
   LangLabel('Pause','Pause'),
   LangLabel('Stop','Stop'),
   LangLabel('Save','Save'),
-  LangLabel('NewGraph', 'New Random Number Graph'),
+  LangLabel('Graphs', 'RNG Graphs'),
+  LangLabel('NewGraph', 'New RNG Graph'),
   LangLabel('DelGraph', 'Delete Graph'),
   LangLabel('DelGraphQ', 'Are you sure you want to delete the graph?'),
   LangLabel('DelComment', 'Delete Comment'),

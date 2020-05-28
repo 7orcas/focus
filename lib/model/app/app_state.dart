@@ -16,6 +16,7 @@ class AppState {
   Map<int, bool> _graphExpansionKeys = {};
   bool _showAddGraph = true;
   bool _commentFieldActive = false;
+  bool _groupsEnabled = false;
 
   AppState._({
     @required this.session,
@@ -88,4 +89,5 @@ class AppState {
 
   bool get isShowAddGraph => _showAddGraph;
   bool get isCommentFieldActive => _commentFieldActive;
+  bool get isGroupsEnabled => _groupsEnabled;
 }
