@@ -15,8 +15,10 @@ class AppState {
   GraphBuild _graphBuild;
   Map<int, bool> _graphExpansionKeys = {};
   bool _showAddGraph = true;
+  bool _graphRunning = false;
   bool _commentFieldActive = false;
   bool _groupsEnabled = false;
+  double _brightness = 1.0;
 
   AppState._({
     @required this.session,
@@ -31,7 +33,9 @@ class AppState {
     app._graphBuild = this._graphBuild;
     app._graphExpansionKeys = this._graphExpansionKeys;
     app._showAddGraph = this._showAddGraph;
+    app._graphRunning = this._graphRunning;
     app._commentFieldActive = this._commentFieldActive;
+    app._brightness = this._brightness;
     return app;
   }
 
@@ -88,6 +92,10 @@ class AppState {
   }
 
   bool get isShowAddGraph => _showAddGraph;
+  bool get isGraphRunning => _graphRunning;
+  void set graphRunning(bool value) => _graphRunning = value;
   bool get isCommentFieldActive => _commentFieldActive;
   bool get isGroupsEnabled => _groupsEnabled;
+  double get brightness => _brightness;
+  void set brightness (var value) => _brightness = value;
 }

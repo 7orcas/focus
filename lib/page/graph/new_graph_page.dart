@@ -1,6 +1,10 @@
+import 'package:flutter/cupertino.dart';
+import 'package:focus/model/app/app_actions.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:wakelock/wakelock.dart';
+import 'package:screen/screen.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/app/app_state.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
@@ -24,11 +28,6 @@ class NewGraphPage extends StatelessWidget {
         builder: (BuildContext context, _ViewModel model) {
           GraphBuild graph = model.store.state.graph;
 
-          Util(StackTrace.current)
-              .out('graph=' + (graph != null ? 'OK' : 'Null'));
-          Util(StackTrace.current).out('graph is running=' +
-              model.store.state.isGraphBlocRunning().toString());
-
           if (graph == null) {
             return MaterialApp(home: Container());
           }
@@ -36,9 +35,15 @@ class NewGraphPage extends StatelessWidget {
 //          Runner runner = Runner(graph);
 //          runner.run();
 
-          return Scaffold(
+          return WillPopScope(
+            onWillPop: () {
+              _stop(graph, model);
+              return new Future(() => true);
+            },
+            child: Scaffold(
               appBar: new AppBar(
                 title: Text(model.label('NewGraph')),
+                  automaticallyImplyLeading: !model.store.state.isGraphRunning,
               ),
               body: StreamBuilder<GraphBuild>(
 //                  stream: runner.stream,
@@ -60,17 +65,34 @@ class NewGraphPage extends StatelessWidget {
                       child: Column(
                         children: <Widget>[
                           _ControlButtonsWidget(model, _id_group, graph),
-                          Text(graph.timerAsString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           Expanded(
-                              child:
-                                  FocusChart(graph.chartDataForNewBuild()))
+                              child: FocusChart(graph.chartDataForNewBuild()))
                         ],
                       ),
                     );
                   }),
-            );
+            ),
+          );
         });
   }
+}
+
+void _stop (GraphBuild _runner, _ViewModel model){
+  _powerManagement(false, model.store, ignoreRefresh: true);
+  model.store.state.graph = null;
+  _runner.stop();
+}
+
+void _powerManagement(bool v, Store store, {bool ignoreRefresh = false}) async {
+  Wakelock.toggle(on: v);
+  store.state.graphRunning = v;
+  if (v) {
+    store.state.brightness = await Screen.brightness;
+    Screen.setBrightness(0.5);
+  } else {
+    Screen.setBrightness(store.state.brightness);
+  }
+  if (!ignoreRefresh) store.dispatch(RefreshAppAction());
 }
 
 class _ControlButtonsWidget extends StatelessWidget {
@@ -79,15 +101,12 @@ class _ControlButtonsWidget extends StatelessWidget {
   final _ViewModel model;
   _ControlButtonsWidget(this.model, this._id_group, this._runner);
 
-  Icon icon(IconData d) => Icon(d, color: Colors.white, size: 60);
-//  RaisedButton button(String t, IconData d, Function f) => RaisedButton.icon(
-//        key: PageStorageKey(t),
-//        icon: Icon(d),
-//        onPressed: f,
-//        label: Text(model.label(t), style: TextStyle(fontSize: 20)),
-//      );
-  void space(List<Widget> actions) {
-    if (actions.length > 0) actions.add(SizedBox(width: 30));
+  Icon _icon(IconData d) => Icon(
+        d,
+        color: Colors.white,
+      );
+  void _space(List<Widget> actions) {
+    if (actions.length > 0) actions.add(SizedBox(width: 20));
   }
 
   @override
@@ -96,106 +115,70 @@ class _ControlButtonsWidget extends StatelessWidget {
 
     if (_runner.isWaiting || _runner.isPaused) {
       actions.add(IconButton(
-        icon: icon(Icons.play_circle_filled),
+        iconSize: 50,
+        icon: _icon(Icons.play_circle_filled),
         onPressed: () {
+          _powerManagement(true, model.store);
           _runner.start();
         },
       ));
     }
 
     if (_runner.isRunning) {
-      space(actions);
+      _space(actions);
       actions.add(IconButton(
-        icon: icon(Icons.pause_circle_filled),
+        iconSize: 50,
+        icon: _icon(Icons.pause_circle_filled),
         onPressed: () {
+          _powerManagement(false, model.store);
           _runner.pause();
         },
       ));
     }
 
     if (!_runner.isStopped) {
-      space(actions);
+      _space(actions);
       actions.add(IconButton(
-        icon: icon(Icons.stop),
+        iconSize: 70,
+        icon: _icon(
+          Icons.stop,
+        ),
         onPressed: () {
-          model.store.state.graph = null;
-          _runner.stop();
+          _stop(_runner, model);
         },
       ));
     }
 
     if (_runner.isStopped) {
-      space(actions);
+      _space(actions);
       actions.add(IconButton(
-        icon: icon(Icons.save),
+        iconSize: 50,
+        icon: _icon(Icons.save),
         onPressed: () {
           model.onAddGraph(_id_group, _runner);
         },
       ));
-//      actions.add(FlatButton(
-//        key: PageStorageKey('Save'),
-//        onPressed: model.onAddGraph(_id_group, _runner.graph),
-//        child: Text(model.label('Save'), style: TextStyle(fontSize: 20)),
-//      ));
     }
 
-
-
-//    if (_runner.isWaiting || _runner.isPaused) {
-//      //actions.add(button('Start', Icons.play_circle_filled, _runner.start));
-//      actions.add(RaisedButton.icon(
-//        key: PageStorageKey('Start'),
-//        icon: Icon(Icons.play_circle_filled),
-//        onPressed: _runner.start,
-//        label: Text(model.label('Start'), style: TextStyle(fontSize: 20)),
-//      ));
-//    }
-//
-//    if (_runner.isRunning) {
-//      space(actions);
-////      actions.add(button('Pause', Icons.pause_circle_filled, _runner.pause));
-//      actions.add(RaisedButton.icon(
-//        key: PageStorageKey('Pause'),
-//        icon: Icon(Icons.pause_circle_filled),
-//        onPressed: _runner.pause,
-//        label: Text(model.label('Pause'), style: TextStyle(fontSize: 20)),
-//      ));
-//    }
-//
-////    if (!_runner.isStopped) {
-////      space(actions);
-////      actions.add(RaisedButton.icon(
-////        key: PageStorageKey('Stop'),
-////        icon: Icon(Icons.stop),
-////        onPressed: _runner.stop,
-////        label: Text(model.label('Stop'), style: TextStyle(fontSize: 20)),
-////      ));
-////    }
-//
-//    if (!_runner.isStopped) {
-//      space(actions);
-//      actions.add(IconButton(
-//        icon: Icon(Icons.stop),
-//        onPressed: () {
-//          model.store.state.graph = null;
-//          _runner.stop();
-//        },
-//      ));
-//    }
-//
-//    if (_runner.isStopped) {
-//      space(actions);
-//      actions.add(button(
-//          'Save', Icons.save, model.onAddGraph(_id_group, _runner.graph)));
-////      actions.add(RaisedButton.icon(
-////        key: PageStorageKey('Save'),
-////        icon: Icon(Icons.save),
-////        onPressed: model.onAddGraph(_id_group, _runner.graph),
-////        label: Text(model.label('Save'), style: TextStyle(fontSize: 20)),
-////      ));
-//    }
-
-    return Row(children: actions);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10,0,10,0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: actions),
+          Container(
+            child: Text(_runner.timerAsString(),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold)),
+          )
+        ],
+      ),
+    );
   }
 }
 

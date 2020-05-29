@@ -9,5 +9,6 @@ class LoadAppAction {
   LoadAppAction(){
     util.out('LoadAppAction constructor');
   }
-
 }
+
+class RefreshAppAction {}
