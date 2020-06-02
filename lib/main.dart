@@ -21,6 +21,10 @@ void main() {
     initialState: AppState.initialState(),
     middleware: listMiddleware(),
   );
+
+  //Initialise here
+//  initialiseGroups(store).then((value) => runApp(FocusApp(store)));
+
   runApp(FocusApp(store));
 }
 
