@@ -19,34 +19,37 @@ class GraphTileWidget extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: SizedBox(
-          width: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(_graph.createdFormatShort(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Flexible(
+              flex: 2,
+              child: Text(_graph.createdFormatShort(),
                   style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
-              const SizedBox(width: 10),
-              Container(
-                  width: 230,
+            ),
+            Flexible(
+              flex: 5,
+              child: Container(
+//                  width: 230,
                   child: Text(title(),
                       style: const TextStyle(fontSize: 13, color: Colors.white),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false)),
-              const SizedBox(width: 25),
-              SizedBox(
-                height: 25.0,
-//                width: 20.0,
+            ),
+            Flexible(
+              flex: 1,
+              child: SizedBox(
+                height: 25,
                 child: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.white, size: 20),
                   onPressed: () => _onDeleteGraph(_graph),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
