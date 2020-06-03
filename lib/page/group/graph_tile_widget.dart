@@ -8,7 +8,12 @@ class GraphTileWidget extends StatelessWidget {
   final Function _onDeleteGraph;
   final Function _lang;
 
-  Widget _buildTiles() {
+  @override
+  Widget build(BuildContext context) {
+
+    double textWidth = 500;
+    if (MediaQuery.of(context).size.width < 500) textWidth = 240;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -20,27 +25,26 @@ class GraphTileWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Flexible(
-              flex: 2,
-              child: Text(_graph.createdFormatShort(),
-                  style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(_graph.createdFormatShort(),
+                    style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                const SizedBox(width: 15),
+                Container(
+                      width: textWidth,
+                    child: Text(title(),
+                        style: const TextStyle(fontSize: 13, color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false)),
+              ],
             ),
-            Flexible(
-              flex: 5,
-              child: Container(
-//                  width: 230,
-                  child: Text(title(),
-                      style: const TextStyle(fontSize: 13, color: Colors.white),
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false)),
-            ),
-            Flexible(
-              flex: 1,
+            Container(
               child: SizedBox(
                 height: 25,
                 child: IconButton(
@@ -61,8 +65,4 @@ class GraphTileWidget extends StatelessWidget {
     return _lang('Time') + ' ' + _graph.timeFormat();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return _buildTiles();
-  }
 }
