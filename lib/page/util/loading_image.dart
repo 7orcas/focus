@@ -7,7 +7,7 @@ class LoadingImage extends StatelessWidget {
     return Scaffold(
         body: new Center(
             child: FadeInImage.assetNetwork(
-              placeholder: 'assets/loading.gif',
+              placeholder: 'assets/logo720.png',
               image:
               'http://archivision.com/educational/samples/files/1A2-F-P-I-2-C1_L.jpg',
             )));

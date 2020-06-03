@@ -3,13 +3,31 @@ import 'package:charts_common/src/chart/cartesian/axis/numeric_tick_provider.dar
 import 'package:focus/model/group/graph/graph_build.dart';
 
 class FocusChart extends LineChart {
-  FocusChart(List<Series<RngPoint, int>> chartData)
+  FocusChart(List<Series<RngPoint, int>> chartData, List<ChartBehavior> titles)
       : super(chartData,
+            behaviors: titles,
             primaryMeasureAxis: NumericAxisSpec(
               renderSpec: SmallTickRendererSpec(),
               showAxisLine: true,
               tickProviderSpec: TickProviderSpec(),
-            ));
+            )) {}
+
+  static List<ChartBehavior> titles(Function lang, {Color color : Colors.white}) {
+    return [
+      new ChartTitle(lang('GraphTitle'),
+          behaviorPosition: BehaviorPosition.top,
+          titleStyleSpec: TextStyleSpec(fontSize: 11),
+          titleOutsideJustification: OutsideJustification.middleDrawArea),
+      new ChartTitle(lang('GraphX'),
+          behaviorPosition: BehaviorPosition.bottom,
+          titleStyleSpec: TextStyleSpec(fontSize: 11),
+          titleOutsideJustification: OutsideJustification.middleDrawArea),
+      new ChartTitle(lang('GraphY'),
+          behaviorPosition: BehaviorPosition.start,
+          titleStyleSpec: TextStyleSpec(fontSize: 11),
+          titleOutsideJustification: OutsideJustification.middleDrawArea)
+    ];
+  }
 }
 
 class TickProviderSpec implements NumericTickProviderSpec {

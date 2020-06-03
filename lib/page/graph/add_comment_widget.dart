@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/group/group_actions.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
-import 'package:focus/page/graph/graph_page.dart';
+import 'package:focus/page/graph/graph_conversation_page.dart';
 
 class AddCommentWidget extends StatefulWidget {
   AddCommentWidget(this.commentTile, this.model);

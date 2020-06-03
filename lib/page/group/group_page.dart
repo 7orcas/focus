@@ -61,7 +61,7 @@ class GroupPage extends StatelessWidget {
                                       model.onDeleteGraph, model.label),
                                 ),
                                 onTap: () => Navigator.pushNamed(
-                                    context, ROUTE_GRAPH_PAGE,
+                                    context, ROUTE_GRAPH_CONVERSATION_PAGE,
                                     arguments: c.graphs[index]),
                               ),
                             ),

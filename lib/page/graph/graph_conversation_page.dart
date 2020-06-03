@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:focus/route.dart';
 import 'package:redux/redux.dart';
 import 'package:focus/service/util.dart';
 import 'package:focus/model/app/app_state.dart';
@@ -14,8 +16,8 @@ import 'package:focus/page/graph/graph_chart.dart';
 import 'package:focus/page/graph/add_comment_widget.dart';
 import 'package:focus/page/util/utilities.dart';
 
-class GraphPage extends StatelessWidget {
-  const GraphPage(this._graph);
+class GraphConversationPage extends StatelessWidget {
+  const GraphConversationPage(this._graph);
 
   final GraphTile _graph;
 
@@ -26,12 +28,12 @@ class GraphPage extends StatelessWidget {
             GraphViewModel.create(context, store, _graph.id, _graph.id_group),
         builder: (BuildContext context, GraphViewModel model) {
           GraphTile _graph = model.getGraph();
-          List<Widget> list = _widgetList(_graph, model);
+          List<Widget> list = _widgetList(_graph, model, context);
 
           return SafeArea(
             child: Scaffold(
-              appBar: new AppBar(
-                title: new Text(_graph.createdFormat()),
+              appBar: AppBar(
+                title: Text(_graph.createdFormat()),
               ),
               resizeToAvoidBottomPadding: true,
               body: Container(
@@ -46,7 +48,8 @@ class GraphPage extends StatelessWidget {
   }
 
   // List of objects within graph
-  List<Widget> _widgetList(GraphTile _graph, GraphViewModel model) {
+  List<Widget> _widgetList(
+      GraphTile _graph, GraphViewModel model, BuildContext context) {
     //Widgets
     var infoStyle = TextStyle(fontSize: 14, color: Colors.white);
 
@@ -61,7 +64,7 @@ class GraphPage extends StatelessWidget {
         children: <Widget>[
           Text(model.label('Time') + ':' + Util.timeFormat(_graph.seconds),
               style: infoStyle),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Text(model.label('Count') + ':' + _graph.count.toString(),
               style: infoStyle),
         ],
@@ -69,11 +72,15 @@ class GraphPage extends StatelessWidget {
     ));
 
     //Add graph
-    comments.add(Padding(
-      padding: const EdgeInsets.fromLTRB(40, 0, 20, 0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        GraphWidget(_graph.graph, model.label),
-      ]),
+    comments.add(Container(
+      child: InkWell(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: GraphWidget(_graph.graph, model.label),
+          ),
+          onDoubleTap: () => Navigator.pushNamed(
+              context, ROUTE_GRAPH_DETAIL_PAGE,
+              arguments: _graph)),
     ));
 
     //Add comments
@@ -101,7 +108,7 @@ class GraphWidget extends StatelessWidget {
     Widget chart;
     try {
       List<double> l = GraphBuild.fromList(_graph);
-      chart = FocusChart(GraphBuild.getChartData(l));
+      chart = FocusChart(GraphBuild.getChartData(l), FocusChart.titles(_lang));
     } on Exception catch (e) {
       chart = Text(_lang('InvalidGraph'));
     }
@@ -182,7 +189,8 @@ class CommentWidget extends StatelessWidget {
                           ),
                         ),
                         Text(_comment.createdFormat(),
-                            style: TextStyle(fontSize: 12, color: Colors.grey[300])),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[300])),
                       ],
                     )),
                     IconButton(
@@ -199,7 +207,6 @@ class CommentWidget extends StatelessWidget {
     );
   }
 }
-
 
 class GraphViewModel extends BaseViewModel {
   GraphTile graph;

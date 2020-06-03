@@ -43,7 +43,7 @@ class NewGraphPage extends StatelessWidget {
             child: Scaffold(
               appBar: new AppBar(
                 title: Text(model.label('NewGraph')),
-                  automaticallyImplyLeading: !model.store.state.isGraphRunning,
+                automaticallyImplyLeading: !model.store.state.isGraphRunning,
               ),
               body: StreamBuilder<GraphBuild>(
 //                  stream: runner.stream,
@@ -66,7 +66,8 @@ class NewGraphPage extends StatelessWidget {
                         children: <Widget>[
                           _ControlButtonsWidget(model, _id_group, graph),
                           Expanded(
-                              child: FocusChart(graph.chartDataForNewBuild()))
+                              child: FocusChart(graph.chartDataForNewBuild(),
+                                  FocusChart.titles(model.label)))
                         ],
                       ),
                     );
@@ -77,7 +78,7 @@ class NewGraphPage extends StatelessWidget {
   }
 }
 
-void _stop (GraphBuild _runner, _ViewModel model){
+void _stop(GraphBuild _runner, _ViewModel model) {
   _powerManagement(false, model.store, ignoreRefresh: true);
   model.store.state.graph = null;
   _runner.stop();
@@ -161,7 +162,7 @@ class _ControlButtonsWidget extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10,0,10,0),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
