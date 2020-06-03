@@ -1,5 +1,6 @@
 import 'package:charts_flutter/flutter.dart';
 import 'package:charts_common/src/chart/cartesian/axis/numeric_tick_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
 
 class FocusChart extends LineChart {
@@ -12,19 +13,32 @@ class FocusChart extends LineChart {
               tickProviderSpec: TickProviderSpec(),
             )) {}
 
-  static List<ChartBehavior> titles(Function lang, {Color color : Colors.white}) {
+  static List<ChartBehavior> titles(Function lang, {color: false}) {
+    TextStyleSpec axis = TextStyleSpec(fontSize: 11, color: color? Color.white : null);
+    TextStyleSpec title = TextStyleSpec(fontSize: 14, color: color? Color.white : null);
+    TextStyleSpec titleSub = TextStyleSpec(fontSize: 11, color: color? Color.white : null);
+
     return [
       new ChartTitle(lang('GraphTitle'),
+          subTitle: lang('GraphSubTitle'),
           behaviorPosition: BehaviorPosition.top,
-          titleStyleSpec: TextStyleSpec(fontSize: 11),
-          titleOutsideJustification: OutsideJustification.middleDrawArea),
+          titlePadding: 7,
+          outerPadding: 2,
+          innerPadding: 1,
+          titleStyleSpec: title,
+          titleOutsideJustification: OutsideJustification.middleDrawArea,
+          subTitleStyleSpec: titleSub),
       new ChartTitle(lang('GraphX'),
           behaviorPosition: BehaviorPosition.bottom,
-          titleStyleSpec: TextStyleSpec(fontSize: 11),
+          outerPadding: 7,
+          innerPadding: 1,
+          titleStyleSpec: axis,
           titleOutsideJustification: OutsideJustification.middleDrawArea),
       new ChartTitle(lang('GraphY'),
           behaviorPosition: BehaviorPosition.start,
-          titleStyleSpec: TextStyleSpec(fontSize: 11),
+          outerPadding: 7,
+          innerPadding: 5,
+          titleStyleSpec: axis,
           titleOutsideJustification: OutsideJustification.middleDrawArea)
     ];
   }

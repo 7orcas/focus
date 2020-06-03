@@ -51,7 +51,7 @@ class GraphConversationPage extends StatelessWidget {
   List<Widget> _widgetList(
       GraphTile _graph, GraphViewModel model, BuildContext context) {
     //Widgets
-    var infoStyle = TextStyle(fontSize: 14, color: Colors.white);
+    var infoStyle = const TextStyle(fontSize: 14, color: Colors.white);
 
     //Add graph
     List<Widget> comments = [];
@@ -120,7 +120,7 @@ class GraphWidget extends StatelessWidget {
             width: 1,
           ),
           boxShadow: [
-            BoxShadow(color: Colors.white54, spreadRadius: 1),
+            const BoxShadow(color: Colors.white54, spreadRadius: 1),
           ],
           gradient: LinearGradient(
               colors: [
@@ -146,7 +146,7 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color _grey = Colors.white;
+    const Color _grey = Colors.white;
 
     return Column(
       children: <Widget>[
@@ -160,7 +160,7 @@ class CommentWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     IconButton(
-                      icon: Icon(Icons.edit, color: _grey, size: 20),
+                      icon: const Icon(Icons.edit, color: _grey, size: 20),
                       onPressed: () => _model.onEditComment(_comment.id),
                     ),
                     Expanded(
@@ -173,7 +173,7 @@ class CommentWidget extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
                               child: Text(_comment.comment,
-                                  style: TextStyle(color: Colors.black)),
+                                  style: const TextStyle(color: Colors.black)),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(3),
                                 border: Border.all(
@@ -181,7 +181,7 @@ class CommentWidget extends StatelessWidget {
                                   width: 1,
                                 ),
                                 boxShadow: [
-                                  BoxShadow(
+                                  const BoxShadow(
                                       color: Colors.white54, spreadRadius: 1),
                                 ],
                               ),
@@ -194,7 +194,7 @@ class CommentWidget extends StatelessWidget {
                       ],
                     )),
                     IconButton(
-                      icon: Icon(Icons.delete, color: _grey, size: 20),
+                      icon: const Icon(Icons.delete, color: _grey, size: 20),
                       onPressed: () => _model.onRemoveComment(_comment),
                     ),
                   ],

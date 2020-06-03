@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 Future<bool> showConfirmDialog(
     String title, String message, Function label, BuildContext context) async {
-  TextStyle button = TextStyle(
+  TextStyle button = const TextStyle(
       fontSize: 20, fontWeight: FontWeight.bold, color: Colors.purple);
 
   return await showDialog<bool>(
@@ -11,7 +11,7 @@ Future<bool> showConfirmDialog(
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(label(title)),
-          titleTextStyle: TextStyle(
+          titleTextStyle: const TextStyle(
               fontSize: 35, fontWeight: FontWeight.bold, color: Colors.purple),
           content: Text(label(message),
               style: TextStyle(fontSize: 20, color: Colors.grey[600])),
@@ -33,8 +33,8 @@ Future<bool> showConfirmDialog(
       });
 }
 
-LinearGradient get chakraColors => LinearGradient(
-        colors: [
+LinearGradient get chakraColors => const LinearGradient(
+        colors: const [
           Colors.purple,
           Colors.indigo,
           Colors.blue,

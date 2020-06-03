@@ -45,7 +45,6 @@ class GraphBuild {
   void stop() {
     _status = RunStatus.STOPPED;
     _timer.status = RunStatus.STOPPED;
-    _controller.sink.add(this);
     _controller.sink.close();
     _controller.close();
   }

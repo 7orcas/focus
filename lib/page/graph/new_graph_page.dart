@@ -38,10 +38,10 @@ class NewGraphPage extends StatelessWidget {
           return WillPopScope(
             onWillPop: () {
               _stop(graph, model);
-              return new Future(() => true);
+              return Future(() => true);
             },
             child: Scaffold(
-              appBar: new AppBar(
+              appBar: AppBar(
                 title: Text(model.label('NewGraph')),
                 automaticallyImplyLeading: !model.store.state.isGraphRunning,
               ),
@@ -67,7 +67,7 @@ class NewGraphPage extends StatelessWidget {
                           _ControlButtonsWidget(model, _id_group, graph),
                           Expanded(
                               child: FocusChart(graph.chartDataForNewBuild(),
-                                  FocusChart.titles(model.label)))
+                                  FocusChart.titles(model.label, color: true)))
                         ],
                       ),
                     );
@@ -79,9 +79,9 @@ class NewGraphPage extends StatelessWidget {
 }
 
 void _stop(GraphBuild _runner, _ViewModel model) {
-  _powerManagement(false, model.store, ignoreRefresh: true);
-  model.store.state.graph = null;
   _runner.stop();
+  _powerManagement(false, model.store);
+//  model.store.state.graph = null;
 }
 
 void _powerManagement(bool v, Store store, {bool ignoreRefresh = false}) async {

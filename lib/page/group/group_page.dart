@@ -71,11 +71,11 @@ class GroupPage extends StatelessWidget {
                       ),
                       floatingActionButton: Visibility(
                           visible: model.store.state.isShowAddGraph,
-                          child: new FloatingActionButton(
+                          child: FloatingActionButton(
                               onPressed: () {
                                 model.onAddGraph(_group);
                               },
-                              child: new Icon(Icons.add)))),
+                              child: const Icon(Icons.add)))),
                 );
               });
         });
@@ -104,10 +104,8 @@ class _ViewModel extends BaseViewModel {
     }
 
     _onAddGraph(GroupTile group) {
-      Util(StackTrace.current).out('_onAddGraph');
       //ToDo needs more validation to test if graph is running
       GraphBuild.addGraphToStore(store);
-      Util(StackTrace.current).out('graph added to store');
       Navigator.pushNamed(context, ROUTE_NEW_GRAPH_PAGE, arguments: group.id);
     }
 

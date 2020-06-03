@@ -25,23 +25,23 @@ class GraphTileWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(_graph.createdFormatShort(),
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Container(
-                  width: 250,
+                  width: 230,
                   child: Text(title(),
-                      style: TextStyle(fontSize: 13, color: Colors.white),
+                      style: const TextStyle(fontSize: 13, color: Colors.white),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false)),
-              SizedBox(width: 25),
+              const SizedBox(width: 25),
               SizedBox(
                 height: 25.0,
-                width: 20.0,
+//                width: 20.0,
                 child: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.white, size: 20),
+                  icon: const Icon(Icons.delete, color: Colors.white, size: 20),
                   onPressed: () => _onDeleteGraph(_graph),
                 ),
               )
@@ -52,12 +52,11 @@ class GraphTileWidget extends StatelessWidget {
     );
   }
 
-  String title () {
+  String title() {
     String x = _graph.firstCommentFormat();
     if (!x.isEmpty) return x;
     return _lang('Time') + ' ' + _graph.timeFormat();
   }
-
 
   @override
   Widget build(BuildContext context) {
