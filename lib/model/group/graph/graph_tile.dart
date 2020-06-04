@@ -93,6 +93,6 @@ class GraphTile extends BaseTile {
     return comments[0].comment.replaceAll('\n', ' ');
   }
 
-  bool get isHighlight => _highlight;
+  bool get isHighlight => _highlight != null && _highlight;
   void set highLight(bool v) => _highlight = v;
 }

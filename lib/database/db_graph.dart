@@ -15,7 +15,10 @@ class GraphDB extends FocusDB {
 
     // The `conflictAlgorithm` in case the same entity is inserted twice.
     // In this case, replace any previous data.
-    graph.setCreated();
+    if (graph.id != null){
+      graph.setCreated();
+    }
+
     int id = await database.insert(
       DB_GRAPH,
       graph.toMap(),

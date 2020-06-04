@@ -73,7 +73,7 @@ List<LangLabel> _en = [
   LangLabel('InvalidGraph', 'Invalid Graph!'),
   LangLabel('Time', 'Time'),
   LangLabel('Trials', 'Trials'),
-  LangLabel('Count', 'Number of Trails'),
+  LangLabel('Count', 'Trails'), //ToDo delete
   LangLabel('GraphRNG', 'RNG Graph'),
   LangLabel('Graphs', 'Random Number Generated Graphs'),
   LangLabel('GraphTitle', 'Random Number Generator'),

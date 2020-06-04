@@ -5,7 +5,7 @@ class BaseEntity {
   final int id;
   DateTime created;
   String encoded;
-  Map<String, dynamic> _parameters;
+  Map<String, String> _parameters;
 
   BaseEntity(this.id, this.created, this.encoded);
 
@@ -35,30 +35,33 @@ class BaseEntity {
     return encoded;
   }
 
-  T getEncoded<T>(String key, var defaultValue) {
+  T getEncoded<T>(String key, T defaultValue) {
     if (encoded == null || encoded.isEmpty) return defaultValue;
     if (_parameters == null) {
-      _parameters = Map();
+      _parameters = Map<String, String>();
       for (String x in encoded.split(',')) {
         List a = x.split(':');
-        String k = a[0];
-        var v;
-        try {
-          switch (defaultValue.runtimeType) { doesnt work
-            case int:
-              v = int.parse(a[1]);
-              break;
-            case bool:
-              v = a[1] == true.toString();
-              break;
-            case String:
-              v = a[1];
-          }
-          _parameters[k] = v;
-        } on Exception catch (e){}
+        _parameters[a[0]] = a[1];
       }
     }
-    if (_parameters.containsKey(key)) return _parameters[key];
+
+    if (!_parameters.containsKey(key)) return defaultValue;
+
+    try {
+      var v;
+      switch (T) {
+        case int:
+          v = int.parse(_parameters[key]);
+          break;
+        case bool:
+          v = _parameters[key] == true.toString();
+          break;
+        case String:
+          v = _parameters[key];
+      }
+      return v;
+    } on Exception catch (e){}
+
     return defaultValue;
   }
 

@@ -46,3 +46,15 @@ LinearGradient get chakraColors => const LinearGradient(
         begin: const FractionalOffset(0.0, 0.0),
         end: const FractionalOffset(0.0, 1.0),
         tileMode: TileMode.clamp);
+
+LinearGradient get graphColors => const LinearGradient(
+    colors: const [Color(0xFF9C27B0), Color(0xFFBA68C8), Colors.purple],
+    begin: const FractionalOffset(0.0, 0.0),
+    end: const FractionalOffset(1.0, 0.0),
+    tileMode: TileMode.clamp);
+
+LinearGradient get graphHighlightColors => const LinearGradient(
+    colors: const [Colors.white, Color(0xFFBA68C8)],
+    begin: const FractionalOffset(0.0, 0.0),
+    end: const FractionalOffset(1.0, 0.0),
+    tileMode: TileMode.clamp);

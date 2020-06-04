@@ -266,6 +266,7 @@ class GraphViewModel extends BaseViewModel {
     }
 
     _toggleHighlight(_){
+      graph.highLight = !graph.isHighlight;
       store.dispatch(ToggleHighlightAction(graph));
     }
 

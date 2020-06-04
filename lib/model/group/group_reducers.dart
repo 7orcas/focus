@@ -87,7 +87,6 @@ List<GroupTile> groupReducer(AppState state, action) {
 
     case ToggleHighlightAction:
       var group = state.findGroupTile(action.graph.id_group);
-      action.graph.highLight = !action.graph.isHighlight;
       return _groups(state.groups, group);
 
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
+import 'package:focus/page/util/utilities.dart';
 
 class GraphTileWidget extends StatelessWidget {
   const GraphTileWidget(this._graph, this._onDeleteGraph, this._lang);
@@ -13,13 +14,11 @@ class GraphTileWidget extends StatelessWidget {
     double textWidth = 500;
     if (MediaQuery.of(context).size.width < 500) textWidth = 240;
 
+    Color color = _graph.isHighlight? Colors.grey[700] : Colors.white;
+
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [Colors.purple[500], Colors.purple[300], Colors.purple],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(1.0, 0.0),
-            tileMode: TileMode.clamp),
+        gradient: _graph.isHighlight? graphHighlightColors : graphColors,
       ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -28,16 +27,16 @@ class GraphTileWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(_graph.createdFormatShort(hideSameYear: true),
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: color)),
               const SizedBox(width: 15),
               Container(
                   width: textWidth,
                   child: Text(title(),
-                      style: const TextStyle(
-                          fontSize: 13, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 13, color: color),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false)),
             ],

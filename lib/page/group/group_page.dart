@@ -42,7 +42,7 @@ class GroupPage extends StatelessWidget {
                 return SafeArea(
                   child: Scaffold(
                       appBar: AppBar(
-                        title: Text(_title(c, model)),
+                        title: Text(_title(c, model)), //ToDo fit
                         actions: MainMenu(context, model.store, model.language,
                                 model.onChangeLanguage)
                             .menu,
