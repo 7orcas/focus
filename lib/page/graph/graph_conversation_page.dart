@@ -59,15 +59,28 @@ class GraphConversationPage extends StatelessWidget {
     //Add details
     comments.add(Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(model.label('Time') + ':' + Util.timeFormat(_graph.seconds),
-              style: infoStyle),
-          const SizedBox(width: 20),
-          Text(model.label('Count') + ':' + _graph.count.toString(),
-              style: infoStyle),
-        ],
+      child: SizedBox(
+        height: 50,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(model.label('Time') + ':' + Util.timeFormat(_graph.seconds),
+                style: infoStyle),
+            const SizedBox(width: 20),
+            Text(model.label('Count') + ':' + _graph.count.toString(),
+                style: infoStyle),
+            const SizedBox(width: 20),
+            Row(
+              children: <Widget>[
+                Text(model.label('Highlight') + ':', style: infoStyle),
+                Checkbox(
+                  value: _graph.isHighlight,
+                  onChanged: model.toggleHighlight
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     ));
 
@@ -122,11 +135,11 @@ class GraphWidget extends StatelessWidget {
           boxShadow: [
             const BoxShadow(color: Colors.white54, spreadRadius: 1),
           ],
-          gradient: LinearGradient(
-              colors: [
-                Colors.purple[400],
-                Colors.purple[100],
-                Colors.purple[400]
+          gradient: const LinearGradient(
+              colors: const [
+                Color(0xFFAB47BC),
+                Color(0xFFE1BEE7),
+                Color(0xFFAB47BC)
               ],
               begin: const FractionalOffset(0.0, 0.0),
               end: const FractionalOffset(0.0, 1.0),
@@ -214,6 +227,7 @@ class GraphViewModel extends BaseViewModel {
   final Function(int, String) onAddComment;
   final Function(int) onEditComment;
   final Function(CommentTile) onRemoveComment;
+  final void Function(bool) toggleHighlight;
 
   GraphViewModel({
     store,
@@ -222,6 +236,7 @@ class GraphViewModel extends BaseViewModel {
     this.onAddComment,
     this.onEditComment,
     this.onRemoveComment,
+    this.toggleHighlight,
   }) : super(store);
 
   factory GraphViewModel.create(
@@ -250,6 +265,10 @@ class GraphViewModel extends BaseViewModel {
       });
     }
 
+    _toggleHighlight(_){
+      store.dispatch(ToggleHighlightAction(graph));
+    }
+
     return GraphViewModel(
       store: store,
       graph: graph,
@@ -257,6 +276,7 @@ class GraphViewModel extends BaseViewModel {
       onAddComment: _onAddComment,
       onEditComment: _onEditComment,
       onRemoveComment: _onRemoveComment,
+      toggleHighlight: _toggleHighlight,
     );
   }
 }

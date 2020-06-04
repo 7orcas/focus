@@ -5,7 +5,7 @@ class BaseEntity {
   final int id;
   DateTime created;
   String encoded;
-  Map <String, dynamic>_parameters;
+  Map<String, dynamic> _parameters;
 
   BaseEntity(this.id, this.created, this.encoded);
 
@@ -37,17 +37,25 @@ class BaseEntity {
 
   T getEncoded<T>(String key, var defaultValue) {
     if (encoded == null || encoded.isEmpty) return defaultValue;
-    if (_parameters == null){
+    if (_parameters == null) {
       _parameters = Map();
-      for (String x in encoded.split(',')){
+      for (String x in encoded.split(',')) {
         List a = x.split(':');
         String k = a[0];
         var v;
-        switch (defaultValue.runtimeType){
-          case int: v = int.parse(a[1]); break;
-          case String: v = a[1];
-        }
-        _parameters[k] = v;
+        try {
+          switch (defaultValue.runtimeType) { doesnt work
+            case int:
+              v = int.parse(a[1]);
+              break;
+            case bool:
+              v = a[1] == true.toString();
+              break;
+            case String:
+              v = a[1];
+          }
+          _parameters[k] = v;
+        } on Exception catch (e){}
       }
     }
     if (_parameters.containsKey(key)) return _parameters[key];
@@ -91,7 +99,7 @@ class BaseTile {
 
   String createdFormat() {
     if (created == null) return '';
-    return DateFormat('dd MMM yy  hh:mm').format(created);
+    return DateFormat.yMMMMd('en_US').add_jm().format(created);
   }
 
   String addEncoded(String encoded, String key, var parameter) {

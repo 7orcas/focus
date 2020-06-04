@@ -82,8 +82,7 @@ class GroupPage extends StatelessWidget {
   }
 
   String _title(GroupTile group, _ViewModel model) {
-    return (model.isGroupsEnabled ? group.name : model.label('FocusApp')) +
-        ': ' +
+    return (model.isGroupsEnabled ? group.name + ': ': '') +
         model.label('Graphs');
   }
 }

@@ -28,8 +28,13 @@ class CommentTile extends BaseTile {
         comment_read = BaseEntity.toBoolean(e.comment_read),
         super(e.id, e.created);
 
-  CommentEntity toEntity() {
+  CommentEntity createEntity() {
     return CommentEntity(id, createdMS(), null, id_group, id_graph, id_user,
+        comment, fromBool(comment_read));
+  }
+
+  CommentEntity toEntity() {
+    return CommentEntity(id, dateTime(createdMS()), null, id_group, id_graph, id_user,
         comment, fromBool(comment_read));
   }
 

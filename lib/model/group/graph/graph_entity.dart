@@ -4,6 +4,7 @@ import 'package:focus/model/group/comment/comment_entity.dart';
 
 const PARAM_KEY_TIME = 'time';
 const PARAM_KEY_COUNT = 'count';
+const PARAM_KEY_HIGHLIGHT = 'hl';
 
 class GraphEntity extends BaseEntity {
   final int id_group;

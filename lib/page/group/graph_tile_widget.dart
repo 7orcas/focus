@@ -10,7 +10,6 @@ class GraphTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     double textWidth = 500;
     if (MediaQuery.of(context).size.width < 500) textWidth = 240;
 
@@ -24,37 +23,40 @@ class GraphTileWidget extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(_graph.createdFormatShort(),
-                    style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
-                const SizedBox(width: 15),
-                Container(
-                      width: textWidth,
-                    child: Text(title(),
-                        style: const TextStyle(fontSize: 13, color: Colors.white),
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false)),
-              ],
-            ),
-            Container(
+        child: Stack(children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(_graph.createdFormatShort(hideSameYear: true),
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+              const SizedBox(width: 15),
+              Container(
+                  width: textWidth,
+                  child: Text(title(),
+                      style: const TextStyle(
+                          fontSize: 13, color: Colors.white),
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false)),
+            ],
+          ),
+          Positioned(
+            top: -10,
+            right: 0,
+            child: Container(
               child: SizedBox(
                 height: 25,
                 child: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.white, size: 20),
+                  icon:
+                      const Icon(Icons.delete, color: Color(0xFF9E9E9E), size: 20),
                   onPressed: () => _onDeleteGraph(_graph),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+        ]),
       ),
     );
   }
@@ -64,5 +66,4 @@ class GraphTileWidget extends StatelessWidget {
     if (!x.isEmpty) return x;
     return _lang('Time') + ' ' + _graph.timeFormat();
   }
-
 }

@@ -45,6 +45,10 @@ void groupStateMiddleware(
       });
       break;
 
+    case ToggleHighlightAction:
+      _updateGraphToDB(store, action.graph);
+      break;
+
     case SaveGraphCommentAction:
       _saveGraphCommentToDB(
               store, action.graph, action.id_comment, action.comment)
@@ -93,6 +97,11 @@ Future<GraphEntity> _saveGraphToDB(
     ..addEncoded(PARAM_KEY_TIME, graph.timer)
     ..addEncoded(PARAM_KEY_COUNT, graph.count);
   return await GraphDB().saveGraph(entity);
+}
+
+Future<GraphEntity> _updateGraphToDB(
+    Store<AppState> store, GraphTile graph) async {
+  return await GraphDB().saveGraph(graph.toEntity());
 }
 
 /// Save graph comment to database and return new entity

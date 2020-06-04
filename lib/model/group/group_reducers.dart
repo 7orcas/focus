@@ -85,8 +85,19 @@ List<GroupTile> groupReducer(AppState state, action) {
     case ToggleAddGraphButtonAction:
       return state.groups;
 
+    case ToggleHighlightAction:
+      var group = state.findGroupTile(action.graph.id_group);
+      action.graph.highLight = !action.graph.isHighlight;
+      return _groups(state.groups, group);
+
   }
 
   return state.groups;
 }
 
+List<GroupTile> _groups (List<GroupTile> groups, GroupTile group){
+  return groups.map((e) {
+    if (e.id == group.id) return group;
+    return e;
+  }).toList();
+}

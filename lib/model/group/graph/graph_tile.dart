@@ -13,16 +13,7 @@ class GraphTile extends BaseTile {
   List<CommentTile> comments;
   final int seconds;
   final int count;
-
-//  GraphTile(
-//    id,
-//    created,
-//    this.id_group,
-//    this.graph,
-//    this.comments,
-//    this.seconds,
-//    this.count,
-//  ) : super(id, created);
+  bool _highlight;
 
   GraphTile.entity(GraphEntity e)
       : id_group = e.id_group,
@@ -30,10 +21,20 @@ class GraphTile extends BaseTile {
         comments = List<CommentTile>(),
         seconds = e.getEncoded(PARAM_KEY_TIME, 0),
         count = e.getEncoded(PARAM_KEY_COUNT, 0),
-        super(e.id, e.created){
-    if (e.comments != null){
+        _highlight = e.getEncoded(PARAM_KEY_HIGHLIGHT, false),
+        super(e.id, e.created) {
+    if (e.comments != null) {
       comments = e.comments.map((e) => CommentTile.entity(e)).toList();
     }
+  }
+
+  GraphEntity toEntity() {
+    String e = addEncoded('', PARAM_KEY_TIME, seconds);
+    e = addEncoded(e, PARAM_KEY_COUNT, count);
+    e = addEncoded(e, PARAM_KEY_HIGHLIGHT, _highlight);
+
+    return GraphEntity(id, dateTime(createdMS()), e, id_group, graph,
+        comments.map((e) => e.toEntity()).toList());
   }
 
   CommentTile addComment(String comment, int id_user) {
@@ -47,12 +48,6 @@ class GraphTile extends BaseTile {
     comments.add(t);
     return t;
   }
-
-//  GraphEntity toEntity() {
-//    List<CommentEntity> list = comments.map((t) => t.toEntity()).toList();
-//    return GraphEntity(id, createdMS(), addEncoded('', PARAM_KEY_TIME, seconds),
-//        id_group, graph, list);
-//  }
 
   CommentTile findCommentTile(int id) {
     for (CommentTile c in comments) {
@@ -80,14 +75,11 @@ class GraphTile extends BaseTile {
     }
   }
 
-  @override
-  String createdFormat() {
+  String createdFormatShort({hideSameYear: false}) {
     if (created == null) return '';
-    return DateFormat('hh:mm dd.MMM.yy').format(created);
-  }
-
-  String createdFormatShort() {
-    if (created == null) return '';
+    if (hideSameYear && created.year == DateTime.now().year) {
+      return DateFormat('dd.MMM').format(created);
+    }
     return DateFormat('dd.MMM.yy').format(created);
   }
 
@@ -100,4 +92,7 @@ class GraphTile extends BaseTile {
     if (comments == null || comments.length == 0) return '';
     return comments[0].comment.replaceAll('\n', ' ');
   }
+
+  bool get isHighlight => _highlight;
+  void set highLight(bool v) => _highlight = v;
 }

@@ -72,3 +72,8 @@ class RemoveGraphCommentStoreAction {
     Util(StackTrace.current).out('RemoveGraphCommentAction constructor');
   }
 }
+
+class ToggleHighlightAction {
+  final GraphTile graph;
+  ToggleHighlightAction(this.graph){}
+}
