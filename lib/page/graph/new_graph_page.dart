@@ -84,17 +84,42 @@ void _stop(GraphBuild _runner, _ViewModel model) {
 //  model.store.state.graph = null;
 }
 
-void _powerManagement(bool v, Store store, {bool ignoreRefresh = false}) async {
+void _powerManagement(bool v, Store store) async {
   Wakelock.toggle(on: v);
   store.state.graphRunning = v;
   if (v) {
     store.state.brightness = await Screen.brightness;
-    Screen.setBrightness(0.5);
+    ScreenChanger.requestChange();
   } else {
+    ScreenChanger.cancel();
     Screen.setBrightness(store.state.brightness);
   }
-  if (!ignoreRefresh) store.dispatch(RefreshAppAction());
+  store.dispatch(RefreshAppAction());
 }
+
+
+/// Class to set a delay for changing the screen brightness
+class ScreenChanger {
+  static bool _timer = false;
+
+  static void requestChange(){
+    if (!_timer){
+      _timer = true;
+      Future.delayed(const Duration(seconds: 3), () {}) //ToDo put in session parameters
+          .then(_setBrightness);
+    }
+  }
+
+  static void _setBrightness (_){
+    if (_timer){
+      Screen.setBrightness(0.1); //ToDo put in session parameters
+      _timer = false;
+    }
+  }
+
+  static void cancel () => _timer = false;
+}
+
 
 class _ControlButtonsWidget extends StatelessWidget {
   final int _id_group;
