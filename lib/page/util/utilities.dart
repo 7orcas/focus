@@ -33,6 +33,34 @@ Future<bool> showConfirmDialog(
       });
 }
 
+Future<bool> showOkDialog(
+    String title, String message, Function label, BuildContext context) async {
+  TextStyle button = const TextStyle(
+      fontSize: 20, fontWeight: FontWeight.bold, color: Colors.purple);
+
+  return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(label(title)),
+          titleTextStyle: const TextStyle(
+              fontSize: 35, fontWeight: FontWeight.bold, color: Colors.purple),
+          content: Text(label(message),
+              style: TextStyle(fontSize: 20, color: Colors.grey[600])),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text(label('Ok'), style: button),
+            ),
+
+          ],
+        );
+      });
+}
+
+
 LinearGradient get chakraColors => const LinearGradient(
         colors: const [
           Colors.purple,

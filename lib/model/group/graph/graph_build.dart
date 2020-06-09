@@ -9,6 +9,7 @@ import 'package:charts_flutter/flutter.dart';
 enum RunStatus { WAIT, RUNNING, PAUSED, STOPPED }
 
 class GraphBuild {
+  DateTime _created;
   List _numbers = List<double>();
   double _lastNumber; //ToDo delete
   List _points = List<RngPoint>();
@@ -30,6 +31,7 @@ class GraphBuild {
 
 
   void start() {
+    _created ??= DateTime.now();
     if (_status == RunStatus.STOPPED) return;
     _status = RunStatus.RUNNING;
     _startRun(0);
@@ -55,6 +57,7 @@ class GraphBuild {
   bool get isPaused => _status == RunStatus.PAUSED;
   bool get isStopped => _status == RunStatus.STOPPED;
   bool get isWaiting => _status == RunStatus.WAIT;
+  DateTime get created => _created;
 
   int get timer => _timer.time();
   void set timer (sec) => _timer.seconds = sec;

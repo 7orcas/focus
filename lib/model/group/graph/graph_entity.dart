@@ -14,9 +14,9 @@ class GraphEntity extends BaseEntity {
   GraphEntity(id, createdMS, encoded, this.id_group, this.graph, this.comments)
       : super(id, createdMS, encoded);
 
-  GraphEntity.build(this.id_group, this.graph)
+  GraphEntity.build(DateTime created, this.id_group, this.graph)
       : comments = List<CommentEntity>(),
-        super(null, null, null);
+        super(null, created, null);
 
   Map<String, dynamic> toMap() => super.toMap()
     ..addAll({

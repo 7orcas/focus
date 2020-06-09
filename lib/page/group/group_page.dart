@@ -109,6 +109,11 @@ class _ViewModel extends BaseViewModel {
     }
 
     _onDeleteGraph(GraphTile graph) {
+      if (graph.isHighlight){
+        showOkDialog(
+            'DelGraphC', 'DelGraphHL', store.state.session.label, context);
+        return;
+      }
       showConfirmDialog(
               'DelGraph', 'DelGraphQ', store.state.session.label, context)
           .then((value) {

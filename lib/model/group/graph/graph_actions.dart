@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus/model/base_action.dart';
 import 'package:focus/model/group/comment/comment_tile.dart';
 import 'package:focus/model/group/graph/graph_tile.dart';
 import 'package:focus/model/group/graph/graph_build.dart';
@@ -7,7 +8,7 @@ import 'package:focus/service/util.dart';
 // Actions that can mutate the state
 
 /// Save results of a graph to the database
-class SaveGraphAction {
+class SaveGraphAction extends BaseAction{
   final int id_group;
   final GraphBuild graph;
   SaveGraphAction(this.id_group, this.graph){
@@ -16,26 +17,26 @@ class SaveGraphAction {
 }
 
 /// Callback from [SaveGraphAction] to mutate the store
-class SaveGraphStoreAction {
+class SaveGraphStoreAction extends BaseAction{
   final GraphTile graph;
   SaveGraphStoreAction(this.graph){}
 }
 
-class DeleteGraphAction {
+class DeleteGraphAction extends BaseAction{
   final GraphTile graph;
-  final Function error;
-  DeleteGraphAction(this.graph, this.error){
+  final Function onError; //ToDo Is this function needed?
+  DeleteGraphAction(this.graph, this.onError){
     Util(StackTrace.current).out('DeleteGraphAction constructor');
   }
 }
 
 /// Callback from [DeleteGraphAction] to mutate the store
-class DeleteGraphStoreAction {
+class DeleteGraphStoreAction extends BaseAction{
   final GraphTile graph;
   DeleteGraphStoreAction(this.graph){}
 }
 
-class SaveGraphCommentAction {
+class SaveGraphCommentAction extends BaseAction{
   final GraphTile graph;
   final int id_comment;
   final String comment;
@@ -45,12 +46,12 @@ class SaveGraphCommentAction {
 }
 
 /// Callback from [SaveGraphCommentAction] to mutate the store
-class SaveGraphCommentStoreAction {
+class SaveGraphCommentStoreAction extends BaseAction{
   final CommentTile comment;
   SaveGraphCommentStoreAction(this.comment){}
 }
 
-class EditGraphCommentAction {
+class EditGraphCommentAction extends BaseAction{
   final GraphTile graph;
   final int id_comment;
   EditGraphCommentAction(this.graph, this.id_comment){
@@ -58,7 +59,7 @@ class EditGraphCommentAction {
   }
 }
 
-class DeleteGraphCommentAction {
+class DeleteGraphCommentAction extends BaseAction{
   final CommentTile comment;
   DeleteGraphCommentAction(this.comment){
     Util(StackTrace.current).out('RemoveGraphCommentAction constructor');
@@ -66,14 +67,14 @@ class DeleteGraphCommentAction {
 }
 
 /// Callback from [DeleteGraphCommentAction] to mutate the store
-class RemoveGraphCommentStoreAction {
+class RemoveGraphCommentStoreAction extends BaseAction{
   final CommentTile comment;
   RemoveGraphCommentStoreAction(this.comment){
     Util(StackTrace.current).out('RemoveGraphCommentAction constructor');
   }
 }
 
-class ToggleHighlightAction {
+class ToggleHighlightAction extends BaseAction{
   final GraphTile graph;
   ToggleHighlightAction(this.graph){}
 }

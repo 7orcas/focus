@@ -1,29 +1,26 @@
 import 'package:focus/service/util.dart';
+import 'package:focus/model/base_action.dart';
 
 // Actions that can mutate the state
 
-final util = Util(StackTrace.current);
-
-class ChangeLanguageAction {
+class ChangeLanguageAction extends BaseAction{
   final String langCode;
-
   ChangeLanguageAction(this.langCode){
-    util.out('ChangeLanguageAction constructor');
+    Util(StackTrace.current).out('ChangeLanguageAction constructor');
   }
 
 }
 
-class GetLanguageAction {
+class GetLanguageAction extends BaseAction{
   GetLanguageAction(){
-    util.out('GetLanguageAction constructor');
+    Util(StackTrace.current).out('GetLanguageAction constructor');
   }
 }
 
-class LoadLanguageAction {
+class LoadLanguageAction extends BaseAction{
   final String langCode;
-
   LoadLanguageAction(this.langCode){
-    util.out('LoadLanguageAction constructor');
+    Util(StackTrace.current).out('LoadLanguageAction constructor');
   }
 
 }

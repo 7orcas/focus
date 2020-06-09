@@ -1,14 +1,11 @@
 import 'package:focus/service/util.dart';
-
-// Actions that can mutate the state
-
-final util = Util(StackTrace.current);
+import 'package:focus/model/base_action.dart';
 
 
-class LoadAppAction {
+class LoadAppAction extends BaseAction{
   LoadAppAction(){
-    util.out('LoadAppAction constructor');
+    Util(StackTrace.current).out('LoadAppAction constructor');
   }
 }
 
-class RefreshAppAction {}
+class RefreshAppAction extends BaseAction{}
